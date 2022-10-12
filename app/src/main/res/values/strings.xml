@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">caishifu</string>
-    <string name="title_activity_flash">FlashActivity</string>
+    <string name="title_activity_flash">菜师傅</string>
     <string name="register">注册</string>
     <string name="login">登录</string>
     <string name="registering">正在注册...</string>
@@ -8,4 +8,9 @@
     <string name="register_failed">注册失败，请重试</string>
     <string name="user_exists">用户已存在</string>
     <string name="account_or_password_error">账号或密码错误，请重新填写</string>
+    <string name="nick_name_example">例如：菜师傅</string>
+    <string name="nick_name">昵称</string>
+    <string name="login_hint_phone">你的手机号码</string>
+    <string name="login_hint_password">填写密码</string>
+    <string name="password">密码</string>
 </resources>

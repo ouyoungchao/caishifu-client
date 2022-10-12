@@ -42,6 +42,11 @@ public class User extends SugarRecord {
     private String userPassword;
 
     /**
+     * 是否为买家
+     */
+    private String isBuyer;
+
+    /**
      *
      */
     private String userImPassword;
@@ -218,6 +223,14 @@ public class User extends SugarRecord {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    public String getIsBuyer() {
+        return isBuyer;
+    }
+
+    public void setIsBuyer(String isBuyer) {
+        this.isBuyer = isBuyer;
     }
 
     public String getUserImPassword() {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Inverse ProgressBar style. This is a medium circular progress bar. -->
+    <attr name="progressBarStyleInverse" format="reference" />
+</resources>

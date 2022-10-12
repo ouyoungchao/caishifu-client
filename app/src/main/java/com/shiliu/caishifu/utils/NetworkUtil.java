@@ -1,14 +1,18 @@
 package com.shiliu.caishifu.utils;
 
+import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.ConnectionPool;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,40 +24,42 @@ public class NetworkUtil {
 
     private static NetworkUtil instance;
 
-    private static OkHttpClient okHttpClient = new OkHttpClient();
 
-    public static synchronized NetworkUtil getInstance(){
-        if(instance == null){
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).build();
+
+    public static synchronized NetworkUtil getInstance(Context context) {
+        if (instance == null) {
             instance = new NetworkUtil();
         }
         return instance;
     }
 
-    private NetworkUtil(){}
+    private NetworkUtil() {
+    }
 
 
-    public Response doGetRequest(String url){
+    public Response doGetRequest(String url) {
         Request request = new Request.Builder().url(url).build();
         try {
             return okHttpClient.newCall(request).execute();
         } catch (IOException e) {
-            Log.e(TAG, "getRequest: " + url + " error ",e );
+            Log.e(TAG, "getRequest: " + url + " error ", e);
         }
         return null;
     }
 
-    public void doPostRequest(String url, String json, final NetworkCallbak callbak){
+    public void doPostRequest(String url, String json, final NetworkCallbak callbak) {
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
         Request request = new Request.Builder().url(url).post(body).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callbak.onFailure(call,e);
+                callbak.onFailure(call, e);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                callbak.onResponse(call,response);
+                callbak.onResponse(call, response);
             }
         });
     }
@@ -61,7 +67,7 @@ public class NetworkUtil {
     /**
      * 请求异步回调函数
      */
-    public static interface NetworkCallbak extends Callback{
+    public static interface NetworkCallbak extends Callback {
 
     }
 

@@ -187,6 +187,60 @@
                 android:background="@color/divider_grey" />
         </RelativeLayout>
 
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp">
+
+            <TextView
+                android:id="@+id/selector_role"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:text="成为"
+                android:textColor="#353535"
+                android:textSize="@dimen/common_item_text_size" />
+
+            <ImageView
+                android:id="@+id/register_buyer"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignRight="@+id/selector_role"
+                android:background="@mipmap/icon_choose_false"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/register_buyer_tx"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_toRightOf="@+id/register_buyer"
+                android:layout_marginLeft="10dp"
+                android:text="买家"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/register_seller"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_toLeftOf="@+id/register_seller_tx"
+                android:layout_marginRight="10dp"
+                android:background="@mipmap/icon_choose_true"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/register_seller_tx"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:text="卖家"
+                android:textSize="13sp" />
+        </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Html;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.alibaba.fastjson.JSON;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
@@ -29,6 +27,7 @@ import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.ResponseMsg;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.CommonUtil;
+import com.shiliu.caishifu.utils.ExampleUtil;
 import com.shiliu.caishifu.utils.FileUtil;
 import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.MD5Util;
@@ -60,6 +59,14 @@ public class RegisterActivity extends BaseActivity2 {
     //注册头像上传按钮
     @BindView(R.id.sdv_avatar)
     SimpleDraweeView mAvatarSdv;
+
+    //买家logo
+    @BindView(R.id.register_buyer)
+    ImageView selectBuye;
+
+    //卖家logo
+    @BindView(R.id.register_seller)
+    ImageView selectSeller;
 
     //同意logo
     @BindView(R.id.iv_agreement)
@@ -94,12 +101,17 @@ public class RegisterActivity extends BaseActivity2 {
     private static final int UPDATE_AVATAR_BY_TAKE_CAMERA = 1;
     private static final int UPDATE_AVATAR_BY_ALBUM = 2;
 
-    private String mImageName;
-    private String mUserAvatar;
+    private String imageName;
+    private String userAvatar;
     /**
      * 是否同意协议
      */
     private boolean mIsAgree = false;
+
+    /**
+     * 是否买家
+     */
+    private boolean isBuyer = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,7 +121,7 @@ public class RegisterActivity extends BaseActivity2 {
 
         initStatusBar();
 
-        networkUtil = NetworkUtil.getInstance();
+        networkUtil = NetworkUtil.getInstance(this);
         mDialog = new LoadingDialog(RegisterActivity.this);
         mUserDao = new UserDao();
         initView();
@@ -130,12 +142,36 @@ public class RegisterActivity extends BaseActivity2 {
         finish();
     }
 
-    @OnClick({R.id.sdv_avatar, R.id.iv_agreement, R.id.btn_register})
+    @OnClick({R.id.sdv_avatar, R.id.iv_agreement, R.id.btn_register, R.id.register_seller, R.id.register_buyer})
     public void onClick(View view) {
         switch (view.getId()) {
             //上传按钮
             case R.id.sdv_avatar:
                 showPhotoDialog();
+                break;
+            //买家按钮
+            case R.id.register_buyer:
+                if (isBuyer) {
+                    selectBuye.setBackgroundResource(R.mipmap.icon_choose_false);
+                    selectSeller.setBackgroundResource(R.mipmap.icon_choose_true);
+                    isBuyer = false;
+                } else {
+                    selectBuye.setBackgroundResource(R.mipmap.icon_choose_true);
+                    selectSeller.setBackgroundResource(R.mipmap.icon_choose_false);
+                    isBuyer = true;
+                }
+                break;
+            //卖家按钮
+            case R.id.register_seller:
+                if (!isBuyer) {
+                    selectBuye.setBackgroundResource(R.mipmap.icon_choose_true);
+                    selectSeller.setBackgroundResource(R.mipmap.icon_choose_false);
+                    isBuyer = true;
+                } else {
+                    selectBuye.setBackgroundResource(R.mipmap.icon_choose_false);
+                    selectSeller.setBackgroundResource(R.mipmap.icon_choose_true);
+                    isBuyer = false;
+                }
                 break;
             //同意按钮
             case R.id.iv_agreement:
@@ -154,7 +190,7 @@ public class RegisterActivity extends BaseActivity2 {
                 mDialog.setCanceledOnTouchOutside(false);
                 mDialog.show();
                 String nickName = mNickNameEt.getText().toString();
-                String phone = mPhoneEt.getText().toString();
+                String telephone = mPhoneEt.getText().toString();
                 String password = mPasswordEt.getText().toString();
                 if (!ValidateUtil.validatePassword(password)) {
                     mDialog.dismiss();
@@ -162,7 +198,7 @@ public class RegisterActivity extends BaseActivity2 {
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-                register(nickName, phone, password, mUserAvatar);
+                register(nickName, telephone, password, isBuyer, userAvatar);
                 break;
         }
     }
@@ -173,13 +209,13 @@ public class RegisterActivity extends BaseActivity2 {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case UPDATE_AVATAR_BY_TAKE_CAMERA:
-                    final File file = new File(Environment.getExternalStorageDirectory(), mImageName);
+                    final File file = new File(Environment.getExternalStorageDirectory(), imageName);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             List<String> imageList = FileUtil.uploadFile(Constant.BASE_URL + "oss/file", file.getPath());
                             if (null != imageList && imageList.size() > 0) {
-                                mUserAvatar = imageList.get(0);
+                                userAvatar = imageList.get(0);
                             }
                         }
                     }).start();
@@ -195,7 +231,7 @@ public class RegisterActivity extends BaseActivity2 {
                             public void run() {
                                 List<String> imageList = FileUtil.uploadFile(Constant.BASE_URL + "oss/file", filePath);
                                 if (null != imageList && imageList.size() > 0) {
-                                    mUserAvatar = imageList.get(0);
+                                    userAvatar = imageList.get(0);
                                 }
                             }
                         }).start();
@@ -238,10 +274,10 @@ public class RegisterActivity extends BaseActivity2 {
         mTakePicTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mImageName = CommonUtil.generateId() + ".png";
+                imageName = CommonUtil.generateId() + ".png";
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
-                        new File(Environment.getExternalStorageDirectory(), mImageName)));
+                        new File(Environment.getExternalStorageDirectory(), imageName)));
                 startActivityForResult(cameraIntent, UPDATE_AVATAR_BY_TAKE_CAMERA);
                 photoDialog.dismiss();
             }
@@ -263,25 +299,26 @@ public class RegisterActivity extends BaseActivity2 {
      * 注册
      *
      * @param nickName 昵称
-     * @param phone    手机号
+     *                 +
+     * @param telephone    手机号
      * @param password 密码
+     * @param isBuyer  是否为采购
      */
-    private void register(String nickName, String phone, String password, String avatar) {
-        String url = Constant.BASE_URL + "users";
-        Map<String, String> paramMap = new HashMap<>();
+    private void register(String nickName, String telephone, String password, boolean isBuyer, String userAvatar) {
+        String url = Constant.BASE_URL + "caishifu/register";
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("nickName", nickName);
-        paramMap.put("phone", phone);
+        paramMap.put("telephone", telephone);
+        paramMap.put("isBuyer", isBuyer ? "true" : "false");
         paramMap.put("password", MD5Util.encode(password, "utf8"));
-        if (!TextUtils.isEmpty(avatar)) {
-            paramMap.put("avatar", avatar);
-        }
-
+        paramMap.put("icon",userAvatar);
         networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
 
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: " + url,e);
                 mDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, R.string.register_failed, Toast.LENGTH_SHORT).show();
+                ExampleUtil.initToast(RegisterActivity.this, getResources().getString(R.string.register_failed), Toast.LENGTH_SHORT);
                 return;
             }
 
@@ -295,7 +332,7 @@ public class RegisterActivity extends BaseActivity2 {
                         Log.d(TAG, "onResponse userId:" + user.getUserId());
                         // 登录成功后设置user和isLogin至sharedpreferences中
                         PreferencesUtil.getInstance().setUser(user);
-                        PreferencesUtil.getInstance().setLogin(true);
+//                        PreferencesUtil.getInstance().setLogin(true);
                         // 注册jpush实现消息推送
                         // TODO: 2022/9/12
 //                        JPushInterface.setAlias(RegisterActivity.this, sequence, user.getUserId());
@@ -326,9 +363,8 @@ public class RegisterActivity extends BaseActivity2 {
                                     R.string.user_exists, Toast.LENGTH_SHORT)
                                     .show();
                         } else {
-                            Toast.makeText(RegisterActivity.this,
-                                    R.string.account_or_password_error, Toast.LENGTH_SHORT)
-                                    .show();
+                            mDialog.dismiss();
+                            ExampleUtil.initToast(RegisterActivity.this, getResources().getString(R.string.account_or_password_error), Toast.LENGTH_SHORT);
                         }
 
                 }

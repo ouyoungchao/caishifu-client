@@ -3,14 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.shiliu.caishifu">
 
-    <permission
-        android:name="com.shiliu.caishifu.permission.JPUSH_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.shiliu.caishifu.permission.JPUSH_MESSAGE" />
-
     <application
+        android:name=".CaishifuApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/caishifu_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -36,6 +32,14 @@
             android:process=":multiprocess"
             tools:node="replace" />
 
+        <service
+            android:name="com.shiliu.caishifu.service.PushService"
+            android:process=":pushcore">
+            <intent-filter>
+                <action android:name="cn.jiguang.user.service.action" />
+            </intent-filter>
+        </service>
+
         <!-- Required SDK核心功能-->
         <receiver
             android:name="cn.jpush.android.service.PushReceiver"
@@ -43,7 +47,7 @@
             android:exported="false">
             <intent-filter android:priority="1000">
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
-                <category android:name="com.bc.wechat" />
+                <category android:name="com.shiliu.caishifu" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
@@ -71,7 +75,7 @@
                 <action android:name="cn.jpush.im.android.action.IM_RESPONSE" />
                 <action android:name="cn.jpush.im.android.action.NOTIFICATION_CLICK_PROXY" />
 
-                <category android:name="com.bc.wechat" />
+                <category android:name="com.shiliu.caishifu" />
             </intent-filter>
         </receiver>
 

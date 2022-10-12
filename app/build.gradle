@@ -1,16 +1,31 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "33.0.0"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
     defaultConfig {
         applicationId "com.shiliu.caishifu"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdkVersion 24
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: "com.shiliu.caishifu",
+                JPUSH_APPKEY : "ca3694c6ce1a2678eef95dce", //JPush 上注册的包名对应的 Appkey.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+        ]
+
+        ndk {
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -35,6 +50,7 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:1.13.0'
     //注解注册按钮
     implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     //汉语拼英组件
     implementation 'com.github.open-android:pinyin4j:2.5.0'
 
@@ -42,4 +58,7 @@ dependencies {
     implementation 'cn.jiguang.sdk:jmessage:2.9.0'
     implementation 'cn.jiguang.sdk:jpush:3.3.4'
     implementation 'cn.jiguang.sdk:jcore:2.1.2'
+
+    //字体兼容
+    implementation 'androidx.core:core:1.5.0'
 }

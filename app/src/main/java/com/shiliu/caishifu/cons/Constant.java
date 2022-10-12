@@ -20,7 +20,7 @@ public class Constant {
     /**
      * 本地IP地址
      */
-    public static final String BASE_URL = "http://127.0.0.1:8080/";
+    public static final String BASE_URL = "http://192.168.43.208:8080/";
 
     public static final String IS_NOT_FRIEND = "0";
 

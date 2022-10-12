@@ -9,4 +9,12 @@
     <color name="register_btn_text_enable">#ffffff</color>
     <color name="register_btn_bg_disable">#E1E1E1</color>
     <color name="register_btn_text_disable">#B4B4B4</color>
+    <!--透明色-->
+    <color name="transparent">#00000000</color>
+
+    <color name="common_top_title">#353535</color>
+    <color name="common_hint_grey">#A5A5A5</color>
+    <color name="divider_grey">#D8D8D8</color>
+    <color name="wechat_btn_green">#07C063</color>
+
 </resources>

@@ -34,11 +34,7 @@ import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
 
-/**
- * activity基类
- *
- * @author zhou
- */
+
 public abstract class BaseActivity2 extends FragmentActivity {
 
     private MessageDao mMessageDao;
@@ -62,7 +58,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
      * @param event 登录状态改变事件
      */
     public void onEventMainThread(LoginStateChangeEvent event) {
-        final LoginStateChangeEvent.Reason reason = event.getReason();
+        /*final LoginStateChangeEvent.Reason reason = event.getReason();
         switch (reason) {
             // 被挤掉线
             case user_logout:
@@ -102,7 +98,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
                 logoutConfirmDialog.setCancelable(false);
                 logoutConfirmDialog.show();
                 break;
-        }
+        }*/
     }
 
     protected void initStatusBar() {
@@ -124,7 +120,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
      * @param cancelable 点击空白处是否消失
      */
     protected void showAlertDialog(Context context, String title, String content, String confirm, boolean cancelable) {
-        final AlertDialog mAlertDialog = new AlertDialog(context, title, content, confirm);
+       /* final AlertDialog mAlertDialog = new AlertDialog(context, title, content, confirm);
         mAlertDialog.setOnDialogClickListener(new AlertDialog.OnDialogClickListener() {
             @Override
             public void onOkClick() {
@@ -134,7 +130,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
         });
         // 点击空白处消失
         mAlertDialog.setCancelable(cancelable);
-        mAlertDialog.show();
+        mAlertDialog.show();*/
     }
 
     /**
@@ -145,7 +141,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
      * @param confirm 确认键
      */
     protected void showNoTitleAlertDialog(Context context, String content, String confirm) {
-        final NoTitleAlertDialog mNoTitleAlertDialog = new NoTitleAlertDialog(context, content, confirm);
+       /* final NoTitleAlertDialog mNoTitleAlertDialog = new NoTitleAlertDialog(context, content, confirm);
         mNoTitleAlertDialog.setOnDialogClickListener(new NoTitleAlertDialog.OnDialogClickListener() {
             @Override
             public void onOkClick() {
@@ -155,7 +151,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
         });
         // 点击空白处消失
         mNoTitleAlertDialog.setCancelable(true);
-        mNoTitleAlertDialog.show();
+        mNoTitleAlertDialog.show();*/
     }
 
     /**
@@ -183,12 +179,12 @@ public abstract class BaseActivity2 extends FragmentActivity {
         paint.setStrokeWidth(0.8f);
     }
 
-    public void onEvent(OfflineMessageEvent event) {
-        List<Message> offlineMessageList = event.getOfflineMessageList();
-        for (Message message : offlineMessageList) {
-            mMessageDao.saveMessageByImMessage(message, mUser.getUserId());
-        }
-    }
+//    public void onEvent(OfflineMessageEvent event) {
+//        List<Message> offlineMessageList = event.getOfflineMessageList();
+//        for (Message message : offlineMessageList) {
+//            mMessageDao.saveMessageByImMessage(message, mUser.getUserId());
+//        }
+//    }
 
     public void onEvent(MessageEvent event) {
         handleReceivedMessage(event.getMessage());
@@ -202,12 +198,12 @@ public abstract class BaseActivity2 extends FragmentActivity {
         // 自己发送出的消息(接收方非自己)自己也能收到
         // 如果是自己发送的消息 则无需处理此条消息
         // 发送者
-        UserInfo fromUserInfo = msg.getFromUser();
+       /* UserInfo fromUserInfo = msg.getFromUser();
         if (fromUserInfo.getUserName().equals(mUser.getUserId())) {
             return;
         }
 
-        com.bc.wechat.entity.Message message = new com.bc.wechat.entity.Message();
+        com.shiliu.caishifu.entity.Message message = new com.shiliu.caishifu.entity.Message();
         message.setCreateTime(TimeUtil.getTimeStringAutoShort2(new Date().getTime(), true));
 
         // 消息发送者信息
@@ -249,7 +245,7 @@ public abstract class BaseActivity2 extends FragmentActivity {
             message.setMessageBody(JSON.toJSONString(messageBodyMap));
         }
 
-        com.bc.wechat.entity.Message.save(message);
+        com.shiliu.caishifu.entity.Message.save(message);*/
     }
 
 }

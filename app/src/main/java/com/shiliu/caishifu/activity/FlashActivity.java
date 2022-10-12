@@ -21,6 +21,9 @@ import com.shiliu.caishifu.utils.RegionUtil;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+/**
+ * 首页动画activity
+ */
 public class FlashActivity extends FragmentActivity implements View.OnClickListener {
     private static final String TAG = "FlashActivity";
 

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PreferencesUtil {
+    private static final String TAG = "PreferencesUtil";
+
     private SharedPreferences preferences = null;
     private SharedPreferences.Editor editor = null;
     private Object object;
@@ -187,11 +189,11 @@ public class PreferencesUtil {
     }
 
     public User getUser() {
-        User user;
+        User user = null;
         try {
             user = JSON.parseObject((String) getParam("user", ""), User.class);
         } catch (Exception e) {
-            user = new User();
+            Log.e(TAG, "getUser error",e);
         }
         return user;
     }
