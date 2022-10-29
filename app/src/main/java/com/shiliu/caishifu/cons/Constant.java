@@ -53,4 +53,14 @@ public class Constant {
      * 普通注册用户
      */
     public static final String USER_TYPE_REG = "REG";
+
+    /**
+     * 手机号/密码登录
+     */
+    public static final String LOGIN_TYPE_PHONE_AND_PASSWORD = "0";
+
+    /**
+     * 手机号/验证码登录
+     */
+    public static final String LOGIN_TYPE_PHONE_AND_VERIFICATION_CODE = "1";
 }

@@ -91,8 +91,7 @@ public class FlashActivity extends FragmentActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                // TODO: 2022/9/12
-//                startActivity(new Intent(FlashActivity.this, LoginActivity.class));
+                startActivity(new Intent(FlashActivity.this, LoginActivity.class));
                 break;
             case R.id.btn_register:
                 startActivity(new Intent(FlashActivity.this, RegisterActivity.class));

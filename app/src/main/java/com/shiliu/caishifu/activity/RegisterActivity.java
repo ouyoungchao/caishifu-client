@@ -49,7 +49,7 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 
-public class RegisterActivity extends BaseActivity2 {
+public class RegisterActivity extends BaseRegisterActivity {
 
     private static final String TAG = "RegisterActivity";
     public static int sequence = 1;
@@ -87,6 +87,16 @@ public class RegisterActivity extends BaseActivity2 {
     //密码
     @BindView(R.id.et_password)
     EditText mPasswordEt;
+
+    //确认密码
+    @BindView(R.id.et_confirm_password)
+    EditText mConfimPasswordEt;
+
+    @BindView(R.id.et_verification_code)
+    EditText mAuthCodeEt;
+
+    @BindView(R.id.btn_verification_code)
+    Button mAuthBtn;
 
     //注册按钮
     @BindView(R.id.btn_register)
@@ -135,19 +145,24 @@ public class RegisterActivity extends BaseActivity2 {
 
         mNickNameEt.addTextChangedListener(new TextChange());
         mPhoneEt.addTextChangedListener(new TextChange());
+        mAuthCodeEt.addTextChangedListener(new TextChange());
         mPasswordEt.addTextChangedListener(new TextChange());
+        mConfimPasswordEt.addTextChangedListener(new TextChange());
     }
 
     public void back(View view) {
         finish();
     }
 
-    @OnClick({R.id.sdv_avatar, R.id.iv_agreement, R.id.btn_register, R.id.register_seller, R.id.register_buyer})
+    @OnClick({R.id.sdv_avatar, R.id.iv_agreement, R.id.btn_register, R.id.register_seller, R.id.register_buyer, R.id.btn_verification_code})
     public void onClick(View view) {
         switch (view.getId()) {
             //上传按钮
             case R.id.sdv_avatar:
                 showPhotoDialog();
+                break;
+            case R.id.btn_verification_code:
+                obtainAuthCode();
                 break;
             //买家按钮
             case R.id.register_buyer:
@@ -202,6 +217,7 @@ public class RegisterActivity extends BaseActivity2 {
                 break;
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -298,11 +314,11 @@ public class RegisterActivity extends BaseActivity2 {
     /**
      * 注册
      *
-     * @param nickName 昵称
-     *                 +
-     * @param telephone    手机号
-     * @param password 密码
-     * @param isBuyer  是否为采购
+     * @param nickName  昵称
+     *                  +
+     * @param telephone 手机号
+     * @param password  密码
+     * @param isBuyer   是否为采购
      */
     private void register(String nickName, String telephone, String password, boolean isBuyer, String userAvatar) {
         String url = Constant.BASE_URL + "caishifu/register";
@@ -311,12 +327,12 @@ public class RegisterActivity extends BaseActivity2 {
         paramMap.put("telephone", telephone);
         paramMap.put("isBuyer", isBuyer ? "true" : "false");
         paramMap.put("password", MD5Util.encode(password, "utf8"));
-        paramMap.put("icon",userAvatar);
+        paramMap.put("icon", userAvatar);
         networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: " + url,e);
+                Log.e(TAG, "onFailure: " + url, e);
                 mDialog.dismiss();
                 ExampleUtil.initToast(RegisterActivity.this, getResources().getString(R.string.register_failed), Toast.LENGTH_SHORT);
                 return;
@@ -373,22 +389,47 @@ public class RegisterActivity extends BaseActivity2 {
     }
 
     /**
-     * 表单是否填充完成(昵称,手机号,密码,是否同意协议)
+     * 表单是否填充完成(昵称,手机号,密码,验证码，是否同意协议)
      */
     private void checkSubmit() {
         boolean nickNameHasText = mNickNameEt.getText().toString().length() > 0;
-        boolean phoneHasText = mPhoneEt.getText().toString().length() > 0;
-        boolean passwordHasText = mPasswordEt.getText().toString().length() > 0;
-        if (nickNameHasText && phoneHasText && passwordHasText && mIsAgree) {
-            // 注册按钮可用
-            mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_enable));
-            mRegisterBtn.setTextColor(getResources().getColor(R.color.register_btn_text_enable));
-            mRegisterBtn.setEnabled(true);
+        boolean phoneHasText = ValidateUtil.isValidChinesePhone(mPhoneEt.getText().toString());
+        boolean passwordHasText = ValidateUtil.validatePassword(mPasswordEt.getText().toString());
+        boolean confimPassword = mPasswordEt.getText().toString().equals(mConfimPasswordEt.getText().toString());
+        boolean authCodeText = mAuthCodeEt.getText().toString().length() == 4 ? true : false;
+        if (phoneHasText) {
+            mAuthBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
+            mAuthBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
+            mAuthBtn.setEnabled(true);
+            if (nickNameHasText && phoneHasText && passwordHasText && authCodeText&& confimPassword && mIsAgree) {
+                // 注册按钮可用
+                mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
+                mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
+                mRegisterBtn.setEnabled(true);
+                mAuthBtn.setEnabled(true);
+            } else {
+                // 注册按钮不可用
+                mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
+                mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
+                mRegisterBtn.setEnabled(false);
+            }
         } else {
-            // 注册按钮不可用
-            mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
-            mRegisterBtn.setTextColor(getResources().getColor(R.color.register_btn_text_disable));
-            mRegisterBtn.setEnabled(false);
+            //获取验证码按钮不可用
+            mAuthBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
+            mAuthBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
+            mAuthBtn.setEnabled(false);
+        }
+    }
+
+    /**
+     * 校验手机号码
+     */
+    private void obtainAuthCode() {
+        String telephone = mPhoneEt.getText().toString();
+        if (ValidateUtil.isValidChinesePhone(telephone)) {
+            // TODO: 2022/10/13  获取验证码
+        } else {
+            // TODO: 2022/10/13 手机号码不正确
         }
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 public class PreferencesUtil {
     private static final String TAG = "PreferencesUtil";
 
-    private SharedPreferences preferences = null;
+    private static SharedPreferences preferences = null;
     private SharedPreferences.Editor editor = null;
     private Object object;
     public static PreferencesUtil preferencesUtil;
@@ -43,6 +43,7 @@ public class PreferencesUtil {
     public void init(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context
                 .getApplicationContext());
+        Log.d(TAG, "init usccess preferences " + preferences);
     }
 
     /**

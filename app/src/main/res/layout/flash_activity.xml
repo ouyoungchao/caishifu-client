@@ -27,7 +27,7 @@
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
             android:text="@string/login"
-            android:textColor="@color/register_btn_text_enable"
+            android:textColor="@color/btn_text_enable"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -43,7 +43,7 @@
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
             android:text="@string/register"
-            android:textColor="@color/register_btn_bg_enable"
+            android:textColor="@color/btn_bg_enable"
             android:textSize="16sp"
             android:visibility="gone" />
     </RelativeLayout>

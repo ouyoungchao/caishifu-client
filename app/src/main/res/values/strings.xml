@@ -1,4 +1,6 @@
 <resources>
+
+<!--    注册常量-->
     <string name="app_name">caishifu</string>
     <string name="title_activity_flash">菜师傅</string>
     <string name="register">注册</string>
@@ -10,7 +12,25 @@
     <string name="account_or_password_error">账号或密码错误，请重新填写</string>
     <string name="nick_name_example">例如：菜师傅</string>
     <string name="nick_name">昵称</string>
-    <string name="login_hint_phone">你的手机号码</string>
+    <string name="login_hint_phone">您的手机号码</string>
     <string name="login_hint_password">填写密码</string>
     <string name="password">密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="verification_code">验证码</string>
+    <string name="hint_verification_code">填写验证码</string>
+    <string name="obtain_verification_code">获取验证码</string>
+
+<!--   登录常量 -->
+    <string name="login_via_account_password">帐号登录</string>
+    <string name="login_via_verification_code">验证码登录</string>
+    <string name="enter_mobile_number">请填写手机号</string>
+    <string name="telephone">手机号</string>
+    <string name="account">帐号</string>
+    <string name="use_verification_code_login">手机验证码登录</string>
+    <string name="use_account_password_login">密码登录</string>
+    <string name="please_wait">请稍候...</string>
+    <string name="logging_in">正在登录...</string>
+    <string name="login_failed">登录失败，请重试</string>
+    <string name="delay_obtain_verification_code"> s后重新获取验证码</string>
+    <string name="retry_obtain_verification_code">重新获取验证码</string>
 </resources>

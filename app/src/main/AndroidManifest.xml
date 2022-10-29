@@ -27,6 +27,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/ImageTranslucentTheme" />
 
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
         <service
             android:name="cn.jpush.android.service.PushService"
             android:process=":multiprocess"

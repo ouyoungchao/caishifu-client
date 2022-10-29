@@ -35,7 +35,7 @@ import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
 
 
-public abstract class BaseActivity2 extends FragmentActivity {
+public abstract class BaseRegisterActivity extends FragmentActivity {
 
     private MessageDao mMessageDao;
     private User mUser;
