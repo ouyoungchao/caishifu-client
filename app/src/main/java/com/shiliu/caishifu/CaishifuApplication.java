@@ -35,7 +35,7 @@ public class CaishifuApplication extends Application implements Observer {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
-
+        PreferencesUtil.getInstance().init(mContext);
         mUser = PreferencesUtil.getInstance().getUser();
         Fresco.initialize(this);
         SugarContext.init(this);

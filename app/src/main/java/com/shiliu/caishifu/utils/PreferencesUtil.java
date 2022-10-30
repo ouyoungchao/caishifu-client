@@ -22,11 +22,11 @@ import java.util.List;
 
 public class PreferencesUtil {
     private static final String TAG = "PreferencesUtil";
-
-    private static SharedPreferences preferences = null;
-    private SharedPreferences.Editor editor = null;
-    private Object object;
+    private static SharedPreferences preferences;
     public static PreferencesUtil preferencesUtil;
+    private SharedPreferences.Editor editor = null;
+    private static Context context;
+    private Object object;
 
     public static PreferencesUtil getInstance() {
         if (preferencesUtil == null) {
@@ -41,9 +41,21 @@ public class PreferencesUtil {
     }
 
     public void init(Context context) {
+        Log.d(TAG, "init preferences");
+        PreferencesUtil.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context
                 .getApplicationContext());
-        Log.d(TAG, "init usccess preferences " + preferences);
+        Log.d(TAG, "init preferences " + preferences);
+    }
+    
+    public static SharedPreferences getPreferences(){
+        synchronized (PreferencesUtil.class){
+            if(preferences == null){
+                preferences = PreferenceManager.getDefaultSharedPreferences(context
+                        .getApplicationContext());
+            }
+            return preferences;
+        }
     }
 
     /**
@@ -64,7 +76,7 @@ public class PreferencesUtil {
      */
     public synchronized void saveParam(String key, Object object) {
         if (editor == null)
-            editor = preferences.edit();
+            editor = getPreferences().edit();
         // 得到object的类型
         String type = object.getClass().getSimpleName();
         if ("String".equals(type)) {
@@ -109,7 +121,7 @@ public class PreferencesUtil {
      */
     public synchronized void remove(String key) {
         if (editor == null)
-            editor = preferences.edit();
+            editor = getPreferences().edit();
         editor.remove(key);
         editor.commit();
     }
@@ -130,15 +142,15 @@ public class PreferencesUtil {
         String type = defaultObject.getClass().getSimpleName();
 
         if ("String".equals(type)) {
-            return preferences.getString(key, (String) defaultObject);
+            return getPreferences().getString(key, (String) defaultObject);
         } else if ("Integer".equals(type)) {
-            return preferences.getInt(key, (Integer) defaultObject);
+            return getPreferences().getInt(key, (Integer) defaultObject);
         } else if ("Boolean".equals(type)) {
-            return preferences.getBoolean(key, (Boolean) defaultObject);
+            return getPreferences().getBoolean(key, (Boolean) defaultObject);
         } else if ("Float".equals(type)) {
-            return preferences.getFloat(key, (Float) defaultObject);
+            return getPreferences().getFloat(key, (Float) defaultObject);
         } else if ("Long".equals(type)) {
-            return preferences.getLong(key, (Long) defaultObject);
+            return getPreferences().getLong(key, (Long) defaultObject);
         }
         return getObject(key);
     }
@@ -208,7 +220,7 @@ public class PreferencesUtil {
     }
 
     public Object getObject(String key) {
-        String wordBase64 = preferences.getString(key, "");
+        String wordBase64 = getPreferences().getString(key, "");
         byte[] base64 = Base64.decode(wordBase64.getBytes(), Base64.DEFAULT);
         ByteArrayInputStream bais = new ByteArrayInputStream(base64);
         try {

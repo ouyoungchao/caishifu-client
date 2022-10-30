@@ -36,13 +36,13 @@ public class FlashActivity extends FragmentActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        //初始化sp,sp名称，packageName_preferences
+        PreferencesUtil.getInstance().init(this);
         //加载首次启动的layout
         final View view = View.inflate(this, R.layout.flash_activity, null);
         setContentView(view);
         super.onCreate(savedInstanceState);
         initView();
-        //初始化sp,sp名称，packageName_preferences
-        PreferencesUtil.getInstance().init(this);
         AlphaAnimation animation = new AlphaAnimation(0.3f, 1.0f);
         animation.setDuration(1500);
         view.setAnimation(animation);
