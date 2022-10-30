@@ -27,6 +27,7 @@ import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.ResponseMsg;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.CommonUtil;
+import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.ExampleUtil;
 import com.shiliu.caishifu.utils.FileUtil;
 import com.shiliu.caishifu.utils.JsonUtil;
@@ -93,10 +94,10 @@ public class RegisterActivity extends BaseRegisterActivity {
     EditText mConfimPasswordEt;
 
     @BindView(R.id.et_verification_code)
-    EditText mAuthCodeEt;
+    EditText mVerificateEt;
 
     @BindView(R.id.btn_verification_code)
-    Button mAuthBtn;
+    Button mVerificateBtn;
 
     //注册按钮
     @BindView(R.id.btn_register)
@@ -145,7 +146,7 @@ public class RegisterActivity extends BaseRegisterActivity {
 
         mNickNameEt.addTextChangedListener(new TextChange());
         mPhoneEt.addTextChangedListener(new TextChange());
-        mAuthCodeEt.addTextChangedListener(new TextChange());
+        mVerificateEt.addTextChangedListener(new TextChange());
         mPasswordEt.addTextChangedListener(new TextChange());
         mConfimPasswordEt.addTextChangedListener(new TextChange());
     }
@@ -160,9 +161,6 @@ public class RegisterActivity extends BaseRegisterActivity {
             //上传按钮
             case R.id.sdv_avatar:
                 showPhotoDialog();
-                break;
-            case R.id.btn_verification_code:
-                obtainAuthCode();
                 break;
             //买家按钮
             case R.id.register_buyer:
@@ -214,6 +212,12 @@ public class RegisterActivity extends BaseRegisterActivity {
                     return;
                 }
                 register(nickName, telephone, password, isBuyer, userAvatar);
+                break;
+            case R.id.btn_verification_code:
+                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificateBtn,60000,1000);
+                countDownTimerUtils.start();
+                telephone = mPhoneEt.getText().toString();
+                obtainVerificationCode();
                 break;
         }
     }
@@ -396,17 +400,16 @@ public class RegisterActivity extends BaseRegisterActivity {
         boolean phoneHasText = ValidateUtil.isValidChinesePhone(mPhoneEt.getText().toString());
         boolean passwordHasText = ValidateUtil.validatePassword(mPasswordEt.getText().toString());
         boolean confimPassword = mPasswordEt.getText().toString().equals(mConfimPasswordEt.getText().toString());
-        boolean authCodeText = mAuthCodeEt.getText().toString().length() == 4 ? true : false;
+        boolean authCodeText = mVerificateEt.getText().toString().length() == 4 ? true : false;
         if (phoneHasText) {
-            mAuthBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
-            mAuthBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
-            mAuthBtn.setEnabled(true);
+            mVerificateBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
+            mVerificateBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
+            mVerificateBtn.setEnabled(true);
             if (nickNameHasText && phoneHasText && passwordHasText && authCodeText&& confimPassword && mIsAgree) {
                 // 注册按钮可用
                 mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
                 mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
                 mRegisterBtn.setEnabled(true);
-                mAuthBtn.setEnabled(true);
             } else {
                 // 注册按钮不可用
                 mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
@@ -415,16 +418,16 @@ public class RegisterActivity extends BaseRegisterActivity {
             }
         } else {
             //获取验证码按钮不可用
-            mAuthBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
-            mAuthBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
-            mAuthBtn.setEnabled(false);
+            mVerificateBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
+            mVerificateBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
+            mVerificateBtn.setEnabled(false);
         }
     }
 
     /**
      * 校验手机号码
      */
-    private void obtainAuthCode() {
+    private void obtainVerificationCode() {
         String telephone = mPhoneEt.getText().toString();
         if (ValidateUtil.isValidChinesePhone(telephone)) {
             // TODO: 2022/10/13  获取验证码

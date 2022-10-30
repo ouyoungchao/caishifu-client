@@ -3,4 +3,6 @@
     <dimen name="top_bar_height">42dp</dimen>
     <dimen name="top_back_width">42dp</dimen>
     <dimen name="common_item_text_size">15.5sp</dimen>
+    <dimen name="common_item_dynamic_text_size">13.5sp</dimen>
+    <dimen name="height_top_bar">48dp</dimen>
 </resources>

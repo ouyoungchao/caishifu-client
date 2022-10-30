@@ -16,6 +16,10 @@
     <color name="common_hint_grey">#A5A5A5</color>
     <color name="divider_grey">#D8D8D8</color>
     <color name="wechat_btn_green">#07C063</color>
-
     <color name="navy_blue">#506484</color>
+
+    <!--主界面相关-->
+    <color name="common_bg">#fcfcfc</color>
+    <color name="common_top_bar">#EDEDED</color>
+    <color name="error_item_color">#F6EBE6</color>
 </resources>

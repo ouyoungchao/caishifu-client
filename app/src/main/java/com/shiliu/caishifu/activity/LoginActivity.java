@@ -41,7 +41,7 @@ import okhttp3.Response;
 /**
  * 登录
  */
-public class LoginActivity extends BaseLoginActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
 
     @BindView(R.id.tv_title)

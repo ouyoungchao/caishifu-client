@@ -26,7 +26,7 @@ import cn.jpush.im.api.BasicCallback;
  *
  * @author zhou
  */
-public abstract class BaseLoginActivity extends FragmentActivity {
+public abstract class BaseActivity extends FragmentActivity {
 
 //    private MessageDao mMessageDao;
 
