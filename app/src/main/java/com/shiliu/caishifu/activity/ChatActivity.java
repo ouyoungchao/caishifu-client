@@ -39,6 +39,18 @@ import com.alibaba.fastjson.JSON;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.abserver.Observer;
+import com.shiliu.caishifu.abserver.ObserverManager;
+import com.shiliu.caishifu.adapter.MessageAdapter;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.dao.MessageDao;
+import com.shiliu.caishifu.model.Message;
+import com.shiliu.caishifu.model.MessageStatus;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.CommonUtil;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.TimeUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -172,7 +184,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private String memberNum;
 
     User mUser;
-    VolleyUtil mVolleyUtil;
+    NetworkUtil mNetworkUtil;
 
     private int mMessageIndex;
 
@@ -191,7 +203,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void initView() {
         initStatusBar();
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        mNetworkUtil = NetworkUtil.getInstance(this);
         PreferencesUtil.getInstance().init(this);
         mUser = PreferencesUtil.getInstance().getUser();
         mMessageDao = new MessageDao();
@@ -280,7 +292,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         View emojiView2 = getGridChildView(2);
         emojiViews.add(emojiView1);
         emojiViews.add(emojiView2);
-        mEmojiVp.setAdapter(new EmojiPagerAdapter(emojiViews));
+        // TODO: 2022/11/1
+//        mEmojiVp.setAdapter(new EmojiPagerAdapter(emojiViews));
 
         mSingleChatSettingIv.setOnClickListener(this);
         mImageAlbumLl.setOnClickListener(this);
@@ -354,7 +367,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 sendTextMsg(content);
                 break;
             case R.id.iv_setting:
-                if (Constant.TARGET_TYPE_SINGLE.equals(targetType)) {
+                // TODO: 2022/11/1
+               /* if (Constant.TARGET_TYPE_SINGLE.equals(targetType)) {
                     // 单聊设置
                     Intent intent = new Intent(ChatActivity.this, ChatSingleSettingActivity.class);
                     intent.putExtra("userId", contactId);
@@ -366,7 +380,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     Intent intent = new Intent(ChatActivity.this, ChatGroupSettingActivity.class);
                     intent.putExtra("groupId", groupId);
                     startActivity(intent);
-                }
+                }*/
                 break;
             case R.id.btn_set_mode_voice:
                 // 切换成语音
@@ -690,7 +704,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         paramMap.put("msgType", msgType);
         paramMap.put("body", body);
 
-        mVolleyUtil.httpPostRequest(url, paramMap, new Response.Listener<String>() {
+      /*  mNetworkUtil.httpPostRequest(url, paramMap, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Message message = mMessageList.get(messageIndex);
@@ -712,7 +726,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 mMessageAdapter.setData(mMessageList);
                 mMessageAdapter.notifyDataSetChanged();
             }
-        });
+        });*/
     }
 
 
@@ -724,18 +738,19 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         } else if (Constant.TARGET_TYPE_GROUP.equals(targetType)) {
             mMessageList = mMessageDao.getMessageListByGroupId(groupId);
         }
-
-        mMessageAdapter = new MessageAdapter(this, mMessageList);
+        // TODO: 2022/11/1
+      /*  mMessageAdapter = new MessageAdapter(this, mMessageList);
         mMessageLv.setAdapter(mMessageAdapter);
 
-        mMessageLv.setSelection(mMessageLv.getCount() - 1);
+        mMessageLv.setSelection(mMessageLv.getCount() - 1);*/
     }
 
     @Override
     public void receiveMsg(int viewType, cn.jpush.im.android.api.model.Message msg) {
-        if (ViewType.CHAT.getType() == viewType) {
+        // TODO: 2022/11/1
+       /* if (ViewType.CHAT.getType() == viewType) {
             handleReceivedMessage(msg);
-        }
+        }*/
     }
 
     /**
@@ -774,7 +789,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         message.setToUserId(mUser.getUserId());
 
         // 消息类型
-        message.setMessageType(JimUtil.getMessageType(msg));
+        // TODO: 2022/11/1
+//        message.setMessageType(JimUtil.getMessageType(msg));
         message.setTimestamp(new Date().getTime());
 
         if (Constant.MSG_TYPE_TEXT.equals(message.getMessageType())) {
@@ -805,9 +821,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 mMessageLv.post(new Runnable() {
                     @Override
                     public void run() {
-                        mMessageAdapter.setData(mMessageList);
+                        // TODO: 2022/11/1  
+                       /* mMessageAdapter.setData(mMessageList);
                         mMessageAdapter.notifyDataSetChanged();
-                        mMessageLv.setSelection(mMessageLv.getBottom());
+                        mMessageLv.setSelection(mMessageLv.getBottom());*/
                     }
                 });
                 // 清除未读数

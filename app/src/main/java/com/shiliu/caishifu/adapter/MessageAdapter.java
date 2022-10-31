@@ -10,6 +10,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.dao.MessageDao;
+import com.shiliu.caishifu.dao.UserDao;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.PreferencesUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -60,7 +66,7 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {/*
         Conversation conversation = conversationList.get(position);
 
         if (conversation.getType().equals(ConversationType.single)) {
@@ -455,14 +461,27 @@ public class MessageAdapter extends BaseAdapter {
                 mCreateTimeTv.setText(TimestampUtil.getTimePoint(conversation.getLastMsgDate()));
             }
         }
-
+*/
         return convertView;
     }
 
-    private View creatConvertView(int size) {
-        View convertView;
+    private String generateGroupDesc(String myNickName, String... userNickNames) {
+        StringBuffer groupDescBuffer = new StringBuffer();
+        for (String userNickName : userNickNames) {
+            if (!userNickName.equals(myNickName)) {
+                groupDescBuffer.append(userNickName).append("、");
+            }
+        }
+        if (groupDescBuffer.length() > 1) {
+            groupDescBuffer.deleteCharAt(groupDescBuffer.length() - 1);
+        }
+        return groupDescBuffer.toString();
+    }
 
-        if (size == 0) {
+    private View creatConvertView(int size) {
+        View convertView = null;
+
+      /*  if (size == 0) {
             convertView = inflater.inflate(R.layout.item_conversation_single,
                     null, false);
 
@@ -507,19 +526,7 @@ public class MessageAdapter extends BaseAdapter {
                     null, false);
 
         }
+        */
         return convertView;
-    }
-
-    private String generateGroupDesc(String myNickName, String... userNickNames) {
-        StringBuffer groupDescBuffer = new StringBuffer();
-        for (String userNickName : userNickNames) {
-            if (!userNickName.equals(myNickName)) {
-                groupDescBuffer.append(userNickName).append("、");
-            }
-        }
-        if (groupDescBuffer.length() > 1) {
-            groupDescBuffer.deleteCharAt(groupDescBuffer.length() - 1);
-        }
-        return groupDescBuffer.toString();
     }
 }

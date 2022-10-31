@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.ChatActivity;
 import com.shiliu.caishifu.adapter.MessageAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;

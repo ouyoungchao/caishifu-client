@@ -63,4 +63,29 @@ public class Constant {
      * 手机号/验证码登录
      */
     public static final String LOGIN_TYPE_PHONE_AND_VERIFICATION_CODE = "1";
+
+    /**
+     * 单聊
+     */
+    public static final String TARGET_TYPE_SINGLE = "single";
+
+    /**
+     * 群聊
+     */
+    public static final String TARGET_TYPE_GROUP = "group";
+
+    /**
+     * 文本消息
+     */
+    public static final String MSG_TYPE_TEXT = "text";
+
+    /**
+     * 图片消息
+     */
+    public static final String MSG_TYPE_IMAGE = "image";
+
+    /**
+     * 位置消息
+     */
+    public static final String MSG_TYPE_LOCATION = "location";
 }

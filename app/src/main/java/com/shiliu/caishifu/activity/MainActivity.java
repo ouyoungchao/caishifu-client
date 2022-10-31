@@ -28,6 +28,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.abserver.Observer;
+import com.shiliu.caishifu.fragement.MessagesFragment;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class MainActivity extends BaseActivity implements Observer {
     public static boolean isForeground = false;
 
     private Fragment[] mFragments;
-    private ChatsFragment mChatsFragment;
+    private MessagesFragment mMessageFragment;
     private ContactsFragment mContactsFragment;
     private DiscoverFragment mDiscoverFragment;
     private MeFragment mMeFragment;
@@ -76,12 +77,12 @@ public class MainActivity extends BaseActivity implements Observer {
     @Override
     public void initView() {
         initStatusBar();
-        mChatsFragment = new ChatsFragment();
+        mMessageFragment = new ChatsFragment();
         mContactsFragment = new ContactsFragment();
         mDiscoverFragment = new DiscoverFragment();
         mMeFragment = new MeFragment();
 
-        mFragments = new Fragment[]{mChatsFragment, mContactsFragment,
+        mFragments = new Fragment[]{mMessageFragment, mContactsFragment,
                 mDiscoverFragment, mMeFragment};
 
         mMainButtonIvs = new ImageView[4];
@@ -101,12 +102,12 @@ public class MainActivity extends BaseActivity implements Observer {
 //        mAddIv = findViewById(R.id.iv_add);
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.rl_fragment_container, mChatsFragment)
+                .add(R.id.rl_fragment_container, mMessageFragment)
                 .add(R.id.rl_fragment_container, mContactsFragment)
                 .add(R.id.rl_fragment_container, mDiscoverFragment)
                 .add(R.id.rl_fragment_container, mMeFragment)
                 .hide(mContactsFragment).hide(mDiscoverFragment).hide(mMeFragment)
-                .show(mChatsFragment).commit();
+                .show(mMessageFragment).commit();
 
         mUnreadNewMsgsNumTv = findViewById(R.id.unread_msg_number);
         mUnreadNewFriendsNumTv = findViewById(R.id.unread_address_number);
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity implements Observer {
         refreshNewMsgsUnreadNum();
         refreshNewFriendsUnreadNum();
         // 进入强制刷新，防止离线消息
-        mChatsFragment.refreshConversationList();
+        mMessageFragment.refreshConversationList();
     }
 
     public void onTabClicked(View view) {
@@ -150,7 +151,7 @@ public class MainActivity extends BaseActivity implements Observer {
             case R.id.rl_chats:
                 // 会话列表
                 // 主动加载一次会话
-                mChatsFragment.refreshConversationList();
+                mMessageFragment.refreshConversationList();
                 mIndex = 0;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
@@ -198,7 +199,7 @@ public class MainActivity extends BaseActivity implements Observer {
 
         // 会话
         if (mCurrentTabIndex == 0) {
-            mChatsFragment.refreshConversationList();
+            mMessageFragment.refreshConversationList();
         }
     }
 
@@ -343,7 +344,7 @@ public class MainActivity extends BaseActivity implements Observer {
 //        }
 //
 //        Message.save(message);
-        mChatsFragment.refreshConversationList();
+        mMessageFragment.refreshConversationList();
 
         if (fromUserInfo.getUserName().equals(mUser.getUserId())) {
             // 如果发送者是自己，不更新
