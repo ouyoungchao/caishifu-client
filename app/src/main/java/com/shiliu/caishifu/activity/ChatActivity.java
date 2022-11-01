@@ -36,8 +36,6 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.fastjson.JSON;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
@@ -48,9 +46,11 @@ import com.shiliu.caishifu.model.Message;
 import com.shiliu.caishifu.model.MessageStatus;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.CommonUtil;
+import com.shiliu.caishifu.utils.FileUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.TimeUtil;
+import com.shiliu.caishifu.widget.ConfirmDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -197,7 +197,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public int getContentView() {
-        return R.layout.activity_chat;
+        return R.layout.chat_activity;
     }
 
     @Override
@@ -821,7 +821,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 mMessageLv.post(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO: 2022/11/1  
+                        // TODO: 2022/11/1
                        /* mMessageAdapter.setData(mMessageList);
                         mMessageAdapter.notifyDataSetChanged();
                         mMessageLv.setSelection(mMessageLv.getBottom());*/
@@ -1044,10 +1044,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
      * 进入地图选择页面
      */
     private void showMapPicker() {
-        Intent intent = new Intent(ChatActivity.this, MapPickerActivity.class);
+       /* Intent intent = new Intent(ChatActivity.this, MapPickerActivity.class);
         intent.putExtra("sendLocation", true);
         intent.putExtra("locationType", Constant.LOCATION_TYPE_MSG);
-        startActivityForResult(intent, REQUEST_CODE_LOCATION);
+        startActivityForResult(intent, REQUEST_CODE_LOCATION);*/
     }
 
     /**
@@ -1120,7 +1120,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private View getGridChildView(int i) {
-        View view = View.inflate(this, R.layout.gridview_emoji, null);
+        /*View view = View.inflate(this, R.layout.gridview_emoji, null);
         ExpandGridView expandGridView = view.findViewById(R.id.egv_emoji);
         List<String> emojiList = new ArrayList<>();
         if (i == 1) {
@@ -1132,51 +1132,52 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         emojiList.add("delete_emoji");
         final EmojiAdapter emojiAdapter = new EmojiAdapter(this, 1, emojiList);
         expandGridView.setAdapter(emojiAdapter);
-//        expandGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                String emoji = emojiAdapter.getItem(position);
-//                try {
-//                    // 文字输入框可见时，才可输入表情
-//                    // 按住说话可见，不让输入表情
-//                    if (mSetModeKeyboardBtn.getVisibility() != View.VISIBLE) {
-//                        if (emoji != "delete_emoji") {
-//                            // 不是删除键，显示表情
-//                            Class clz = Class.forName("com.bc.wechat.utils.EmojiUtil");
-//                            Field field = clz.getField(emoji);
-//                            mTextMsgEt.append(EmojiUtil.getEmojisText(
-//                                    ChatActivity.this, (String) field.get(null)));
-//                        } else {
-//                            // 删除文字或者表情
-//                            if (!TextUtils.isEmpty(mTextMsgEt.getText())) {
-//                                int selectionStart = mTextMsgEt.getSelectionStart();// 获取光标的位置
-//                                if (selectionStart > 0) {
-//                                    String body = mTextMsgEt.getText().toString();
-//                                    String tempStr = body.substring(0, selectionStart);
-//                                    int i = tempStr.lastIndexOf("[");// 获取最后一个表情的位置
-//                                    if (i != -1) {
-//                                        CharSequence cs = tempStr.substring(i, selectionStart);
-//                                        if (EmojiUtil.containsKey(cs.toString()))
-//                                            mTextMsgEt.getEditableText().delete(i, selectionStart);
-//                                        else
-//                                            mTextMsgEt.getEditableText().delete(selectionStart - 1, selectionStart);
-//                                    } else {
-//                                        mTextMsgEt.getEditableText().delete(selectionStart - 1, selectionStart);
-//                                    }
-//                                }
-//                            }
-//
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-        return view;
+        expandGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                String emoji = emojiAdapter.getItem(position);
+                try {
+                    // 文字输入框可见时，才可输入表情
+                    // 按住说话可见，不让输入表情
+                    if (mSetModeKeyboardBtn.getVisibility() != View.VISIBLE) {
+                        if (emoji != "delete_emoji") {
+                            // 不是删除键，显示表情
+                            Class clz = Class.forName("com.bc.wechat.utils.EmojiUtil");
+                            Field field = clz.getField(emoji);
+                            mTextMsgEt.append(EmojiUtil.getEmojisText(
+                                    ChatActivity.this, (String) field.get(null)));
+                        } else {
+                            // 删除文字或者表情
+                            if (!TextUtils.isEmpty(mTextMsgEt.getText())) {
+                                int selectionStart = mTextMsgEt.getSelectionStart();// 获取光标的位置
+                                if (selectionStart > 0) {
+                                    String body = mTextMsgEt.getText().toString();
+                                    String tempStr = body.substring(0, selectionStart);
+                                    int i = tempStr.lastIndexOf("[");// 获取最后一个表情的位置
+                                    if (i != -1) {
+                                        CharSequence cs = tempStr.substring(i, selectionStart);
+                                        if (EmojiUtil.containsKey(cs.toString()))
+                                            mTextMsgEt.getEditableText().delete(i, selectionStart);
+                                        else
+                                            mTextMsgEt.getEditableText().delete(selectionStart - 1, selectionStart);
+                                    } else {
+                                        mTextMsgEt.getEditableText().delete(selectionStart - 1, selectionStart);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        return view;*/
+        return null;
     }
 
     Handler handler = new Handler() {

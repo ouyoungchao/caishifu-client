@@ -14,6 +14,7 @@ import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.MessageDao;
 import com.shiliu.caishifu.dao.UserDao;
+import com.shiliu.caishifu.model.Message;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 
@@ -21,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import cn.jpush.im.android.api.enums.ConversationType;
-import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.GroupMemberInfo;
 import cn.jpush.im.android.api.model.UserInfo;
@@ -29,35 +29,35 @@ import cn.jpush.im.android.api.model.UserInfo;
 public class MessageAdapter extends BaseAdapter {
 
 
-    private List<Conversation> conversationList;
+    private List<Message> messagesList;
     private Context mContext;
     private LayoutInflater inflater;
     private MessageDao messageDao;
     private UserDao mUserDao;
 
-    public MessageAdapter(Context context, List<Conversation> conversationList) {
+    public MessageAdapter(Context context, List<Message> messageList) {
         this.mContext = context;
-        this.conversationList = conversationList;
+        this.messagesList = messageList;
         inflater = LayoutInflater.from(context);
         messageDao = new MessageDao();
         mUserDao = new UserDao();
     }
 
-    public void setData(List<Conversation> conversationList) {
-        if (null != conversationList) {
-            this.conversationList.clear();
-            this.conversationList.addAll(conversationList);
+    public void setData(List<Message> messageList) {
+        if (null != messageList) {
+            this.messagesList.clear();
+            this.messagesList.addAll(messageList);
         }
     }
 
     @Override
     public int getCount() {
-        return conversationList.size();
+        return messagesList.size();
     }
 
     @Override
-    public Conversation getItem(int position) {
-        return conversationList.get(position);
+    public Message getItem(int position) {
+        return messagesList.get(position);
     }
 
     @Override

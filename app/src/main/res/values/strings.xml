@@ -19,6 +19,9 @@
     <string name="verification_code">验证码</string>
     <string name="hint_verification_code">填写验证码</string>
     <string name="obtain_verification_code">获取验证码</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确认</string>
+    <string name="go_setting">去设置</string>
 
 <!--   登录常量 -->
     <string name="login_via_account_password">帐号登录</string>
@@ -33,4 +36,16 @@
     <string name="login_failed">登录失败，请重试</string>
     <string name="delay_obtain_verification_code"> s后重新获取验证码</string>
     <string name="retry_obtain_verification_code">重新获取验证码</string>
+
+    <!--  permission  -->
+    <string name="request_permission">权限设置</string>
+    <string name="request_permission_location">在设置-应用-菜师傅-权限中开启位置信息权限，以正常使用位置共享</string>
+    <string name="request_permission_camera">在设置-应用-菜师傅-权限中开启相机权限，以正常使用拍照、小视频、扫一扫等功能</string>
+    <string name="request_permission_storage">为确保接收到的图片、视频等内容能被正常浏览，菜师傅需要申请手机存储权限。</string>
+    <string name="request_permission_record_audio">在设置-应用-菜师傅-权限中开启麦克风权限，以正常使用语音功能</string>
+    <string name="request_permission_contacts">在设置-应用-菜师傅-权限中开启通讯录权限，以正常使用联系人查找功能</string>
+
+    <string name="move_up_to_cancel">手指上滑，取消发送</string>
+    <string name="release_to_cancel">松开手指，取消发送</string>
 </resources>
+
