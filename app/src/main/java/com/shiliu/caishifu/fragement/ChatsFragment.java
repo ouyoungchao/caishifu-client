@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.activity.ChatActivity;
-import com.shiliu.caishifu.adapter.MessageAdapter;
+import com.shiliu.caishifu.adapter.ConversationAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.User;
@@ -31,15 +31,15 @@ import cn.jpush.im.android.api.model.Conversation;
 import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.UserInfo;
 
-public class MessagesFragment extends BaseFragment {
+public class ChatsFragment extends BaseFragment {
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
 
-    @BindView(R.id.lv_message)
-    ListView mMessageLv;
+    @BindView(R.id.lv_conversation)
+    ListView mConversationLv;
 
-    MessageAdapter mMessageAdapter;
+    ConversationAdapter mConversationAdapter;
     List<Conversation> mConversationList;
 
     private static final int REFRESH_CONVERSATION_LIST = 0x3000;
@@ -47,7 +47,7 @@ public class MessagesFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.messages_fragment, container, false);
+        View view = inflater.inflate(R.layout.conversation_fragment, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -63,10 +63,10 @@ public class MessagesFragment extends BaseFragment {
         if (null == mConversationList) {
             mConversationList = new ArrayList<>();
         }
-        mMessageAdapter = new MessageAdapter(getActivity(), mConversationList);
-        mMessageLv.setAdapter(mMessageAdapter);
+        mConversationAdapter = new ConversationAdapter(getActivity(), mConversationList);
+        mConversationLv.setAdapter(mConversationAdapter);
 
-        mMessageLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mConversationLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Conversation conversation = mConversationList.get(position);
@@ -120,8 +120,8 @@ public class MessagesFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             if (msg.what == REFRESH_CONVERSATION_LIST) {
                 List<Conversation> newConversationList = JMessageClient.getConversationList();
-                mMessageAdapter.setData(newConversationList);
-                mMessageAdapter.notifyDataSetChanged();
+                mConversationAdapter.setData(newConversationList);
+                mConversationAdapter.notifyDataSetChanged();
             }
         }
     };

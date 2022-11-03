@@ -1,63 +1,88 @@
 package com.shiliu.caishifu.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.MessageDao;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.Message;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import cn.jpush.im.android.api.enums.ConversationType;
-import cn.jpush.im.android.api.model.GroupInfo;
-import cn.jpush.im.android.api.model.GroupMemberInfo;
-import cn.jpush.im.android.api.model.UserInfo;
 
 public class MessageAdapter extends BaseAdapter {
+    private static final int DEFAULT_WIDTH_1 = 300;
+    private static final int DEFAULT_WIDTH_2 = 400;
+    private static final int DEFAULT_WIDTH_3 = 500;
 
+    private static final int MESSAGE_TYPE_SENT_TEXT = 0;
+    private static final int MESSAGE_TYPE_RECV_TEXT = 1;
+    private static final int MESSAGE_TYPE_SENT_IMAGE = 2;
+    private static final int MESSAGE_TYPE_RECV_IMAGE = 3;
+    private static final int MESSAGE_TYPE_SENT_LOCATION = 4;
+    private static final int MESSAGE_TYPE_RECV_LOCATION = 5;
 
-    private List<Message> messagesList;
     private Context mContext;
     private LayoutInflater inflater;
+
+    private List<Message> messageList;
+
+    private User user;
+    private NetworkUtil networkUtil;
     private MessageDao messageDao;
     private UserDao mUserDao;
 
+    private boolean isSender;
+
     public MessageAdapter(Context context, List<Message> messageList) {
-        this.mContext = context;
-        this.messagesList = messageList;
+        mContext = context;
         inflater = LayoutInflater.from(context);
+        PreferencesUtil.getInstance().init(context);
+        user = PreferencesUtil.getInstance().getUser();
+        networkUtil = networkUtil.getInstance(mContext);
         messageDao = new MessageDao();
         mUserDao = new UserDao();
+        this.messageList = messageList;
     }
 
     public void setData(List<Message> messageList) {
-        if (null != messageList) {
-            this.messagesList.clear();
-            this.messagesList.addAll(messageList);
-        }
+        this.messageList = messageList;
     }
 
     @Override
     public int getCount() {
-        return messagesList.size();
+        return messageList.size();
     }
 
     @Override
-    public Message getItem(int position) {
-        return messagesList.get(position);
+    public Object getItem(int position) {
+        return messageList.get(position);
     }
 
     @Override
@@ -66,467 +91,485 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {/*
-        Conversation conversation = conversationList.get(position);
+    public int getItemViewType(int position) {
+        Message message = messageList.get(position);
+        isSender = user.getUserId().equals(message.getFromUserId());
+        if (Constant.MSG_TYPE_TEXT.equals(message.getMessageType())) {
+            return isSender ? MESSAGE_TYPE_SENT_TEXT : MESSAGE_TYPE_RECV_TEXT;
+        } else if (Constant.MSG_TYPE_IMAGE.equals(message.getMessageType())) {
+            return isSender ? MESSAGE_TYPE_SENT_IMAGE : MESSAGE_TYPE_RECV_IMAGE;
+        } else if (Constant.MSG_TYPE_LOCATION.equals(message.getMessageType())) {
+            return isSender ? MESSAGE_TYPE_SENT_LOCATION : MESSAGE_TYPE_RECV_LOCATION;
+        }
+        // invalid
+        return -1;
+    }
 
-        if (conversation.getType().equals(ConversationType.single)) {
-            // 单聊
-            convertView = creatConvertView(0);
-            TextView mNickNameTv = convertView.findViewById(R.id.tv_nick_name);
-            TextView mLastMsgTv = convertView.findViewById(R.id.tv_last_msg);
-            SimpleDraweeView mAvatarSdv = convertView.findViewById(R.id.sdv_avatar);
-            TextView mUnreadTv = convertView.findViewById(R.id.tv_unread);
-            TextView mCreateTimeTv = convertView.findViewById(R.id.tv_create_time);
+    @Override
+    public int getViewTypeCount() {
+        return 6;
+    }
 
-            UserInfo userInfo = (UserInfo) conversation.getTargetInfo();
-            User user = mUserDao.getUserById(userInfo.getUserName());
-            mNickNameTv.setText(user.getUserNickName());
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final Message message = messageList.get(position);
+        ViewHolder viewHolder;
+        isSender = user.getUserId().equals(message.getFromUserId());
+        if (convertView == null) {
+            /*viewHolder = new ViewHolder();
+            convertView = createViewByMessageType(message.getMessageType(), isSender);
+            if (Constant.MSG_TYPE_TEXT.equals(message.getMessageType())) {
+                // 文字消息
+                viewHolder.mTimeStampTv = convertView.findViewById(R.id.tv_timestamp);
+                viewHolder.mContentTv = convertView.findViewById(R.id.tv_chat_content);
+                viewHolder.mAvatarSdv = convertView.findViewById(R.id.sdv_avatar);
+                viewHolder.mSendingPb = convertView.findViewById(R.id.pb_sending);
+                viewHolder.mStatusIv = convertView.findViewById(R.id.iv_msg_status);
+
+            } else if (Constant.MSG_TYPE_IMAGE.equals(message.getMessageType())) {
+                // 图片消息
+                viewHolder.mTimeStampTv = convertView.findViewById(R.id.tv_timestamp);
+                viewHolder.mAvatarSdv = convertView.findViewById(R.id.sdv_avatar);
+                viewHolder.mImageContentSdv = convertView.findViewById(R.id.sdv_image_content);
+
+                viewHolder.mSendingPb = convertView.findViewById(R.id.pb_sending);
+                viewHolder.mStatusIv = convertView.findViewById(R.id.iv_msg_status);
+
+            } else if (Constant.MSG_TYPE_LOCATION.equals(message.getMessageType())) {
+                // 定位消息
+                viewHolder.mTimeStampTv = convertView.findViewById(R.id.tv_timestamp);
+                viewHolder.mAvatarSdv = convertView.findViewById(R.id.sdv_avatar);
+                viewHolder.mAddressTv = convertView.findViewById(R.id.tv_address);
+                viewHolder.mAddressDetailTv = convertView.findViewById(R.id.tv_address_detail);
+                viewHolder.mLocationImgSdv = convertView.findViewById(R.id.sdv_location_img);
+
+                viewHolder.mSendingPb = convertView.findViewById(R.id.pb_sending);
+                viewHolder.mStatusIv = convertView.findViewById(R.id.iv_msg_status);
+
+                viewHolder.mChatContentCv = convertView.findViewById(R.id.cv_chat_content);
+
+            } else if (Constant.MSG_TYPE_SYSTEM.equals(message.getMessageType())) {
+                viewHolder.mTimeStampTv = convertView.findViewById(R.id.tv_timestamp);
+                viewHolder.mSystemMessageTv = convertView.findViewById(R.id.tv_system_message);
+                viewHolder.mMessageRl = convertView.findViewById(R.id.rl_message);
+            } else {
+                // 默认文字信息
+                viewHolder.mTimeStampTv = convertView.findViewById(R.id.tv_timestamp);
+                viewHolder.mContentTv = convertView.findViewById(R.id.tv_chat_content);
+                viewHolder.mAvatarSdv = convertView.findViewById(R.id.sdv_avatar);
+                viewHolder.mSendingPb = convertView.findViewById(R.id.pb_sending);
+                viewHolder.mStatusIv = convertView.findViewById(R.id.iv_msg_status);
+            }
+            convertView.setTag(viewHolder);*/
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+       /* if (Constant.MSG_TYPE_TEXT.equals(message.getMessageType())) {
+            handleTextMessage(message, viewHolder, position);
+        } else if (Constant.MSG_TYPE_IMAGE.equals(message.getMessageType())) {
+            handleImageMessage(message, viewHolder, position);
+        } else if (Constant.MSG_TYPE_LOCATION.equals(message.getMessageType())) {
+            handleLocationMessage(message, viewHolder, position);
+        } else if (Constant.MSG_TYPE_SYSTEM.equals(message.getMessageType())) {
+            handleEventNotificationMessage(message, viewHolder, position);
+        } else {
+            handleTextMessage(message, viewHolder, position);
+        }
+
+        if (Constant.MSG_TYPE_TEXT.equals(message.getMessageType())) {
+
+        } else if (Constant.MSG_TYPE_IMAGE.equals(message.getMessageType())) {
+            viewHolder.mImageContentSdv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, MessageBigImageActivity.class);
+                    Map<String, Object> imageMap = JSON.parseObject(message.getMessageBody(), Map.class);
+                    final String imgUrl = imageMap.get("imgUrl") == null ? "" : String.valueOf(imageMap.get("imgUrl"));
+                    final String localPath = imageMap.get("localPath") == null ? "" : String.valueOf(imageMap.get("localPath"));
+                    intent.putExtra("imgUrl", imgUrl);
+                    intent.putExtra("localPath", localPath);
+                    mContext.startActivity(intent);
+                }
+            });
+        } else if (Constant.MSG_TYPE_LOCATION.equals(message.getMessageType())) {
+
+        } else {
+
+        }
+
+        // 点击头像进入用户详情页
+        // 做非空判断防止通知类消息
+        if (null != viewHolder.mAvatarSdv) {
+            viewHolder.mAvatarSdv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // 进入自己详情页
+                    Intent intent = new Intent(mContext, UserInfoActivity.class);
+                    intent.putExtra("userId", message.getFromUserId());
+                    mContext.startActivity(intent);
+                }
+            });
+        }*/
+
+        return convertView;
+    }
+
+    class ViewHolder {
+        // text
+        TextView mTimeStampTv;
+        TextView mContentTv;
+        SimpleDraweeView mAvatarSdv;
+        ProgressBar mSendingPb;
+        ImageView mStatusIv;
+
+        RelativeLayout mMessageRl;
+
+        // sys
+        TextView mSystemMessageTv;
+
+        // image
+        SimpleDraweeView mImageContentSdv;
+
+        // location
+        // 地址
+        TextView mAddressTv;
+        // 详细地址
+        TextView mAddressDetailTv;
+        SimpleDraweeView mLocationImgSdv;
+
+        // 聊天内容
+//        ChatView mChatContentCv;
+
+    }
+
+   /* private View createViewByMessageType(String messageType, boolean isSender) {
+        if (Constant.MSG_TYPE_TEXT.equals(messageType)) {
+            return isSender ? inflater.inflate(R.layout.item_sent_text, null) :
+                    inflater.inflate(R.layout.item_received_text, null);
+        } else if (Constant.MSG_TYPE_IMAGE.equals(messageType)) {
+            return isSender ? inflater.inflate(R.layout.item_sent_image, null) :
+                    inflater.inflate(R.layout.item_received_image, null);
+        } else if (Constant.MSG_TYPE_LOCATION.equals(messageType)) {
+            return isSender ? inflater.inflate(R.layout.item_sent_location, null) :
+                    inflater.inflate(R.layout.item_received_location, null);
+        } else {
+            return isSender ? inflater.inflate(R.layout.item_sent_text, null) :
+                    inflater.inflate(R.layout.item_received_text, null);
+        }
+    }*/
+
+    private void sendMessage(String targetType, String targetId, String fromId, String msgType, String body, final int messageIndex) {
+        String url = Constant.BASE_URL + "messages";
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("targetType", targetType);
+        paramMap.put("targetId", targetId);
+        paramMap.put("fromId", fromId);
+        paramMap.put("msgType", msgType);
+        paramMap.put("body", body);
+
+      /*  networkUtil.httpPostRequest(url, paramMap, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Message message = messageList.get(messageIndex);
+                message = messageDao.getMessageByMessageId(message.getMessageId());
+                message.setStatus(MessageStatus.SEND_SUCCESS.value());
+                message.setTimestamp(new Date().getTime());
+                messageList.set(messageIndex, message);
+
+                Message.delete(message);
+                message.setId(null);
+                Message.save(message);
+                notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Message message = messageList.get(messageIndex);
+                message = messageDao.getMessageByMessageId(message.getMessageId());
+                message.setStatus(MessageStatus.SEND_FAIL.value());
+                message.setTimestamp(new Date().getTime());
+                messageList.set(messageIndex, message);
+
+                Message.delete(message);
+                message.setId(null);
+                Message.save(message);
+                notifyDataSetChanged();
+            }
+        });*/
+    }
+
+    /**
+     * 处理文字消息
+     *
+     * @param message    消息
+     * @param viewHolder viewHolder
+     * @param position   位置
+     */
+    private void handleTextMessage(final Message message, ViewHolder viewHolder, final int position) {
+        // 好友头像和昵称从sqlite中读取，防止脏数据
+       /* User friend = mUserDao.getUserById(message.getFromUserId());
+
+        if (message.getStatus() == MessageStatus.SENDING.value()) {
+            viewHolder.mSendingPb.setVisibility(View.VISIBLE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_SUCCESS.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_FAIL.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.VISIBLE);
+        }
+
+        viewHolder.mTimeStampTv.setText(TimestampUtil.getTimePoint(message.getTimestamp()));
+        viewHolder.mContentTv.setText(message.getContent());
+
+        if (user.getUserId().equals(message.getFromUserId())) {
             if (!TextUtils.isEmpty(user.getUserAvatar())) {
-                mAvatarSdv.setImageURI(Uri.parse(user.getUserAvatar()));
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(user.getUserAvatar()));
             }
-
-            // 如果消息被清除
-            // conversation.getLastestMessage() == null
-            mLastMsgTv.setText(JimUtil.getLatestMessage(conversation));
-
-            int unReadMsgCnt = conversation.getUnReadMsgCnt();
-            if (unReadMsgCnt <= 0) {
-                mUnreadTv.setVisibility(View.GONE);
-            } else if (unReadMsgCnt > 99) {
-                mUnreadTv.setText("99+");
-            } else {
-                mUnreadTv.setText(String.valueOf(conversation.getUnReadMsgCnt()));
-            }
-            // conversation由极光维护
-            // 如果消息被清除，conversation.getLastestMessage() == null
-            // 这个时间不好显示
-            if (null == conversation.getLatestMessage()) {
-                mCreateTimeTv.setText(TimestampUtil.getTimePoint(new Date().getTime()));
-            } else {
-                mCreateTimeTv.setText(TimestampUtil.getTimePoint(conversation.getLatestMessage().getCreateTime()));
-            }
-
-
         } else {
-            // 群聊
-            GroupInfo jGroupInfo = (GroupInfo) conversation.getTargetInfo();
-            String groupDesc = "";
-
-            List<GroupMemberInfo> groupMemberInfoList = jGroupInfo.getGroupMemberInfos();
-            int memberCount = groupMemberInfoList.size();
-            convertView = creatConvertView(memberCount);
-            if (memberCount == 3) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3);
-
-            } else if (memberCount == 4) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4);
-            } else if (memberCount == 5) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                SimpleDraweeView mAvatar5Sdv = convertView.findViewById(R.id.sdv_avatar5);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-                String avatar5 = groupMemberInfoList.get(4).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-                String userNickName5 = groupMemberInfoList.get(4).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-                if (!TextUtils.isEmpty(avatar5)) {
-                    mAvatar5Sdv.setImageURI(avatar5);
-                }
-
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4, userNickName5);
-            } else if (memberCount == 6) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                SimpleDraweeView mAvatar5Sdv = convertView.findViewById(R.id.sdv_avatar5);
-                SimpleDraweeView mAvatar6Sdv = convertView.findViewById(R.id.sdv_avatar6);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-                String avatar5 = groupMemberInfoList.get(4).getUserInfo().getAvatar();
-                String avatar6 = groupMemberInfoList.get(5).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-                String userNickName5 = groupMemberInfoList.get(4).getUserInfo().getNickname();
-                String userNickName6 = groupMemberInfoList.get(5).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-                if (!TextUtils.isEmpty(avatar5)) {
-                    mAvatar5Sdv.setImageURI(avatar5);
-                }
-                if (!TextUtils.isEmpty(avatar6)) {
-                    mAvatar6Sdv.setImageURI(avatar6);
-                }
-
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4, userNickName5, userNickName6);
-            } else if (memberCount == 7) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                SimpleDraweeView mAvatar5Sdv = convertView.findViewById(R.id.sdv_avatar5);
-                SimpleDraweeView mAvatar6Sdv = convertView.findViewById(R.id.sdv_avatar6);
-                SimpleDraweeView mAvatar7Sdv = convertView.findViewById(R.id.sdv_avatar7);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-                String avatar5 = groupMemberInfoList.get(4).getUserInfo().getAvatar();
-                String avatar6 = groupMemberInfoList.get(5).getUserInfo().getAvatar();
-                String avatar7 = groupMemberInfoList.get(6).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-                String userNickName5 = groupMemberInfoList.get(4).getUserInfo().getNickname();
-                String userNickName6 = groupMemberInfoList.get(5).getUserInfo().getNickname();
-                String userNickName7 = groupMemberInfoList.get(6).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-                if (!TextUtils.isEmpty(avatar5)) {
-                    mAvatar5Sdv.setImageURI(avatar5);
-                }
-                if (!TextUtils.isEmpty(avatar6)) {
-                    mAvatar6Sdv.setImageURI(avatar6);
-                }
-                if (!TextUtils.isEmpty(avatar7)) {
-                    mAvatar7Sdv.setImageURI(avatar7);
-                }
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4, userNickName5, userNickName6, userNickName7);
-            } else if (memberCount == 8) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                SimpleDraweeView mAvatar5Sdv = convertView.findViewById(R.id.sdv_avatar5);
-                SimpleDraweeView mAvatar6Sdv = convertView.findViewById(R.id.sdv_avatar6);
-                SimpleDraweeView mAvatar7Sdv = convertView.findViewById(R.id.sdv_avatar7);
-                SimpleDraweeView mAvatar8Sdv = convertView.findViewById(R.id.sdv_avatar8);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-                String avatar5 = groupMemberInfoList.get(4).getUserInfo().getAvatar();
-                String avatar6 = groupMemberInfoList.get(5).getUserInfo().getAvatar();
-                String avatar7 = groupMemberInfoList.get(6).getUserInfo().getAvatar();
-                String avatar8 = groupMemberInfoList.get(7).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-                String userNickName5 = groupMemberInfoList.get(4).getUserInfo().getNickname();
-                String userNickName6 = groupMemberInfoList.get(5).getUserInfo().getNickname();
-                String userNickName7 = groupMemberInfoList.get(6).getUserInfo().getNickname();
-                String userNickName8 = groupMemberInfoList.get(7).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-                if (!TextUtils.isEmpty(avatar5)) {
-                    mAvatar5Sdv.setImageURI(avatar5);
-                }
-                if (!TextUtils.isEmpty(avatar6)) {
-                    mAvatar6Sdv.setImageURI(avatar6);
-                }
-                if (!TextUtils.isEmpty(avatar7)) {
-                    mAvatar7Sdv.setImageURI(avatar7);
-                }
-                if (!TextUtils.isEmpty(avatar8)) {
-                    mAvatar8Sdv.setImageURI(avatar8);
-                }
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4,
-                        userNickName5, userNickName6, userNickName7, userNickName8);
-            } else if (memberCount >= 9) {
-                SimpleDraweeView mAvatar1Sdv = convertView.findViewById(R.id.sdv_avatar1);
-                SimpleDraweeView mAvatar2Sdv = convertView.findViewById(R.id.sdv_avatar2);
-                SimpleDraweeView mAvatar3Sdv = convertView.findViewById(R.id.sdv_avatar3);
-                SimpleDraweeView mAvatar4Sdv = convertView.findViewById(R.id.sdv_avatar4);
-                SimpleDraweeView mAvatar5Sdv = convertView.findViewById(R.id.sdv_avatar5);
-                SimpleDraweeView mAvatar6Sdv = convertView.findViewById(R.id.sdv_avatar6);
-                SimpleDraweeView mAvatar7Sdv = convertView.findViewById(R.id.sdv_avatar7);
-                SimpleDraweeView mAvatar8Sdv = convertView.findViewById(R.id.sdv_avatar8);
-                SimpleDraweeView mAvatar9Sdv = convertView.findViewById(R.id.sdv_avatar9);
-                String avatar1 = groupMemberInfoList.get(0).getUserInfo().getAvatar();
-                String avatar2 = groupMemberInfoList.get(1).getUserInfo().getAvatar();
-                String avatar3 = groupMemberInfoList.get(2).getUserInfo().getAvatar();
-                String avatar4 = groupMemberInfoList.get(3).getUserInfo().getAvatar();
-                String avatar5 = groupMemberInfoList.get(4).getUserInfo().getAvatar();
-                String avatar6 = groupMemberInfoList.get(5).getUserInfo().getAvatar();
-                String avatar7 = groupMemberInfoList.get(6).getUserInfo().getAvatar();
-                String avatar8 = groupMemberInfoList.get(7).getUserInfo().getAvatar();
-                String avatar9 = groupMemberInfoList.get(8).getUserInfo().getAvatar();
-
-                String userNickName1 = groupMemberInfoList.get(0).getUserInfo().getNickname();
-                String userNickName2 = groupMemberInfoList.get(1).getUserInfo().getNickname();
-                String userNickName3 = groupMemberInfoList.get(2).getUserInfo().getNickname();
-                String userNickName4 = groupMemberInfoList.get(3).getUserInfo().getNickname();
-                String userNickName5 = groupMemberInfoList.get(4).getUserInfo().getNickname();
-                String userNickName6 = groupMemberInfoList.get(5).getUserInfo().getNickname();
-                String userNickName7 = groupMemberInfoList.get(6).getUserInfo().getNickname();
-                String userNickName8 = groupMemberInfoList.get(7).getUserInfo().getNickname();
-                String userNickName9 = groupMemberInfoList.get(8).getUserInfo().getNickname();
-
-                if (!TextUtils.isEmpty(avatar1)) {
-                    mAvatar1Sdv.setImageURI(avatar1);
-                }
-                if (!TextUtils.isEmpty(avatar2)) {
-                    mAvatar2Sdv.setImageURI(avatar2);
-                }
-                if (!TextUtils.isEmpty(avatar3)) {
-                    mAvatar3Sdv.setImageURI(avatar3);
-                }
-                if (!TextUtils.isEmpty(avatar4)) {
-                    mAvatar4Sdv.setImageURI(avatar4);
-                }
-                if (!TextUtils.isEmpty(avatar5)) {
-                    mAvatar5Sdv.setImageURI(avatar5);
-                }
-                if (!TextUtils.isEmpty(avatar6)) {
-                    mAvatar6Sdv.setImageURI(avatar6);
-                }
-                if (!TextUtils.isEmpty(avatar7)) {
-                    mAvatar7Sdv.setImageURI(avatar7);
-                }
-                if (!TextUtils.isEmpty(avatar8)) {
-                    mAvatar8Sdv.setImageURI(avatar8);
-                }
-                if (!TextUtils.isEmpty(avatar9)) {
-                    mAvatar9Sdv.setImageURI(avatar9);
-                }
-                groupDesc = generateGroupDesc(PreferencesUtil.getInstance().getUser().getUserNickName(),
-                        userNickName1, userNickName2, userNickName3, userNickName4,
-                        userNickName5, userNickName6, userNickName7, userNickName8, userNickName9);
+            if (!TextUtils.isEmpty(friend.getUserAvatar())) {
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(friend.getUserAvatar()));
             }
+        }
 
-            TextView mGroupNameTv = convertView.findViewById(R.id.tv_group_name);
-            TextView mUnreadTv = convertView.findViewById(R.id.tv_unread);
-            TextView mCreateTimeTv = convertView.findViewById(R.id.tv_create_time);
-            TextView mLastMsgTv = convertView.findViewById(R.id.tv_last_msg);
+        if (position != 0) {
+            Message lastMessage = messageList.get(position - 1);
 
-            // 极光群组误删此处会有异常
-            try {
-                mGroupNameTv.setText(jGroupInfo.getGroupName());
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (message.getTimestamp() - lastMessage.getTimestamp() < 10 * 60 * 1000) {
+                viewHolder.mTimeStampTv.setVisibility(View.GONE);
             }
-            String messageType;
-            try {
-                messageType = conversation.getLatestMessage().getContentType().name();
-            } catch (Exception e) {
-                messageType = Constant.MSG_TYPE_TEXT;
-            }
-            long messageCount = messageDao.getMessageCountByGroupId(String.valueOf(jGroupInfo.getGroupID()));
-            if (messageCount == 0) {
-                mLastMsgTv.setText("");
-            } else {
-                String lastMsg = conversation.getLatestText();
-                if (TextUtils.isEmpty(lastMsg)) {
-                    if (null != mLastMsgTv) {
-                        mLastMsgTv.setText("你邀请" + groupDesc + "加入了群聊");
-                    }
-                } else {
-                    UserInfo lastestFromUser = conversation.getLatestMessage().getFromUser();
-                    String lastestFromUserName = lastestFromUser.getUserName().equals(PreferencesUtil.getInstance().getUser().getUserId()) ? "" :
-                            lastestFromUser.getNickname() + ": ";
-                    if (Constant.MSG_TYPE_TEXT.equals(messageType)) {
-                        mLastMsgTv.setText(lastestFromUserName + conversation.getLatestText());
-                    } else if (Constant.MSG_TYPE_IMAGE.equals(messageType)) {
-                        mLastMsgTv.setText(lastestFromUserName + "[图片]");
+        }
+
+        if (null != viewHolder.mStatusIv) {
+            viewHolder.mStatusIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Map<String, Object> body = new HashMap<>();
+                    body.put("extras", new HashMap<>());
+                    body.put("text", message.getContent());
+                    Message resendMessage = messageDao.getMessageByMessageId(message.getMessageId());
+                    resendMessage.setStatus(MessageStatus.SENDING.value());
+                    resendMessage.setTimestamp(new Date().getTime());
+                    Message.delete(resendMessage);
+                    resendMessage.setId(null);
+                    Message.save(resendMessage);
+                    // 重发消息移至最后
+                    messageList.remove(position);
+                    messageList.add(resendMessage);
+
+                    notifyDataSetChanged();
+                    String targetType = message.getTargetType();
+                    if (Constant.TARGET_TYPE_SINGLE.equals(targetType)) {
+                        sendMessage(targetType, message.getToUserId(),
+                                user.getUserId(), "text", JSON.toJSONString(body), messageList.size() - 1);
                     } else {
-                        mLastMsgTv.setText(lastestFromUserName + conversation.getLatestText());
+                        // 群聊
+                        sendMessage(targetType, message.getGroupId(), user.getUserId(),
+                                message.getMessageType(), JSON.toJSONString(body), messageList.size() - 1);
                     }
                 }
-            }
-            int unReadMsgCnt = conversation.getUnReadMsgCnt();
-            if (unReadMsgCnt <= 0) {
-                mUnreadTv.setVisibility(View.GONE);
-            } else if (unReadMsgCnt > 99) {
-                mUnreadTv.setText("99+");
-            } else {
-                mUnreadTv.setText(String.valueOf(conversation.getUnReadMsgCnt()));
-            }
-            if (null != mCreateTimeTv) {
-                mCreateTimeTv.setText(TimestampUtil.getTimePoint(conversation.getLastMsgDate()));
-            }
-        }
-*/
-        return convertView;
+            });
+        }*/
     }
 
-    private String generateGroupDesc(String myNickName, String... userNickNames) {
-        StringBuffer groupDescBuffer = new StringBuffer();
-        for (String userNickName : userNickNames) {
-            if (!userNickName.equals(myNickName)) {
-                groupDescBuffer.append(userNickName).append("、");
+    /**
+     * 处理图片消息
+     *
+     * @param message    消息
+     * @param viewHolder viewHolder
+     * @param position   位置
+     */
+    private void handleImageMessage(final Message message, final ViewHolder viewHolder, final int position) {
+        // 好友头像和昵称从sqlite中读取，防止脏数据
+      /*  User friend = mUserDao.getUserById(message.getFromUserId());
+
+        // 消息状态
+        if (message.getStatus() == MessageStatus.SENDING.value()) {
+            viewHolder.mSendingPb.setVisibility(View.VISIBLE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_SUCCESS.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_FAIL.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.VISIBLE);
+        }
+
+        viewHolder.mTimeStampTv.setText(TimestampUtil.getTimePoint(message.getTimestamp()));
+        if (user.getUserId().equals(message.getFromUserId())) {
+            if (!TextUtils.isEmpty(user.getUserAvatar())) {
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(user.getUserAvatar()));
             }
-        }
-        if (groupDescBuffer.length() > 1) {
-            groupDescBuffer.deleteCharAt(groupDescBuffer.length() - 1);
-        }
-        return groupDescBuffer.toString();
-    }
-
-    private View creatConvertView(int size) {
-        View convertView = null;
-
-      /*  if (size == 0) {
-            convertView = inflater.inflate(R.layout.item_conversation_single,
-                    null, false);
-
-        } else if (size == 1) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_1,
-                    null, false);
-
-        } else if (size == 2) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_2,
-                    null, false);
-
-        } else if (size == 3) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_3,
-                    null, false);
-
-        } else if (size == 4) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_4,
-                    null, false);
-
-        } else if (size == 5) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_5,
-                    null, false);
-
-        } else if (size == 6) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_6,
-                    null, false);
-
-        } else if (size == 7) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_7,
-                    null, false);
-
-        } else if (size == 8) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_8,
-                    null, false);
-
-        } else if (size >= 9) {
-            convertView = inflater.inflate(R.layout.item_conversation_group_9,
-                    null, false);
-
         } else {
-            convertView = inflater.inflate(R.layout.item_conversation_group_5,
-                    null, false);
-
+            if (!TextUtils.isEmpty(message.getFromUserAvatar())) {
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(friend.getUserAvatar()));
+            }
         }
-        */
-        return convertView;
+        Map<String, Object> imageMap = JSON.parseObject(message.getMessageBody(), Map.class);
+        final String imgUrl = imageMap.get("imgUrl") == null ? "" : String.valueOf(imageMap.get("imgUrl"));
+        final String localPath = imageMap.get("localPath") == null ? "" : String.valueOf(imageMap.get("localPath"));
+        Uri uri;
+        if (!TextUtils.isEmpty(localPath)) {
+            // 本地读
+            uri = Uri.fromFile(new File(localPath));
+        } else {
+            // 网络获取
+            uri = Uri.parse(OssUtil.resize(imgUrl));
+        }
+
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(viewHolder.mImageContentSdv.getController())
+                .setControllerListener(new ControllerListener<ImageInfo>() {
+                    @Override
+                    public void onSubmit(String id, Object callerContext) {
+
+                    }
+
+                    @Override
+                    public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                        int originWidth = imageInfo.getWidth();
+                        int originHeight = imageInfo.getHeight();
+                        int adjustWidth;
+
+                        if (originWidth < originHeight) {
+                            adjustWidth = DEFAULT_WIDTH_1;
+                        } else if (originWidth > originHeight) {
+                            adjustWidth = DEFAULT_WIDTH_3;
+                        } else {
+                            adjustWidth = DEFAULT_WIDTH_2;
+                        }
+
+                        ViewGroup.LayoutParams params = viewHolder.mImageContentSdv.getLayoutParams();
+                        params.width = adjustWidth;
+                        Double resetHeight = CalculateUtil.mul(CalculateUtil.div(imageInfo.getHeight(), imageInfo.getWidth(), 5), adjustWidth);
+                        params.height = resetHeight.intValue();
+                        viewHolder.mImageContentSdv.setLayoutParams(params);
+                    }
+
+                    @Override
+                    public void onIntermediateImageSet(String id, ImageInfo imageInfo) {
+
+                    }
+
+                    @Override
+                    public void onIntermediateImageFailed(String id, Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String id, Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onRelease(String id) {
+
+                    }
+                })
+                .setUri(uri)
+                .build();
+        viewHolder.mImageContentSdv.setController(controller);
+
+
+        if (position != 0) {
+            Message lastMessage = messageList.get(position - 1);
+
+            if (message.getTimestamp() - lastMessage.getTimestamp() < 10 * 60 * 1000) {
+                viewHolder.mTimeStampTv.setVisibility(View.GONE);
+            }
+        }*/
+    }
+
+    private void handleEventNotificationMessage(final Message message, ViewHolder viewHolder, final int position) {
+       /* viewHolder.mTimeStampTv.setText(TimestampUtil.getTimePoint(message.getTimestamp()));
+        viewHolder.mSystemMessageTv.setVisibility(View.VISIBLE);
+        viewHolder.mSystemMessageTv.setText(message.getContent());
+        viewHolder.mMessageRl.setVisibility(View.GONE);
+
+        if (position != 0) {
+            Message lastMessage = messageList.get(position - 1);
+
+            if (message.getTimestamp() - lastMessage.getTimestamp() < 10 * 60 * 1000) {
+                viewHolder.mTimeStampTv.setVisibility(View.GONE);
+            }
+        }*/
+    }
+
+    /**
+     * 处理位置消息
+     *
+     * @param message    消息
+     * @param viewHolder viewHolder
+     * @param position   位置
+     */
+    private void handleLocationMessage(final Message message, ViewHolder viewHolder, final int position) {
+        // 好友头像和昵称从sqlite中读取，防止脏数据
+       /* User friend = mUserDao.getUserById(message.getFromUserId());
+
+        if (message.getStatus() == MessageStatus.SENDING.value()) {
+            viewHolder.mSendingPb.setVisibility(View.VISIBLE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_SUCCESS.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.GONE);
+        } else if (message.getStatus() == MessageStatus.SEND_FAIL.value()) {
+            viewHolder.mSendingPb.setVisibility(View.GONE);
+            viewHolder.mStatusIv.setVisibility(View.VISIBLE);
+        }
+
+        viewHolder.mTimeStampTv.setText(TimestampUtil.getTimePoint(message.getTimestamp()));
+
+        if (user.getUserId().equals(message.getFromUserId())) {
+            if (!TextUtils.isEmpty(user.getUserAvatar())) {
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(user.getUserAvatar()));
+            }
+        } else {
+            if (!TextUtils.isEmpty(friend.getUserAvatar())) {
+                viewHolder.mAvatarSdv.setImageURI(Uri.parse(friend.getUserAvatar()));
+            }
+        }
+
+        if (position != 0) {
+            Message lastMessage = messageList.get(position - 1);
+            if (message.getTimestamp() - lastMessage.getTimestamp() < 10 * 60 * 1000) {
+                viewHolder.mTimeStampTv.setVisibility(View.GONE);
+            }
+        }
+
+        Map<String, Object> locationMap = JSON.parseObject(message.getMessageBody(), Map.class);
+        final String address = locationMap.get("address") == null ? "" : String.valueOf(locationMap.get("address"));
+        final double latitude = locationMap.get("latitude") == null ? 0L : Double.valueOf(String.valueOf(locationMap.get("latitude")));
+        final double longitude = locationMap.get("longitude") == null ? 0L : Double.valueOf(String.valueOf(locationMap.get("longitude")));
+
+        final String addressDetail = locationMap.get("addressDetail") == null ? "" : String.valueOf(locationMap.get("addressDetail"));
+
+        final String path = locationMap.get("path") == null ? "" : String.valueOf(locationMap.get("path"));
+
+        if (!TextUtils.isEmpty(address)) {
+            if (address.length() > 15) {
+                viewHolder.mAddressTv.setText(address.substring(0, 11) + "...");
+            } else {
+                viewHolder.mAddressTv.setText(address);
+            }
+        }
+        viewHolder.mAddressDetailTv.setText(addressDetail);
+
+        if (!TextUtils.isEmpty(path)) {
+            viewHolder.mLocationImgSdv.setImageURI(Uri.parse(path));
+        }
+
+        viewHolder.mChatContentCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                intent = new Intent(mContext, MapPickerActivity.class);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+                intent.putExtra("sendLocation", false);
+                mContext.startActivity(intent);
+            }
+        });*/
     }
 }

@@ -24,4 +24,7 @@
     <color name="common_bg">#fcfcfc</color>
     <color name="common_top_bar">#EDEDED</color>
     <color name="error_item_color">#F6EBE6</color>
+
+    <!-- 菜市场页面-->
+    <color name="common_text_color_black">#191919</color>
 </resources>

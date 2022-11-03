@@ -47,5 +47,9 @@
 
     <string name="move_up_to_cancel">手指上滑，取消发送</string>
     <string name="release_to_cancel">松开手指，取消发送</string>
+
+    <!--动态相关-->
+    <string name="tab_discover">发现</string>
+    <string name="vegetable_market">菜市场</string>
 </resources>
 

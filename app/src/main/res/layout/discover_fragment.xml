@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_common_bg"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_top_bar"
+        android:layout_alignParentTop="true"
+        android:background="@color/common_top_bar">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:text="@string/tab_discover"
+            android:textColor="@color/common_top_title"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:clickable="true"
+            android:src="@mipmap/icon_main_activity_add_normal" />
+
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/iv_add"
+            android:clickable="true"
+            android:src="@mipmap/icon_main_activity_search_normal" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_vegetable_market"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/discover_layout_height"
+                android:background="@drawable/bg_list_item_click"
+                android:clickable="true"
+                android:paddingLeft="@dimen/discover_layout_padding_left">
+
+                <ImageView
+                    android:id="@+id/iv_vegetable_market"
+                    android:layout_width="@dimen/discover_icon_width"
+                    android:layout_height="@dimen/discover_icon_height"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/discover_icon_margin_left"
+                    android:src="@mipmap/icon_discover_moments" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/discover_text_margin_left"
+                    android:layout_toRightOf="@id/iv_vegetable_market"
+                    android:text="@string/vegetable_market"
+                    android:textColor="@color/common_text_color_black"
+                    android:textSize="@dimen/discover_text_size" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:src="@mipmap/icon_right_arrow" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

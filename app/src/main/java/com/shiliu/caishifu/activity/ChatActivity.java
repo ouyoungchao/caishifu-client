@@ -39,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
+import com.shiliu.caishifu.adapter.ConversationAdapter;
 import com.shiliu.caishifu.adapter.MessageAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.MessageDao;
@@ -164,7 +165,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     @BindView(R.id.iv_setting)
     ImageView mSingleChatSettingIv;
 
-    @BindView(R.id.lv_message)
+    @BindView(R.id.lv_conversation)
     ListView mMessageLv;
 
     AnimationDrawable mVoiceRecordingAd;
