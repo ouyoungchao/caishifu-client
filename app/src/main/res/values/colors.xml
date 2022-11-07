@@ -36,4 +36,5 @@
     <color name="nine_image_bg">#f2f2f2</color>
     <color name="grey">#f7f7f7</color>
     <color name="black_deep">#FF000000</color>
+    <color name="common_item_grey">#999999</color>
 </resources>

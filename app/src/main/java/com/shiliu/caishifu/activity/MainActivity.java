@@ -32,6 +32,7 @@ import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
 import com.shiliu.caishifu.fragement.ChatsFragment;
 import com.shiliu.caishifu.fragement.DiscoverFragment;
+import com.shiliu.caishifu.fragement.MeFragment;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.ViewType;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -96,14 +97,12 @@ public class MainActivity extends BaseActivity implements Observer {
 
         mMainButtonIvs = new ImageView[4];
         mMainButtonIvs[0] = findViewById(R.id.iv_chats);
-        mMainButtonIvs[1] = findViewById(R.id.iv_contacts);
         mMainButtonIvs[2] = findViewById(R.id.iv_discover);
         mMainButtonIvs[3] = findViewById(R.id.iv_me);
 
         mMainButtonIvs[0].setSelected(true);
         mMainButtonTvs = new TextView[4];
         mMainButtonTvs[0] = findViewById(R.id.tv_chats);
-        mMainButtonTvs[1] = findViewById(R.id.tv_contacts);
         mMainButtonTvs[2] = findViewById(R.id.tv_discover);
         mMainButtonTvs[3] = findViewById(R.id.tv_me);
         mMainButtonTvs[0].setTextColor(0xFF45C01A);
@@ -112,14 +111,13 @@ public class MainActivity extends BaseActivity implements Observer {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.rl_fragment_container, mChatFragment)
-                .add(R.id.rl_fragment_container, mContactsFragment)
                 .add(R.id.rl_fragment_container, mDiscoverFragment)
                 .add(R.id.rl_fragment_container, mMeFragment)
-                .hide(mContactsFragment).hide(mDiscoverFragment).hide(mMeFragment)
+                .hide(mDiscoverFragment).hide(mMeFragment)
                 .show(mChatFragment).commit();
 
         mUnreadNewMsgsNumTv = findViewById(R.id.unread_msg_number);
-        mUnreadNewFriendsNumTv = findViewById(R.id.unread_address_number);
+//        mUnreadNewFriendsNumTv = findViewById(R.id.unread_address_number);
 
 //        mAddIv.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -170,7 +168,7 @@ public class MainActivity extends BaseActivity implements Observer {
                 break;
             case R.id.rl_me:
                 mIndex = 3;
-                StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.bottom_text_color_normal);
+                StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.white);
                 break;
         }
 
