@@ -73,7 +73,7 @@
                     android:layout_centerVertical="true"
                     android:paddingLeft="100dp"
                     android:text="中国大陆（+86）"
-                    android:textColor="@color/wechat_btn_green"
+                    android:textColor="@color/green"
                     android:textSize="@dimen/common_item_text_size" />
             </RelativeLayout>
 

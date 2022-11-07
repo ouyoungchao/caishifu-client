@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.activity.MainActivity;
+import com.shiliu.caishifu.activity.MomentsActivity;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class DiscoverFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == MainActivity.REQUEST_CODE_SCAN) {
                 String isbn = data.getStringExtra("CaptureIsbn");
-                if (!TextUtils.isEmpty(isbn)) {
+                /*if (!TextUtils.isEmpty(isbn)) {
                     if (isbn.contains("http")) {
                         Intent intent = new Intent(getActivity(), WebViewActivity.class);
                         intent.putExtra(WebViewActivity.RESULT, isbn);
@@ -91,7 +92,7 @@ public class DiscoverFragment extends BaseFragment {
                             e.printStackTrace();
                         }
                     }
-                }
+                }*/
             }
         }
     }

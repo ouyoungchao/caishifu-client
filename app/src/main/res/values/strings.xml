@@ -47,9 +47,15 @@
 
     <string name="move_up_to_cancel">手指上滑，取消发送</string>
     <string name="release_to_cancel">松开手指，取消发送</string>
-
     <!--动态相关-->
     <string name="tab_discover">发现</string>
     <string name="vegetable_market">菜市场</string>
+    <string name="user_settings">资料设置</string>
+    <string name="send">发送</string>
+    <string name="show_more">全文</string>
+    <string name="show_less">收起</string>
+    <string name="delete">删除</string>
+    <string name="tab_chats">菜师傅</string>
+    <string name="tab_me">我</string>
 </resources>
 

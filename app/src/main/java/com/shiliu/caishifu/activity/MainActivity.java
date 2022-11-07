@@ -33,6 +33,11 @@ import com.shiliu.caishifu.abserver.ObserverManager;
 import com.shiliu.caishifu.fragement.ChatsFragment;
 import com.shiliu.caishifu.fragement.DiscoverFragment;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.ViewType;
+import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.StatusBarUtil;
+import com.shiliu.caishifu.widget.ConfirmDialog;
 
 import java.util.ArrayList;
 
@@ -75,7 +80,7 @@ public class MainActivity extends BaseActivity implements Observer {
 
     @Override
     public int getContentView() {
-        return R.layout.activity_main;
+        return R.layout.main_activity;
     }
 
     @Override
@@ -86,7 +91,7 @@ public class MainActivity extends BaseActivity implements Observer {
         mDiscoverFragment = new DiscoverFragment();
         mMeFragment = new MeFragment();
 
-        mFragments = new Fragment[]{mChatFragment, mContactsFragment,
+        mFragments = new Fragment[]{mChatFragment,
                 mDiscoverFragment, mMeFragment};
 
         mMainButtonIvs = new ImageView[4];
@@ -159,10 +164,6 @@ public class MainActivity extends BaseActivity implements Observer {
                 mIndex = 0;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
-            case R.id.rl_contacts:
-                mIndex = 1;
-                StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
-                break;
             case R.id.rl_discover:
                 mIndex = 2;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
@@ -197,9 +198,9 @@ public class MainActivity extends BaseActivity implements Observer {
         // 消息
         refreshNewMsgsUnreadNum();
         // 通讯录
-        refreshNewFriendsUnreadNum();
-        mContactsFragment.refreshNewFriendsUnreadNum();
-        mContactsFragment.refreshFriendsList();
+//        refreshNewFriendsUnreadNum();
+//        mContactsFragment.refreshNewFriendsUnreadNum();
+//        mContactsFragment.refreshFriendsList();
 
         // 会话
         if (mCurrentTabIndex == 0) {
@@ -253,12 +254,13 @@ public class MainActivity extends BaseActivity implements Observer {
                     if (!ExampleUtil.isEmpty(extras)) {
                         showMsg.append(KEY_EXTRAS + " : " + extras + "\n");
                     }
-                    refreshNewFriendsUnreadNum();
-                    mContactsFragment.refreshNewFriendsUnreadNum();
+                    // TODO: 2022/11/8
+                    /*refreshNewFriendsUnreadNum();
+                    mContactsFragment.refreshNewFriendsUnreadNum();*/
                 }
-                if (MESSAGE_RECEIVED_ACTION_ADD_FRIENDS_ACCEPT_MAIN.equals(intent.getAction())) {
+                /*if (MESSAGE_RECEIVED_ACTION_ADD_FRIENDS_ACCEPT_MAIN.equals(intent.getAction())) {
                     mContactsFragment.refreshFriendsList();
-                }
+                }*/
             } catch (Exception e) {
             }
         }
@@ -380,7 +382,7 @@ public class MainActivity extends BaseActivity implements Observer {
      * 初始化首页弹出框
      */
     private void initPopupWindow() {
-        mPopupView = View.inflate(this, R.layout.popup_window_add, null);
+        /*mPopupView = View.inflate(this, R.layout.popup_window_add, null);
         mPopupWindow = new PopupWindow();
         // 设置SelectPicPopupWindow的View
         mPopupWindow.setContentView(mPopupView);
@@ -426,7 +428,7 @@ public class MainActivity extends BaseActivity implements Observer {
         });
 
         // 帮助和反馈
-        RelativeLayout mHelpRl = mPopupView.findViewById(R.id.rl_help);
+        RelativeLayout mHelpRl = mPopupView.findViewById(R.id.rl_help);*/
 
     }
 
@@ -441,7 +443,7 @@ public class MainActivity extends BaseActivity implements Observer {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CODE_SCAN) {
                 String isbn = data.getStringExtra("CaptureIsbn");
-                if (!TextUtils.isEmpty(isbn)) {
+                /*if (!TextUtils.isEmpty(isbn)) {
                     if (isbn.contains("http")) {
                         Intent intent = new Intent(this, WebViewActivity.class);
                         intent.putExtra(WebViewActivity.RESULT, isbn);
@@ -457,7 +459,7 @@ public class MainActivity extends BaseActivity implements Observer {
                             e.printStackTrace();
                         }
                     }
-                }
+                }*/
             }
         }
     }
@@ -555,9 +557,9 @@ public class MainActivity extends BaseActivity implements Observer {
      * 进入扫一扫页面
      */
     private void startScanActivity() {
-        Intent intent = new Intent(this, CaptureActivity2.class);
+       /* Intent intent = new Intent(this, CaptureActivity2.class);
         intent.putExtra(CaptureActivity2.USE_DEFUALT_ISBN_ACTIVITY, true);
-        startActivityForResult(intent, REQUEST_CODE_SCAN);
+        startActivityForResult(intent, REQUEST_CODE_SCAN);*/
     }
 
 }

@@ -14,4 +14,8 @@
     <dimen name="discover_icon_margin_left">5dp</dimen>
     <dimen name="discover_text_margin_left">15dp</dimen>
     <dimen name="discover_text_size">15.5sp</dimen>
+    <!--菜市场显示页面相关-->
+    <dimen name="top_bar_back_width">32dp</dimen>
+    <dimen name="top_bar_back_height">32dp</dimen>
+    <dimen name="top_bar_title_text_size">15.5sp</dimen>
 </resources>

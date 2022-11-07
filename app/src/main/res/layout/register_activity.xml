@@ -113,7 +113,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/tv_country_and_area_title"
                 android:text="中国大陆（+86）"
-                android:textColor="@color/wechat_btn_green"
+                android:textColor="@color/green"
                 android:textSize="@dimen/common_item_text_size" />
 
         </RelativeLayout>

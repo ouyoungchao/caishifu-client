@@ -50,7 +50,7 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 
-public class RegisterActivity extends BaseRegisterActivity {
+public class RegisterActivity extends CommonActivity {
 
     private static final String TAG = "RegisterActivity";
     public static int sequence = 1;
