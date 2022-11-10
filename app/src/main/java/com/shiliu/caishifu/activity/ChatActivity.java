@@ -131,15 +131,15 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     /**
      * 语音
-     */
+     *//*
     @BindView(R.id.rl_voice_recording_container)
-    RelativeLayout mVoiceRecordingContainerRl;
+    RelativeLayout mVoiceRecordingContainerRl;*/
 
-    @BindView(R.id.tv_voice_recording_hint)
-    TextView mVoiceRecordingHintTv;
+    /*@BindView(R.id.tv_voice_recording_hint)
+    TextView mVoiceRecordingHintTv;*/
 
-    @BindView(R.id.iv_voice_recording_anim)
-    ImageView mVoiceRecordingAnimIv;
+    /*@BindView(R.id.iv_voice_recording_anim)
+    ImageView mVoiceRecordingAnimIv;*/
 
     @BindView(R.id.iv_emoji_normal)
     ImageView mEmojiNormalIv;
@@ -210,7 +210,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         mMessageDao = new MessageDao();
         setTitleStrokeWidth(mFromNickNameTv);
 
-        mVoiceRecordingAnimIv = findViewById(R.id.iv_voice_recording_anim);
+        /*mVoiceRecordingAnimIv = findViewById(R.id.iv_voice_recording_anim);*/
 
         mTextMsgEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -1204,7 +1204,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    try {
+                  /*  try {
                         v.setPressed(true);
                         // 播放动画
                         mVoiceRecordingAd = (AnimationDrawable) mVoiceRecordingAnimIv.getDrawable();
@@ -1217,24 +1217,24 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         v.setPressed(false);
                         mVoiceRecordingContainerRl.setVisibility(View.INVISIBLE);
                         return false;
-                    }
+                    }*/
                     return true;
                 case MotionEvent.ACTION_MOVE: {
-                    if (event.getY() < 0) {
+                   /* if (event.getY() < 0) {
                         mVoiceRecordingHintTv.setText(getString(R.string.release_to_cancel));
                         mVoiceRecordingHintTv.setBackgroundResource(R.drawable.recording_text_hint_bg);
                     } else {
                         mVoiceRecordingHintTv.setText(getString(R.string.move_up_to_cancel));
                         mVoiceRecordingHintTv.setBackgroundColor(Color.TRANSPARENT);
-                    }
+                    }*/
                     return true;
                 }
                 case MotionEvent.ACTION_UP:
-                    v.setPressed(false);
-                    mVoiceRecordingContainerRl.setVisibility(View.INVISIBLE);
+                   /* v.setPressed(false);
+                    mVoiceRecordingContainerRl.setVisibility(View.INVISIBLE);*/
                     return true;
                 default:
-                    mVoiceRecordingContainerRl.setVisibility(View.INVISIBLE);
+//                    mVoiceRecordingContainerRl.setVisibility(View.INVISIBLE);
                     return false;
             }
         }

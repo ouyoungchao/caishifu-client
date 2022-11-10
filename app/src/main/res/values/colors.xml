@@ -37,4 +37,8 @@
     <color name="grey">#f7f7f7</color>
     <color name="black_deep">#FF000000</color>
     <color name="common_item_grey">#999999</color>
+    <color name="color_light_grey">#f0f0f0</color>
+    <color name="common_top_bar_grey">#ebebeb</color>
+    <color name="black">#000000</color>
+    <color name="praise_item">#8290AF</color>
 </resources>

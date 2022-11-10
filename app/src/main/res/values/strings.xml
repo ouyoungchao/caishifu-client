@@ -57,5 +57,6 @@
     <string name="delete">删除</string>
     <string name="tab_chats">菜师傅</string>
     <string name="tab_me">我</string>
+    <string name="connect_to_server_error">网络连接异常</string>
 </resources>
 

@@ -50,7 +50,7 @@
 
             </RelativeLayout>
 
-            <com.bc.wechat.widget.ExpandTextView
+            <com.shiliu.caishifu.widget.ExpandTextView
                 android:id="@+id/etv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <com.bc.wechat.widget.NineGridView
+            <com.shiliu.caishifu.widget.NineGridView
                 android:id="@+id/gv_photos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                 android:background="@drawable/bg_moments_like_and_comment"
                 android:orientation="vertical">
 
-                <com.bc.wechat.widget.MomentsLikeListView
+                <com.shiliu.caishifu.widget.MomentsLikeListView
                     android:id="@+id/lv_like"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                     android:textStyle="bold"
                     app:item_color="@color/navy_blue" />
 
-                <com.bc.wechat.widget.CommentsView
+                <com.shiliu.caishifu.widget.CommentsView
                     android:id="@+id/cv_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

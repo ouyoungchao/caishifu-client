@@ -1,5 +1,6 @@
 package com.shiliu.caishifu.activity;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -193,7 +194,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         paramMap.put("telephone", telephone);
         paramMap.put("password", MD5Util.encode(password, "utf8"));
         paramMap.put("deviceInfo", JSON.toJSONString(deviceInfo));
-        networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        /*networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure login ", e);
@@ -243,7 +245,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 });
 
             }
-        });
+        });*/
     }
 
     class TextChange implements TextWatcher {

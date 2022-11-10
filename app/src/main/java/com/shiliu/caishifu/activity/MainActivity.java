@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity implements Observer {
         mUser = PreferencesUtil.getInstance().getUser();
         registerMessageReceiver();
         refreshNewMsgsUnreadNum();
-        refreshNewFriendsUnreadNum();
+//        refreshNewFriendsUnreadNum();
         // 进入强制刷新，防止离线消息
         mChatFragment.refreshConversationList();
     }

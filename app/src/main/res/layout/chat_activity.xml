@@ -246,7 +246,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                        <!--<RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -267,7 +267,7 @@
                             android:gravity="center"
                             android:text="@string/album"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -278,7 +278,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                        <!--<RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -299,7 +299,7 @@
                             android:gravity="center"
                             android:text="拍摄"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -309,7 +309,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                       <!-- <RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -323,16 +323,16 @@
                                 android:onClick="onClick"
                                 android:scaleType="fitCenter"
                                 android:src="@mipmap/icon_chat_vedio" />
-                        </RelativeLayout>
+                        </RelativeLayout>-->
 
-                        <TextView
+                       <!-- <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/chat_multiple_type_text_margin_top"
                             android:gravity="center"
                             android:text="视频通话"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -343,7 +343,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                        <!--<RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -355,16 +355,16 @@
                                 android:layout_centerInParent="true"
                                 android:scaleType="fitCenter"
                                 android:src="@mipmap/icon_chat_location" />
-                        </RelativeLayout>
+                        </RelativeLayout>-->
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/chat_multiple_type_text_margin_top"
                             android:gravity="center"
                             android:text="位置"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
                 </LinearLayout>
@@ -384,7 +384,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                        <!--<RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -398,19 +398,19 @@
                                 android:clickable="true"
                                 android:onClick="onClick"
                                 android:scaleType="fitCenter" />
-                        </RelativeLayout>
+                        </RelativeLayout>-->
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/chat_multiple_type_text_margin_top"
                             android:gravity="center"
                             android:text="红包"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
-                    <LinearLayout
+                    <!--<LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -441,7 +441,7 @@
                             android:text="转账"
                             android:textColor="#727171"
                             android:textSize="@dimen/chat_multiple_type_text_size" />
-                    </LinearLayout>
+                    </LinearLayout>-->
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -450,7 +450,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                       <!-- <RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -464,16 +464,16 @@
                                 android:clickable="true"
                                 android:onClick="onClick"
                                 android:scaleType="fitCenter" />
-                        </RelativeLayout>
+                        </RelativeLayout>-->
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/chat_multiple_type_text_margin_top"
                             android:gravity="center"
                             android:text="语音输入"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -483,7 +483,7 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <RelativeLayout
+                      <!--  <RelativeLayout
                             android:layout_width="@dimen/chat_multiple_type_bg_width"
                             android:layout_height="@dimen/chat_multiple_type_bg_height"
                             android:background="@drawable/bg_chat_multiple_type">
@@ -497,16 +497,16 @@
                                 android:clickable="true"
                                 android:onClick="onClick"
                                 android:scaleType="fitCenter" />
-                        </RelativeLayout>
+                        </RelativeLayout>-->
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/chat_multiple_type_text_margin_top"
                             android:gravity="center"
                             android:text="我的收藏"
                             android:textColor="#727171"
-                            android:textSize="@dimen/chat_multiple_type_text_size" />
+                            android:textSize="@dimen/chat_multiple_type_text_size" />-->
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -540,7 +540,7 @@
             android:scrollbars="none"
             android:transcriptMode="normal" />
 
-        <RelativeLayout
+        <!--<RelativeLayout
             android:id="@+id/rl_voice_recording_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -566,7 +566,7 @@
                 android:padding="2dp"
                 android:text="手指上滑，取消发送"
                 android:textSize="12sp" />
-        </RelativeLayout>
+        </RelativeLayout>-->
     </RelativeLayout>
 
 </RelativeLayout>
