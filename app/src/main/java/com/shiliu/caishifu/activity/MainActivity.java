@@ -95,16 +95,16 @@ public class MainActivity extends BaseActivity implements Observer {
         mFragments = new Fragment[]{mChatFragment,
                 mDiscoverFragment, mMeFragment};
 
-        mMainButtonIvs = new ImageView[4];
+        mMainButtonIvs = new ImageView[3];
         mMainButtonIvs[0] = findViewById(R.id.iv_chats);
-        mMainButtonIvs[2] = findViewById(R.id.iv_discover);
-        mMainButtonIvs[3] = findViewById(R.id.iv_me);
+        mMainButtonIvs[1] = findViewById(R.id.iv_discover);
+        mMainButtonIvs[2] = findViewById(R.id.iv_me);
 
         mMainButtonIvs[0].setSelected(true);
-        mMainButtonTvs = new TextView[4];
+        mMainButtonTvs = new TextView[3];
         mMainButtonTvs[0] = findViewById(R.id.tv_chats);
-        mMainButtonTvs[2] = findViewById(R.id.tv_discover);
-        mMainButtonTvs[3] = findViewById(R.id.tv_me);
+        mMainButtonTvs[1] = findViewById(R.id.tv_discover);
+        mMainButtonTvs[2] = findViewById(R.id.tv_me);
         mMainButtonTvs[0].setTextColor(0xFF45C01A);
 
 //        mAddIv = findViewById(R.id.iv_add);
@@ -163,11 +163,11 @@ public class MainActivity extends BaseActivity implements Observer {
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
             case R.id.rl_discover:
-                mIndex = 2;
+                mIndex = 1;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
             case R.id.rl_me:
-                mIndex = 3;
+                mIndex = 2;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.white);
                 break;
         }
