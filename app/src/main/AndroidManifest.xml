@@ -36,6 +36,7 @@
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ImageTranslucentTheme" />
+        <activity android:name=".activity.MomentsActivity"></activity>
 
         <service
             android:name="cn.jpush.android.service.PushService"

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.UserInfo;
 
 public class ChatsFragment extends BaseFragment {
+
+    private static final String TAG = "ChatsFragment";
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -62,7 +65,9 @@ public class ChatsFragment extends BaseFragment {
         mConversationList = JMessageClient.getConversationList();
         if (null == mConversationList) {
             mConversationList = new ArrayList<>();
+            Log.i(TAG, "onActivityCreated: chatFragement not receive message");
         }
+        //填充消息
         mConversationAdapter = new ConversationAdapter(getActivity(), mConversationList);
         mConversationLv.setAdapter(mConversationAdapter);
 

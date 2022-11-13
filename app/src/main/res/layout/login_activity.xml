@@ -215,6 +215,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_centerVertical="true"
+                    android:layout_alignParentBottom="true"
                     android:background="@null"
                     android:hint="请填写密码"
                     android:inputType="textPassword"

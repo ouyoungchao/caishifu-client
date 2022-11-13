@@ -173,7 +173,7 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
             }
         });
 
-        getFriendMomentsListByUserId(mUser.getUserId());
+//        getFriendMomentsListByUserId(mUser.getUserId());
     }
 
     @OnClick({R.id.btn_send})

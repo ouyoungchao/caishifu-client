@@ -101,7 +101,7 @@
             android:textSize="13sp" />
     </LinearLayout>
 
-    <byc.imagewatcher.ImageWatcher
+    <com.shiliu.caishifu.image.ImageWatcher
         android:id="@+id/v_image_watcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -39,7 +39,7 @@
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="张三"
+                android:text="菜师傅"
                 android:textColor="#353535"
                 android:textSize="18.5sp"
                 android:textStyle="bold" />
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="微信号:"
+                android:text="帐号:"
                 android:textColor="@color/common_item_grey"
                 android:textSize="13sp" />
 
