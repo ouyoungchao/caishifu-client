@@ -13,6 +13,8 @@ public class CountDownTimerUtils extends CountDownTimer {
 
     private TextView mTextView;
 
+    private CountDownFinishCallBack countDownFinishCallBack;
+
     /**
      * @param millisInFuture    The number of millis in the future from the call
      *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
@@ -20,9 +22,10 @@ public class CountDownTimerUtils extends CountDownTimer {
      * @param countDownInterval The interval along the way to receive
      *                          {@link #onTick(long)} callbacks.
      */
-    public CountDownTimerUtils(TextView textView, long millisInFuture, long countDownInterval) {
+    public CountDownTimerUtils(TextView textView, long millisInFuture, long countDownInterval, CountDownFinishCallBack countDownFinishCallBack) {
         super(millisInFuture, countDownInterval);
         this.mTextView = textView;;
+        this.countDownFinishCallBack = countDownFinishCallBack;
     }
 
     @Override
@@ -44,5 +47,10 @@ public class CountDownTimerUtils extends CountDownTimer {
         mTextView.setTextColor(mTextView.getContext().getColor(R.color.btn_text_enable));
         mTextView.setClickable(true);
         mTextView.setBackgroundResource(R.drawable.btn_enable);
+        this.countDownFinishCallBack.onFinish();
+    }
+
+    public interface CountDownFinishCallBack{
+        public void onFinish();
     }
 }

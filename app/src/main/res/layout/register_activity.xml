@@ -242,6 +242,7 @@
                 android:textColor="@color/btn_text_disable"
                 android:textSize="@dimen/common_item_text_size" />
 
+
             <EditText
                 android:id="@+id/et_verification_code"
                 android:layout_width="match_parent"

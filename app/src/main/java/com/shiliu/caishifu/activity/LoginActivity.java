@@ -158,7 +158,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.btn_verification_code:
-                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificationBtn,60000,1000);
+                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificationBtn, 60000, 1000, new CountDownTimerUtils.CountDownFinishCallBack() {
+                    @Override
+                    public void onFinish() {
+                        // TODO: 2022/11/13
+                    }
+                });
                 countDownTimerUtils.start();
                 String telephone = mPhoneEt.getText().toString();
                 obtainVerificationCode(telephone);

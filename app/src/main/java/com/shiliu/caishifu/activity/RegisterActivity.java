@@ -124,7 +124,7 @@ public class RegisterActivity extends CommonActivity {
      */
     private boolean isBuyer = false;
 
-    private boolean isFistObtainVerification = true;
+    private boolean isDuringObtainVerification = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -216,10 +216,18 @@ public class RegisterActivity extends CommonActivity {
                 register(nickName, telephone, password, isBuyer, userAvatar);
                 break;
             case R.id.btn_verification_code:
-                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificateBtn, 60000, 1000);
-                countDownTimerUtils.start();
-                isFistObtainVerification = false;
                 telephone = mPhoneEt.getText().toString();
+                if(!ValidateUtil.isValidChinesePhone(telephone)){
+                    return;
+                }
+                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificateBtn, 60000, 1000, new CountDownTimerUtils.CountDownFinishCallBack() {
+                    @Override
+                    public void onFinish() {
+                        isDuringObtainVerification = false;
+                    }
+                });
+                countDownTimerUtils.start();
+                isDuringObtainVerification = true;
                 obtainVerificationCode();
                 break;
         }
@@ -421,7 +429,7 @@ public class RegisterActivity extends CommonActivity {
 
     private void checkObtainVerificationBtn() {
         boolean phoneHasText = ValidateUtil.isValidChinesePhone(mPhoneEt.getText().toString());
-        if (isFistObtainVerification && phoneHasText) {
+        if (phoneHasText && !isDuringObtainVerification) {
             mVerificateBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
             mVerificateBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
             mVerificateBtn.setEnabled(true);
