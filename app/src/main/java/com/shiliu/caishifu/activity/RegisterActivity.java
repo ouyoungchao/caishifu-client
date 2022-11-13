@@ -124,6 +124,8 @@ public class RegisterActivity extends CommonActivity {
      */
     private boolean isBuyer = false;
 
+    private boolean isFistObtainVerification = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,8 +216,9 @@ public class RegisterActivity extends CommonActivity {
                 register(nickName, telephone, password, isBuyer, userAvatar);
                 break;
             case R.id.btn_verification_code:
-                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificateBtn,60000,1000);
+                CountDownTimerUtils countDownTimerUtils = new CountDownTimerUtils(mVerificateBtn, 60000, 1000);
                 countDownTimerUtils.start();
+                isFistObtainVerification = false;
                 telephone = mPhoneEt.getText().toString();
                 obtainVerificationCode();
                 break;
@@ -273,6 +276,7 @@ public class RegisterActivity extends CommonActivity {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             checkSubmit();
+            checkObtainVerificationBtn();
         }
 
         @Override
@@ -401,21 +405,26 @@ public class RegisterActivity extends CommonActivity {
         boolean passwordHasText = ValidateUtil.validatePassword(mPasswordEt.getText().toString());
         boolean confimPassword = mPasswordEt.getText().toString().equals(mConfimPasswordEt.getText().toString());
         boolean authCodeText = mVerificateEt.getText().toString().length() == 4 ? true : false;
-        if (phoneHasText) {
+        if (nickNameHasText && phoneHasText && passwordHasText && authCodeText && confimPassword && mIsAgree) {
+            // 注册按钮可用
+            mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
+            mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
+            mRegisterBtn.setEnabled(true);
+        } else {
+            // 注册按钮不可用
+            mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
+            mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
+            mRegisterBtn.setEnabled(false);
+        }
+
+    }
+
+    private void checkObtainVerificationBtn() {
+        boolean phoneHasText = ValidateUtil.isValidChinesePhone(mPhoneEt.getText().toString());
+        if (isFistObtainVerification && phoneHasText) {
             mVerificateBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
             mVerificateBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
             mVerificateBtn.setEnabled(true);
-            if (nickNameHasText && phoneHasText && passwordHasText && authCodeText&& confimPassword && mIsAgree) {
-                // 注册按钮可用
-                mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.btn_bg_enable));
-                mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_enable));
-                mRegisterBtn.setEnabled(true);
-            } else {
-                // 注册按钮不可用
-                mRegisterBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
-                mRegisterBtn.setTextColor(getResources().getColor(R.color.btn_text_disable));
-                mRegisterBtn.setEnabled(false);
-            }
         } else {
             //获取验证码按钮不可用
             mVerificateBtn.setBackgroundColor(getResources().getColor(R.color.register_btn_bg_disable));
