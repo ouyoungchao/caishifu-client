@@ -26,6 +26,8 @@ import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.ResponseMsg;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -138,6 +140,7 @@ public class RegisterActivity extends CommonActivity {
         mDialog = new LoadingDialog(RegisterActivity.this);
         mUserDao = new UserDao();
         initView();
+        ExampleUtil.initToast();
     }
 
     private void initView() {
@@ -341,7 +344,7 @@ public class RegisterActivity extends CommonActivity {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("nickName", nickName);
         paramMap.put("telephone", telephone);
-        paramMap.put("isBuyer", isBuyer ? "true" : "false");
+        paramMap.put("isBuyer", isBuyer ? 1 : 0);
         paramMap.put("password", MD5Util.encode(password, "utf8"));
         paramMap.put("icon", userAvatar);
         networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
@@ -350,7 +353,7 @@ public class RegisterActivity extends CommonActivity {
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: " + url, e);
                 mDialog.dismiss();
-                ExampleUtil.initToast(RegisterActivity.this, getResources().getString(R.string.register_failed), Toast.LENGTH_SHORT);
+                ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.register_failed), Toast.LENGTH_SHORT);
                 return;
             }
 
@@ -360,45 +363,30 @@ public class RegisterActivity extends CommonActivity {
                 int code = response.code();
                 switch (code) {
                     case 200:
-                        final User user = JsonUtil.jsoToObject(response.body().byteStream(), User.class);
-                        Log.d(TAG, "onResponse userId:" + user.getUserId());
+//                        Log.d(TAG, "onResponse: " + response.body().string());
+                        UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                        Log.d(TAG, "onResponse user:" + result.getData().getUmsLoginInfo());
                         // 登录成功后设置user和isLogin至sharedpreferences中
-                        PreferencesUtil.getInstance().setUser(user);
-//                        PreferencesUtil.getInstance().setLogin(true);
-                        // 注册jpush实现消息推送
+                        PreferencesUtil.getInstance().setUserLoginInfo(result.getData().getUmsLoginInfo());
+                        PreferencesUtil.getInstance().setLogin(true);
                         // TODO: 2022/9/12
-//                        JPushInterface.setAlias(RegisterActivity.this, sequence, user.getUserId());
-                        List<User> friendList = user.getContactList();
-                        if (null != friendList && friendList.size() > 0) {
-                            for (User userFriend : friendList) {
-                                if (null != userFriend) {
-                                    userFriend.setIsFriend(Constant.IS_FRIEND);
-                                    mUserDao.saveUser(userFriend);
-                                }
-                            }
-                        }
-                        // TODO: 2022/9/12
-//                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                         finish();
-                        // 登录极光im
-                        // TODO: 2022/9/12
-                       /* JMessageClient.login(user.getUserId(), user.getUserImPassword(), new BasicCallback() {
-                            @Override
-                            public void gotResult(int responseCode, String responseMessage) {
-                                Log.d(TAG, "responseCode: " + responseCode + ", responseMessage: " + responseMessage);
-                            }
-                        });*/
-                    case 400:
-                        String responseCode = response.headers().get("responseCode");
-                        if (ResponseMsg.USER_EXISTS.getResponseCode().equals(responseCode)) {
-                            Toast.makeText(RegisterActivity.this,
-                                    R.string.user_exists, Toast.LENGTH_SHORT)
-                                    .show();
-                        } else {
-                            mDialog.dismiss();
-                            ExampleUtil.initToast(RegisterActivity.this, getResources().getString(R.string.account_or_password_error), Toast.LENGTH_SHORT);
+                        break;
+                    case 500:
+//                        Log.d(TAG, "onResponse: " + response.body().string());
+                        result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                        if (ResultCode.REGISTER_FAILED_USER_EXIST.getCode() == (result.getCode())) {
+                            ExampleUtil.showToast(RegisterActivity.this,
+                                    getResources().getString(R.string.user_exists), Toast.LENGTH_SHORT);
                         }
-
+                        mDialog.dismiss();
+                        break;
+                  default:
+                      Log.d(TAG, "onResponse: " + response.body().string());
+                      mDialog.dismiss();
+                      ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.account_or_password_error), Toast.LENGTH_SHORT);
+                      break;
                 }
             }
         });

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.model.PositionInfo;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.UmsLoginInfo;
 
 
 import java.io.ByteArrayInputStream;
@@ -209,6 +210,20 @@ public class PreferencesUtil {
             Log.e(TAG, "getUser error",e);
         }
         return user;
+    }
+
+    public void setUserLoginInfo(UmsLoginInfo umsLoginInfo) {
+        saveParam("umsLoginInfo", JSON.toJSONString(umsLoginInfo));
+    }
+
+    public UmsLoginInfo getUmsLoginInfo() {
+        UmsLoginInfo umsLoginInfo = null;
+        try {
+            umsLoginInfo = JSON.parseObject((String) getParam("user", ""), UmsLoginInfo.class);
+        } catch (Exception e) {
+            Log.e(TAG, "getUmsLoginInfo error",e);
+        }
+        return umsLoginInfo;
     }
 
     public void setNewFriendsUnreadNumber(int newFriendsUnreadNumber) {

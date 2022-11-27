@@ -90,10 +90,20 @@ public class ExampleUtil {
         }
     }
 
-    public static void initToast(Context context, String message, int length) {
-        Looper.prepare();
+    public static void showToast(Context context, String message, int length) {
+        if(Looper.myLooper() == null) {
+            Looper.prepare();
+        }
         Toast.makeText(context, message, length).show();
-        Looper.loop();
+//        Looper.loop();
+    }
+
+    public static void initToast() {
+        if(Looper.myLooper() == null) {
+            Looper.prepare();
+//                    Toast.makeText(context, message, length).show();
+            Looper.loop();
+        }
     }
 
     public static boolean isConnected(Context context) {

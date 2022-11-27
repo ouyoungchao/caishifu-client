@@ -78,7 +78,7 @@ public class FlashActivity extends FragmentActivity implements View.OnClickListe
                 }
                 if (PreferencesUtil.getInstance().isLogin()) {
                     // 已登录，跳至主页面
-//                    startActivity(new Intent(FlashActivity.this, MainActivity.class));
+                    startActivity(new Intent(FlashActivity.this, MainActivity.class));
                     finish();
                 } else {
                     mHandler.sendMessage(mHandler.obtainMessage(SHOW_OPERATE_BTN));

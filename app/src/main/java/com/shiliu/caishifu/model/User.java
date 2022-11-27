@@ -95,7 +95,7 @@ public class User extends SugarRecord {
     private String userQrCode;
 
     /**
-     * 是否为freing
+     * 是否为friend
      */
     private String isFriend;
 
@@ -501,4 +501,13 @@ public class User extends SugarRecord {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", userNickName='" + userNickName + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", isBuyer='" + isBuyer + '\'' +
+                '}';
+    }
 }

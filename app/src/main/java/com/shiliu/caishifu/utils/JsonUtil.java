@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shiliu.caishifu.model.server.CommonResult;
+import com.shiliu.caishifu.model.server.UserResult;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 

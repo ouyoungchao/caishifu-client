@@ -54,6 +54,7 @@ public class NetworkUtil {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "doPostRequest: "+ url , e);
                 callbak.onFailure(call, e);
             }
 
@@ -62,6 +63,17 @@ public class NetworkUtil {
                 callbak.onResponse(call, response);
             }
         });
+    }
+
+    public Response doPostRequest(String url, String json){
+        RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
+        Request request = new Request.Builder().url(url).post(body).build();
+        try {
+             return okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            Log.e(TAG, "doPostRequest: "+ url , e);
+        }
+        return null;
     }
 
     /**
