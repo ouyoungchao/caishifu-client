@@ -16,6 +16,8 @@ import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.DeviceInfo;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.DeviceInfoUtil;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -194,17 +196,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mDialog.show();
         DeviceInfo deviceInfo = DeviceInfoUtil.getInstance().getDeviceInfo(this);
         String url = Constant.BASE_URL + "users/login";
+        if(loginType == Constant.LOGIN_TYPE_PHONE_AND_PASSWORD){
+            url = url+"?verificationCode=false";
+        }else{
+            url = url+"?verificationCode=true";
+        }
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("loginType", loginType);
         paramMap.put("telephone", telephone);
         paramMap.put("password", MD5Util.encode(password, "utf8"));
         paramMap.put("deviceInfo", JSON.toJSONString(deviceInfo));
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        /*networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
+        networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure login ", e);
-                ExampleUtil.initToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
+                ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
                 mDialog.dismiss();
             }
 
@@ -212,45 +217,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "server response: " + response);
                 // TODO: 2022/10/15
-                User user = null;
+                UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
 //                final User user = JSON.parseObject(response, User.class);
-                Log.d(TAG, "userId:" + user.getUserId());
-
-                // 登录极光im
-                JMessageClient.login(user.getUserId(), user.getUserImPassword(), new BasicCallback() {
-                    @Override
-                    public void gotResult(int responseCode, String responseMessage) {
-                        if (responseCode == 0) {
-                            // 极光im登录成功
-                            // 登录成功后设置user和isLogin至sharedpreferences中
-                            PreferencesUtil.getInstance().setUser(user);
-                            PreferencesUtil.getInstance().setLogin(true);
-                            // 注册jpush
-//                            JPushInterface.setAlias(PhoneLoginFinalActivity.this, sequence, user.getUserId());
-//                            List<User> contactList = user.getContactList();
-//                            if (!CollectionUtils.isEmpty(contactList)) {
-//                                for (User contact : contactList) {
-//                                    if (null != contact) {
-//                                        contact.setIsFriend(Constant.IS_FRIEND);
-//                                        mUserDao.saveUser(contact);
-//                                    }
-//                                }
-//                            }
-//                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
-                        } else {
-                            // 极光im登录失败
-//                            Toast.makeText(PhoneLoginFinalActivity.this,
-//                                    R.string.account_or_password_error, Toast.LENGTH_SHORT)
-//                                    .show();
-                        }
-                        // 上面都是耗时操作
-                        mDialog.dismiss();
-                    }
-                });
-
+//                Log.d(TAG, "userId:" + user.getUserId());
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
-        });*/
+        });
     }
 
     class TextChange implements TextWatcher {
