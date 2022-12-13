@@ -7,12 +7,14 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -25,7 +27,7 @@ public class NetworkUtil {
     private static NetworkUtil instance;
 
 
-    private static OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).build();
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(100, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).build();
 
     public static synchronized NetworkUtil getInstance(Context context) {
         if (instance == null) {
@@ -46,6 +48,30 @@ public class NetworkUtil {
             Log.e(TAG, "getRequest: " + url + " error ", e);
         }
         return null;
+    }
+
+    public void doPostRequest(String url, Map<String, String> body, final NetworkCallbak callbak){
+        FormBody.Builder formBody = new FormBody.Builder();
+        if(!body.isEmpty()) {
+            Iterator<Map.Entry<String, String>> iterator = body.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, String> entry = iterator.next();
+                formBody.add(entry.getKey(),entry.getValue());
+            }
+        }
+        Request request = new Request.Builder().url(url).post(formBody.build()).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "doPostRequest: "+ url , e);
+                callbak.onFailure(call, e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                callbak.onResponse(call, response);
+            }
+        });
     }
 
     public void doPostRequest(String url, String json, final NetworkCallbak callbak) {

@@ -1,6 +1,6 @@
 package com.shiliu.caishifu.model.server;
 
-public class CommonResult {
+public class CommonResult<T> {
     /**
      * 状态码
      */
@@ -10,12 +10,20 @@ public class CommonResult {
      */
     private String message;
 
+    private T data;
+
     protected CommonResult() {
     }
 
     protected CommonResult(long code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    public CommonResult(long code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
 
     public long getCode() {
@@ -32,5 +40,13 @@ public class CommonResult {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

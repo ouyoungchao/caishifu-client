@@ -12,8 +12,6 @@ public class UmsInfo implements Serializable {
         this.umsLoginInfo = umsLoginInfo;
     }
 
-
-
     public UmsLoginInfo getUmsLoginInfo() {
         return umsLoginInfo;
     }

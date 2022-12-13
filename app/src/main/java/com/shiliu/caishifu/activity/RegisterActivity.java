@@ -27,6 +27,7 @@ import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.ResponseMsg;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UmsInfo;
 import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
@@ -210,13 +211,14 @@ public class RegisterActivity extends CommonActivity {
                 String nickName = mNickNameEt.getText().toString();
                 String telephone = mPhoneEt.getText().toString();
                 String password = mPasswordEt.getText().toString();
+                String authCode = mVerificateEt.getText().toString();
                 if (!ValidateUtil.validatePassword(password)) {
                     mDialog.dismiss();
                     Toast.makeText(RegisterActivity.this, R.string.password_rules,
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-                register(nickName, telephone, password, isBuyer, userAvatar);
+                register(nickName, telephone, password, isBuyer, authCode);
                 break;
             case R.id.btn_verification_code:
                 telephone = mPhoneEt.getText().toString();
@@ -339,15 +341,15 @@ public class RegisterActivity extends CommonActivity {
      * @param password  密码
      * @param isBuyer   是否为采购
      */
-    private void register(String nickName, String telephone, String password, boolean isBuyer, String userAvatar) {
-        String url = Constant.BASE_URL + "caishifu/register";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("nickName", nickName);
+    private void register(String nickName, String telephone, String password, boolean isBuyer, String authCode) {
+        String url = Constant.BASE_URL + "caishifu/sso/register";
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("nicName", nickName);
         paramMap.put("telephone", telephone);
-        paramMap.put("isBuyer", isBuyer ? 1 : 0);
+        paramMap.put("isBuyer", isBuyer ? "true" : "false");
         paramMap.put("password", MD5Util.encode(password, "utf8"));
-        paramMap.put("icon", userAvatar);
-        networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
+        paramMap.put("authCode", authCode);
+        networkUtil.doPostRequest(url, paramMap, new NetworkUtil.NetworkCallbak() {
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -363,22 +365,19 @@ public class RegisterActivity extends CommonActivity {
                 int code = response.code();
                 switch (code) {
                     case 200:
-//                        Log.d(TAG, "onResponse: " + response.body().string());
-                        UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                        Log.d(TAG, "onResponse user:" + result.getData().getUmsLoginInfo());
-                        // 登录成功后设置user和isLogin至sharedpreferences中
-                        PreferencesUtil.getInstance().setUserLoginInfo(result.getData().getUmsLoginInfo());
-                        PreferencesUtil.getInstance().setLogin(true);
-                        // TODO: 2022/9/12
-                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+//
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         finish();
                         break;
                     case 500:
 //                        Log.d(TAG, "onResponse: " + response.body().string());
-                        result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                        UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
                         if (ResultCode.REGISTER_FAILED_USER_EXIST.getCode() == (result.getCode())) {
                             ExampleUtil.showToast(RegisterActivity.this,
-                                    getResources().getString(R.string.user_exists), Toast.LENGTH_SHORT);
+                                    ResultCode.REGISTER_FAILED_USER_EXIST.getMessage(), Toast.LENGTH_SHORT);
+                        }else if(ResultCode.VERIFICATION_CODE_INVALID.getCode() == result.getCode()){
+                            ExampleUtil.showToast(RegisterActivity.this,
+                                    ResultCode.VERIFICATION_CODE_INVALID.getMessage(), Toast.LENGTH_SHORT);
                         }
                         mDialog.dismiss();
                         break;

@@ -17,6 +17,8 @@ import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.DeviceInfo;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.TokenInfo;
+import com.shiliu.caishifu.model.server.TokenResult;
 import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.DeviceInfoUtil;
@@ -195,17 +197,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
         DeviceInfo deviceInfo = DeviceInfoUtil.getInstance().getDeviceInfo(this);
-        String url = Constant.BASE_URL + "users/login";
-        if(loginType == Constant.LOGIN_TYPE_PHONE_AND_PASSWORD){
-            url = url+"?verificationCode=false";
-        }else{
-            url = url+"?verificationCode=true";
-        }
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("telephone", telephone);
-        paramMap.put("password", MD5Util.encode(password, "utf8"));
+        String url = Constant.BASE_URL + "caishifu/sso/login";
+        Map<String, String> paramMap = new HashMap<>();
         paramMap.put("deviceInfo", JSON.toJSONString(deviceInfo));
-        networkUtil.doPostRequest(url, JsonUtil.objectToJson(paramMap), new NetworkUtil.NetworkCallbak() {
+        paramMap.put("telephone", telephone);
+        if(loginType == Constant.LOGIN_TYPE_PHONE_AND_PASSWORD){
+            paramMap.put("password", password);
+        }else{
+            paramMap.put("password", verificationCode);
+            paramMap.put("isAuthCode","true");
+        }
+//        paramMap.put("password", MD5Util.encode(password, "utf8"));
+        networkUtil.doPostRequest(url, paramMap, new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure login ", e);
@@ -216,11 +219,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "server response: " + response);
-                // TODO: 2022/10/15
-                UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-//                final User user = JSON.parseObject(response, User.class);
-//                Log.d(TAG, "userId:" + user.getUserId());
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                mDialog.dismiss();
+                TokenResult tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResult.class);
+                if(response.code() == 200) {
+                    PreferencesUtil.getInstance().saveParam("tokenInfo",tokenResult.getData());
+                    PreferencesUtil.getInstance().setLogin(true);
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                }else if(response.code() == 500){
+                    if(tokenResult.getCode() == ResultCode.LOGIN_USERNAME_OR_PASSWOR_ERROR.getCode()){
+                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_USERNAME_OR_PASSWOR_ERROR.getMessage(), Toast.LENGTH_SHORT);
+                    }else if(tokenResult.getCode() == ResultCode.LOGIN_USERNAME_IS_FIRBIDDEN.getCode()) {
+                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_USERNAME_IS_FIRBIDDEN.getMessage(), Toast.LENGTH_SHORT);
+                    } else {
+                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_ERROR.getMessage(), Toast.LENGTH_SHORT);
+                    }
+                }else{
+                    Log.d(TAG, "Login failed with code " + response.code());
+                    ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
+                }
             }
         });
     }
