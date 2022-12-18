@@ -24,11 +24,9 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
-import com.shiliu.caishifu.model.ResponseMsg;
-import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.CommonResult;
 import com.shiliu.caishifu.model.server.ResultCode;
-import com.shiliu.caishifu.model.server.UmsInfo;
-import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.model.server.UserResultAbstract;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -36,7 +34,7 @@ import com.shiliu.caishifu.utils.FileUtil;
 import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.MD5Util;
 import com.shiliu.caishifu.utils.NetworkUtil;
-import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.SortMessageUtil;
 import com.shiliu.caishifu.utils.ValidateUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
@@ -233,7 +231,7 @@ public class RegisterActivity extends CommonActivity {
                 });
                 countDownTimerUtils.start();
                 isDuringObtainVerification = true;
-                obtainVerificationCode();
+                obtainVerificationCode(telephone);
                 break;
         }
     }
@@ -371,7 +369,7 @@ public class RegisterActivity extends CommonActivity {
                         break;
                     case 500:
 //                        Log.d(TAG, "onResponse: " + response.body().string());
-                        UserResult result = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                        UserResultAbstract result = JsonUtil.jsoToObject(response.body().byteStream(), UserResultAbstract.class);
                         if (ResultCode.REGISTER_FAILED_USER_EXIST.getCode() == (result.getCode())) {
                             ExampleUtil.showToast(RegisterActivity.this,
                                     ResultCode.REGISTER_FAILED_USER_EXIST.getMessage(), Toast.LENGTH_SHORT);
@@ -431,12 +429,26 @@ public class RegisterActivity extends CommonActivity {
     /**
      * 校验手机号码
      */
-    private void obtainVerificationCode() {
-        String telephone = mPhoneEt.getText().toString();
+    private void obtainVerificationCode(String telephone) {
         if (ValidateUtil.isValidChinesePhone(telephone)) {
-            // TODO: 2022/10/13  获取验证码
+            SortMessageUtil.getAuthCode(this, telephone, new NetworkUtil.NetworkCallbak() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                    Log.e(TAG, "onFailure getAuthCode", e);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.i(TAG, "onResponse: getAuthCode success");
+                    CommonResult commonResult = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
+                    if(commonResult.getCode() == ResultCode.VERIFICATION_GET_FAILED.getCode()){
+                        ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                    }
+                }
+            });
         } else {
-            // TODO: 2022/10/13 手机号码不正确
+
         }
     }
 }

@@ -15,11 +15,10 @@ import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.DeviceInfo;
-import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.AbstractCommonResult;
+import com.shiliu.caishifu.model.server.CommonResult;
 import com.shiliu.caishifu.model.server.ResultCode;
-import com.shiliu.caishifu.model.server.TokenInfo;
-import com.shiliu.caishifu.model.server.TokenResult;
-import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.model.server.TokenResultAbstract;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.DeviceInfoUtil;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -27,6 +26,7 @@ import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.MD5Util;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.SortMessageUtil;
 import com.shiliu.caishifu.utils.ValidateUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
@@ -38,8 +38,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.jpush.im.android.api.JMessageClient;
-import cn.jpush.im.api.BasicCallback;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -181,6 +179,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * @param telephone
      */
     private void obtainVerificationCode(String telephone) {
+        SortMessageUtil.getAuthCode(this, telephone,new NetworkUtil.NetworkCallbak() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                Log.e(TAG, "onFailure getAuthCode", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i(TAG, "onResponse: getAuthCode success");
+                CommonResult commonResult = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
+                if(commonResult.getCode() == ResultCode.VERIFICATION_GET_FAILED.getCode()){
+                    ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                }
+            }
+        });
     }
 
 
@@ -202,7 +217,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         paramMap.put("deviceInfo", JSON.toJSONString(deviceInfo));
         paramMap.put("telephone", telephone);
         if(loginType == Constant.LOGIN_TYPE_PHONE_AND_PASSWORD){
-            paramMap.put("password", password);
+            paramMap.put("password", MD5Util.encode(password, "utf8"));
+            paramMap.put("isAuthCode","false");
         }else{
             paramMap.put("password", verificationCode);
             paramMap.put("isAuthCode","true");
@@ -220,7 +236,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "server response: " + response);
                 mDialog.dismiss();
-                TokenResult tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResult.class);
+                TokenResultAbstract tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResultAbstract.class);
                 if(response.code() == 200) {
                     PreferencesUtil.getInstance().saveParam("tokenInfo",tokenResult.getData());
                     PreferencesUtil.getInstance().setLogin(true);

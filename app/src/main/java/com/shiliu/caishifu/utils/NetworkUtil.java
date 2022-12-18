@@ -50,6 +50,12 @@ public class NetworkUtil {
         return null;
     }
 
+
+    public void doGetReRequest(String url, final NetworkCallbak callbak){
+        Request request = new Request.Builder().url(url).build();
+        okHttpClient.newCall(request).enqueue(callbak);
+    }
+
     public void doPostRequest(String url, Map<String, String> body, final NetworkCallbak callbak){
         FormBody.Builder formBody = new FormBody.Builder();
         if(!body.isEmpty()) {
@@ -60,35 +66,13 @@ public class NetworkUtil {
             }
         }
         Request request = new Request.Builder().url(url).post(formBody.build()).build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "doPostRequest: "+ url , e);
-                callbak.onFailure(call, e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                callbak.onResponse(call, response);
-            }
-        });
+        okHttpClient.newCall(request).enqueue(callbak);
     }
 
     public void doPostRequest(String url, String json, final NetworkCallbak callbak) {
         RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
         Request request = new Request.Builder().url(url).post(body).build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "doPostRequest: "+ url , e);
-                callbak.onFailure(call, e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                callbak.onResponse(call, response);
-            }
-        });
+        okHttpClient.newCall(request).enqueue(callbak);
     }
 
     public Response doPostRequest(String url, String json){

@@ -13,6 +13,8 @@ public enum ResultCode {
     LOGIN_ERROR(1105, "服务器登录异常"),
     //验证码相关错误
     VERIFICATION_CODE_INVALID(1200, "验证码错误"),
+    VERIFICATION_GET_SUCCESS(1201,"获取验证码成功"),
+    VERIFICATION_GET_FAILED(1201,"证码获取失败"),
 
 
     VALIDATE_FAILED(404, "参数检验失败"),

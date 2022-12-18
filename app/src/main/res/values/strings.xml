@@ -36,6 +36,7 @@
     <string name="login_failed">登录失败，请重试</string>
     <string name="delay_obtain_verification_code"> s后重新获取验证码</string>
     <string name="retry_obtain_verification_code">重新获取验证码</string>
+    <string name="obtain_verification_code_failed">获取验证码失败</string>
 
     <!--  permission  -->
     <string name="request_permission">权限设置</string>
