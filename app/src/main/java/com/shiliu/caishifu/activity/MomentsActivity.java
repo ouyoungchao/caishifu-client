@@ -186,10 +186,11 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
         }
     }
 
+    //朋友圈头像和背景设置
     private void setHeader(RecyclerView view) {
-       /* View header = LayoutInflater.from(this).inflate(R.layout.item_my_moments_header, view, false);
+        View header = LayoutInflater.from(this).inflate(R.layout.my_moments_header_item, view, false);
         mAvatarSdv = header.findViewById(R.id.sdv_avatar);
-        mAdapter.setHeaderView(header);*/
+        mAdapter.setHeaderView(header);
     }
 
     //评论

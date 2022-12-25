@@ -38,6 +38,8 @@
             android:theme="@style/ImageTranslucentTheme" />
         <activity android:name=".activity.MomentsActivity"></activity>
 
+        <activity android:name=".activity.FriendsCircleActivity"></activity>
+
         <service
             android:name="cn.jpush.android.service.PushService"
             android:process=":multiprocess"

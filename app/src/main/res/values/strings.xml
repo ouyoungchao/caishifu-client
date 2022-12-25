@@ -59,5 +59,29 @@
     <string name="tab_chats">菜师傅</string>
     <string name="tab_me">我</string>
     <string name="connect_to_server_error">网络连接异常</string>
+    <string name="edit_contact">设置备注和标签</string>
+    <string name="tag">标签</string>
+    <string name="description">描述</string>
+    <string name="add_description">添加更多备注信息</string>
+    <string name="moments">菜市场</string>
+    <string name="more_info">更多信息</string>
+    <string name="send_message">发送消息</string>
+    <string name="voice_or_video_call">音视频通话</string>
+    <string name="blocked_contact_tips">已添加至黑名单，你将不再收到对方的消息</string>
+    <string name="add_star">设为星标朋友</string>
+    <string name="block_contact">加入黑名单</string>
+    <string name="report">投诉</string>
+    <string name="complete">完成</string>
+
+    <string name="remark_name">备注名</string>
+    <string name="sort_friend_by_tag">添加标签对联系人进行分类</string>
+    <string name="phone_num">电话号码</string>
+    <string name="add_phone_num">添加电话号码</string>
+
+    <string name="add_tag">添加标签</string>
+    <string name="all_tag">所有标签</string>
+    <string name="save">保存</string>
+    <string name="call">呼叫</string>
+    <string name="copy">拷贝</string>
 </resources>
 

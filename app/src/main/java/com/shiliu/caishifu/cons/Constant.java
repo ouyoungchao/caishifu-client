@@ -88,4 +88,13 @@ public class Constant {
      * 位置消息
      */
     public static final String MSG_TYPE_LOCATION = "location";
+    public static final int DEFAULT_PAGE_SIZE = 10;
+
+    /**
+     * 非星标好友
+     */
+    public static final String CONTACT_IS_NOT_STARRED = "0";
+
+    public static final String USER_SEX_MALE = "1";
+    public static final String USER_SEX_FEMALE = "2";
 }

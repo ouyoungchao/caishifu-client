@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.FriendsCircleActivity;
 import com.shiliu.caishifu.activity.MainActivity;
 import com.shiliu.caishifu.activity.MomentsActivity;
 import com.shiliu.caishifu.widget.ConfirmDialog;
@@ -233,7 +234,7 @@ public class DiscoverFragment extends BaseFragment {
         String[] permissions;
         switch (view.getId()) {
             case R.id.rl_vegetable_market:
-                startActivity(new Intent(getActivity(), MomentsActivity.class));
+                startActivity(new Intent(getActivity(), FriendsCircleActivity.class));
                 break;
         }
     }

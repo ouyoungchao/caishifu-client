@@ -128,7 +128,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return;
         }
         final int position = getRealPosition(viewHolder);
-        Moments moments = mMomentsList.get(position);
+      /*  Moments moments = mMomentsList.get(position);
         if (viewHolder instanceof TextViewHolder) {
             //将数据添加到布局中
             TextViewHolder textViewHolder = (TextViewHolder) viewHolder;
@@ -157,7 +157,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
             }
-        } /*else if (viewHolder instanceof VideoViewHolder) {
+        } *//*else if (viewHolder instanceof VideoViewHolder) {
             //将数据添加到另一个布局中
             VideoViewHolder videoViewHolder = (VideoViewHolder) viewHolder;
             if (!TextUtils.isEmpty(moments.getThumbnails())) {
@@ -178,7 +178,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }*/
         // 处理公用部分
-        final BaseViewHolder baseViewHolder = (BaseViewHolder) viewHolder;
+      /*  final BaseViewHolder baseViewHolder = (BaseViewHolder) viewHolder;
         // 头像
         if (!TextUtils.isEmpty(moments.getUserAvatar())) {
             baseViewHolder.mAvatarSdv.setImageURI(Uri.parse(moments.getUserAvatar()));
@@ -195,7 +195,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            baseViewHolder.mLikeAndCommentLl.setVisibility(View.VISIBLE);
             // 点赞列表
             if (!CollectionUtils.isEmpty(moments.getLikeUserList())) {
-              /*  baseViewHolder.mLikeLv.setVisibility(View.VISIBLE);
+              *//*  baseViewHolder.mLikeLv.setVisibility(View.VISIBLE);
 
                 baseViewHolder.mLikeLv.setData(moments.getLikeUserList());
                 baseViewHolder.mLikeLv.setOnItemClickListener(new MomentsLikeListView.OnItemClickListener() {
@@ -203,7 +203,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public void onClick(int position) {
 //                        onclickUser(mList.get(position).getFabulous().get(position).getUserid() + "");
                     }
-                });*/
+                });*//*
             } else {
             // TODO: 2022/11/6  
 //                baseViewHolder.mLikeLv.setVisibility(View.GONE);
@@ -211,7 +211,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // 评论列表
             if (!CollectionUtils.isEmpty(moments.getMomentsCommentList())) {
                 // TODO: 2022/11/6  
-                /*baseViewHolder.mCommentsCv.setVisibility(View.VISIBLE);
+                *//*baseViewHolder.mCommentsCv.setVisibility(View.VISIBLE);
                 baseViewHolder.mCommentsCv.setData(moments.getMomentsCommentList());
                 baseViewHolder.mCommentsCv.setOnCommentListener(new CommentsView.CommentListener() {
                     @SuppressLint("NewApi")
@@ -244,7 +244,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
 //
-                baseViewHolder.mCommentsCv.notifyDataSetChanged();*/
+                baseViewHolder.mCommentsCv.notifyDataSetChanged();*//*
             } else {
                 // TODO: 2022/11/6  
 //                baseViewHolder.mCommentsCv.setVisibility(View.GONE);
@@ -252,7 +252,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else {
         // TODO: 2022/11/6  
 //            baseViewHolder.mLikeAndCommentLl.setVisibility(View.GONE);
-        }
+        }*/
     // TODO: 2022/11/6
        /* if (moments.getUserId().equals(mUser.getUserId())) {
             baseViewHolder.mDeleteTv.setVisibility(View.VISIBLE);

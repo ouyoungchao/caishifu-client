@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:scrollY="24dip">
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="fill_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/bg_friends_circle_cover" />
+
+    <ImageView
+        android:id="@+id/iv_friends_circle_progress"
+        android:layout_width="24dip"
+        android:layout_height="24dip"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dip"
+        android:layout_marginTop="40dp"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/icon_friends_circle_progress"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_nick_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_cover"
+        android:layout_marginRight="14dp"
+        android:layout_toLeftOf="@+id/sdv_avatar"
+        android:paddingTop="40dp"
+        android:paddingBottom="5dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdv_avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignTop="@+id/tv_nick_name"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="15dp"
+        android:scaleType="fitXY"
+        fresco:placeholderImage="@mipmap/default_user_avatar" />
+
+</RelativeLayout>

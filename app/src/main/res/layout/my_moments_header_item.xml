@@ -7,7 +7,7 @@
     android:background="@color/color_moments_default_cover"
     android:orientation="vertical"
     tools:ignore="ContentDescription">
-
+    <!--朋友圈头-->
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/sdv_moments_cover"
         android:layout_width="match_parent"

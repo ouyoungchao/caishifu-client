@@ -6,17 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
@@ -97,13 +93,13 @@ public class MainActivity extends BaseActivity implements Observer {
 
         mMainButtonIvs = new ImageView[3];
         mMainButtonIvs[0] = findViewById(R.id.iv_chats);
-        mMainButtonIvs[1] = findViewById(R.id.iv_discover);
+        mMainButtonIvs[1] = findViewById(R.id.vegetable_market);
         mMainButtonIvs[2] = findViewById(R.id.iv_me);
 
         mMainButtonIvs[0].setSelected(true);
         mMainButtonTvs = new TextView[3];
         mMainButtonTvs[0] = findViewById(R.id.tv_chats);
-        mMainButtonTvs[1] = findViewById(R.id.tv_discover);
+        mMainButtonTvs[1] = findViewById(R.id.tv_vegetable_market);
         mMainButtonTvs[2] = findViewById(R.id.tv_me);
         mMainButtonTvs[0].setTextColor(0xFF45C01A);
 
@@ -162,7 +158,7 @@ public class MainActivity extends BaseActivity implements Observer {
                 mIndex = 0;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
-            case R.id.rl_discover:
+            case R.id.rl_vegetable_market:
                 mIndex = 1;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;

@@ -62,8 +62,17 @@ dependencies {
     //字体兼容
     implementation 'androidx.core:core:1.5.0'
 
+    // 核心必须依赖
+    implementation 'com.scwang.smart:refresh-layout-kernel:2.0.1'
+    // 经典刷新头
+    implementation 'com.scwang.smart:refresh-header-classics:2.0.1'
+
     //图片加载
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '4.9.0'
 
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
+    implementation 'com.scwang.smart:refresh-header-classics:2.0.1'
+    implementation 'com.zhy:flowlayout-lib:1.0.3'
+    implementation 'me.relex:photodraweeview:1.1.2'
 }

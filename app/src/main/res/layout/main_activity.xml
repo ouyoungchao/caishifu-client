@@ -56,9 +56,9 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
         </RelativeLayout>
-
+        <!-- 底层菜单-->
         <RelativeLayout
-            android:id="@+id/rl_discover"
+            android:id="@+id/rl_vegetable_market"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -66,7 +66,7 @@
             android:padding="3dp">
 
             <ImageView
-                android:id="@+id/iv_discover"
+                android:id="@+id/vegetable_market"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:layout_centerHorizontal="true"
@@ -75,13 +75,13 @@
                 android:src="@drawable/bg_tab_discover" />
 
             <TextView
-                android:id="@+id/tv_discover"
+                android:id="@+id/tv_vegetable_market"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/iv_discover"
+                android:layout_below="@id/vegetable_market"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="2dp"
-                android:text="@string/tab_discover"
+                android:text="@string/vegetable_market"
                 android:textColor="#353535"
                 android:textSize="11sp" />
         </RelativeLayout>
