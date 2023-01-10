@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,6 +22,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ZoomControls;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
@@ -42,29 +46,25 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-import com.bc.wechat.R;
-import com.bc.wechat.WechatApplication;
-import com.bc.wechat.adapter.MapPickerAdapter;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.service.LocationService;
-import com.bc.wechat.utils.BitmapLoaderUtil;
-import com.bc.wechat.utils.FileUtil;
-import com.bc.wechat.widget.ConfirmDialog;
+import com.shiliu.caishifu.CaishifuApplication;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.adapter.MapPickerAdapter;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.service.LocationService;
+import com.shiliu.caishifu.utils.BitmapLoaderUtil;
+import com.shiliu.caishifu.utils.FileUtil;
+import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.smarx.notchlib.NotchScreenManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 
 /**
  * 地图选择器
  *
- * @author zhou
  */
 public class MapPickerActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
@@ -132,7 +132,7 @@ public class MapPickerActivity extends BaseActivity implements AdapterView.OnIte
 
     @Override
     public int getContentView() {
-        return R.layout.activity_map_picker;
+        return R.layout.map_picker_activity;
     }
 
     @Override
@@ -142,7 +142,7 @@ public class MapPickerActivity extends BaseActivity implements AdapterView.OnIte
         getNotch();
         initStatusBar();
 
-        locationService = WechatApplication.locationService;
+        locationService = CaishifuApplication.locationService;
         locationService.registerListener(mListener);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();

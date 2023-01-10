@@ -1,13 +1,15 @@
-package com.bc.wechat.dao;
+package com.shiliu.caishifu.dao;
 
-import com.bc.wechat.entity.Address;
 
+import com.shiliu.caishifu.model.Address;
+import com.shiliu.caishifu.utils.CollectionUtils;
+
+import java.util.Collections;
 import java.util.List;
 
 /**
  * 地址
  *
- * @author zhou
  */
 public class AddressDao {
 
@@ -17,7 +19,8 @@ public class AddressDao {
      * @return 地址列表
      */
     public List<Address> getAddressList() {
-        return Address.listAll(Address.class);
+        return Collections.EMPTY_LIST;
+//        return Address.listAll(Address.class);
     }
 
     /**

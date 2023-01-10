@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,22 +8,18 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.NetworkError;
-import com.android.volley.TimeoutError;
-import com.bc.wechat.R;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.StatusBarUtil;
-import com.bc.wechat.utils.VolleyUtil;
-import com.bc.wechat.widget.LoadingDialog;
+import androidx.annotation.Nullable;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.StatusBarUtil;
+import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -32,7 +28,7 @@ import butterknife.ButterKnife;
  *
  * @author zhou
  */
-public class EditNameActivity extends BaseActivity2 {
+public class EditNameActivity extends CommonActivity {
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -46,14 +42,14 @@ public class EditNameActivity extends BaseActivity2 {
     @BindView(R.id.tv_save)
     TextView mSaveTv;
 
-    VolleyUtil mVolleyUtil;
+    NetworkUtil networkUtil;
     LoadingDialog mDialog;
     User mUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_name);
+        setContentView(R.layout.edit_name_activity);
         ButterKnife.bind(this);
 
         initStatusBar();
@@ -62,7 +58,7 @@ public class EditNameActivity extends BaseActivity2 {
         PreferencesUtil.getInstance().init(this);
 
         mUser = PreferencesUtil.getInstance().getUser();
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        networkUtil = NetworkUtil.getInstance(this);
         mDialog = new LoadingDialog(EditNameActivity.this);
         initView();
 
@@ -75,7 +71,7 @@ public class EditNameActivity extends BaseActivity2 {
         });
     }
 
-    private void initView() {
+    public void initView() {
         setTitleStrokeWidth(mTitleTv);
 
         mNickNameEt.setText(mUser.getUserNickName());
@@ -138,7 +134,7 @@ public class EditNameActivity extends BaseActivity2 {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("userNickName", userNickName);
 
-        mVolleyUtil.httpPutRequest(url, paramMap, response -> {
+       /* networkUtil.httpPutRequest(url, paramMap, response -> {
             mDialog.dismiss();
             setResult(RESULT_OK);
             mUser.setUserNickName(userNickName);
@@ -154,6 +150,6 @@ public class EditNameActivity extends BaseActivity2 {
                 return;
             }
 
-        });
+        });*/
     }
 }

@@ -40,20 +40,36 @@ public class NetworkUtil {
     }
 
 
-    public Response doGetRequest(String url) {
-        Request request = new Request.Builder().url(url).build();
+    public Response doGetReRequest(String url, Map<String,String> headers) {
+        Request.Builder builder = new Request.Builder();
+        if(!headers.isEmpty()){
+            Iterator<Map.Entry<String,String>> iterator = headers.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,String> entry = iterator.next();
+                builder.addHeader(entry.getKey(),entry.getValue());
+            }
+        }
+        builder.url(url).build();
         try {
-            return okHttpClient.newCall(request).execute();
+            return okHttpClient.newCall(builder.build()).execute();
         } catch (IOException e) {
-            Log.e(TAG, "getRequest: " + url + " error ", e);
+            Log.e(TAG, "doGetRequest: "+ url,e );
         }
         return null;
     }
 
 
-    public void doGetReRequest(String url, final NetworkCallbak callbak){
-        Request request = new Request.Builder().url(url).build();
-        okHttpClient.newCall(request).enqueue(callbak);
+    public void doGetReRequest(String url, Map<String,String> headers, final NetworkCallbak callbak){
+        Request.Builder builder = new Request.Builder();
+        if(!headers.isEmpty()){
+            Iterator<Map.Entry<String,String>> iterator = headers.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,String> entry = iterator.next();
+                builder.addHeader(entry.getKey(),entry.getValue());
+            }
+        }
+        builder.url(url).build();
+        okHttpClient.newCall(builder.build()).enqueue(callbak);
     }
 
     public void doPostRequest(String url, Map<String, String> body, final NetworkCallbak callbak){

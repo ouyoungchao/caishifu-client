@@ -1,14 +1,13 @@
-package com.bc.wechat.dao;
+package com.shiliu.caishifu.dao;
 
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.entity.Area;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.model.Area;
 
 import java.util.List;
 
 /**
  * 地区
  *
- * @author zhou
  */
 public class AreaDao {
 

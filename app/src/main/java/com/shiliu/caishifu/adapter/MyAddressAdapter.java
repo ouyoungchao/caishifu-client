@@ -1,4 +1,4 @@
-package com.bc.wechat.adapter;
+package com.shiliu.caishifu.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +9,16 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bc.wechat.R;
-import com.bc.wechat.activity.ModifyAddressActivity;
-import com.bc.wechat.entity.Address;
+
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.ModifyAddressActivity;
+import com.shiliu.caishifu.model.Address;
 
 import java.util.List;
 
 /**
  * 我的地址
  *
- * @author zhou
  */
 public class MyAddressAdapter extends BaseAdapter {
 
@@ -55,7 +55,7 @@ public class MyAddressAdapter extends BaseAdapter {
         ViewHolder viewHolder;
         if (null == convertView) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.item_my_address, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.my_address_item, null);
 
             viewHolder.mRootLl = convertView.findViewById(R.id.ll_root);
             viewHolder.mUserInfoTv = convertView.findViewById(R.id.tv_user_info);

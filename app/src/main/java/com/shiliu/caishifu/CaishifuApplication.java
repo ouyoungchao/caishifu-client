@@ -4,15 +4,15 @@ import android.app.Application;
 import android.content.Context;
 
 import com.alibaba.fastjson.JSON;
+import com.baidu.mapapi.SDKInitializer;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.orm.SugarContext;
 import com.shiliu.caishifu.abserver.Observer;
+import com.shiliu.caishifu.abserver.ObserverManager;
 import com.shiliu.caishifu.model.User;
-import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.service.LocationService;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 
-import java.util.Date;
-import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.im.android.api.JMessageClient;
@@ -27,8 +27,8 @@ public class CaishifuApplication extends Application implements Observer {
 
     // 全局Context
     private static Context mContext;
-//    public static LocationService locationService;
-//    ObserverManager manager;
+    public static LocationService locationService;
+    ObserverManager manager;
     User mUser;
 
     @Override
@@ -62,14 +62,14 @@ public class CaishifuApplication extends Application implements Observer {
 //        ClassicsFooter.REFRESH_FOOTER_NOTHING = ""; // "全部加载完成"
 
         // 百度地图
-//        SDKInitializer.initialize(this);
-//        locationService = new LocationService(getApplicationContext());
-//
-//        JMessageClient.registerEventReceiver(this);
-//        if (manager == null) {
-//            manager = ObserverManager.getInstance();
-//            manager.addObserver(this);
-//        }
+        SDKInitializer.initialize(this);
+        locationService = new LocationService(getApplicationContext());
+
+        JMessageClient.registerEventReceiver(this);
+        if (manager == null) {
+            manager = ObserverManager.getInstance();
+            manager.addObserver(this);
+        }
     }
 
     @Override

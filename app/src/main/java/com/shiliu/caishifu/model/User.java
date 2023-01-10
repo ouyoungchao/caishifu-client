@@ -3,11 +3,12 @@ package com.shiliu.caishifu.model;
 import com.alibaba.fastjson.JSON;
 import com.orm.SugarRecord;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class User extends SugarRecord {
+public class User extends SugarRecord implements Serializable {
 
     /**
      * 用户id

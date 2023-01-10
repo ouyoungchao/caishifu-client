@@ -84,55 +84,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_region"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/bg_list_item_click"
-        android:clickable="true">
-
-        <TextView
-            android:id="@+id/tv_temp_region"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:text="@string/region"
-            android:textColor="#353535"
-            android:textSize="@dimen/common_item_text_size" />
-
-        <TextView
-            android:id="@+id/tv_region"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
-            android:layout_toRightOf="@id/tv_temp_region"
-            android:ellipsize="end"
-            android:gravity="right"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="#AAAAAA"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
-            android:src="@mipmap/icon_right_arrow" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.1dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
-            android:background="@color/common_divider_grey" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/rl_sign"
         android:layout_width="match_parent"
         android:layout_height="48dp"

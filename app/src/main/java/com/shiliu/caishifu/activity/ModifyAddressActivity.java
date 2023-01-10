@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -16,31 +16,28 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.NetworkError;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.bc.wechat.R;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.dao.AddressDao;
-import com.bc.wechat.dao.AreaDao;
-import com.bc.wechat.entity.Address;
-import com.bc.wechat.entity.Area;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.VolleyUtil;
-import com.bc.wechat.widget.ConfirmDialog;
-import com.bc.wechat.widget.LoadingDialog;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.dao.AddressDao;
+import com.shiliu.caishifu.dao.AreaDao;
+import com.shiliu.caishifu.model.Address;
+import com.shiliu.caishifu.model.Area;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.widget.ConfirmDialog;
+import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
@@ -48,7 +45,6 @@ import butterknife.OnFocusChange;
 /**
  * 修改地址
  *
- * @author zhou
  */
 public class ModifyAddressActivity extends BaseActivity {
 
@@ -94,7 +90,7 @@ public class ModifyAddressActivity extends BaseActivity {
     @BindView(R.id.vi_post_code)
     View mPostCodeVi;
 
-    private VolleyUtil mVolleyUtil;
+    private NetworkUtil networkUtil;
     private User mUser;
 
     private LoadingDialog mDialog;
@@ -145,7 +141,7 @@ public class ModifyAddressActivity extends BaseActivity {
 
     @Override
     public int getContentView() {
-        return R.layout.activity_add_or_modify_address;
+        return R.layout.add_or_modify_address_activity;
     }
 
     @Override
@@ -166,8 +162,8 @@ public class ModifyAddressActivity extends BaseActivity {
 
     @Override
     public void initData() {
-        mVolleyUtil = VolleyUtil.getInstance(this);
-        mUser = PreferencesUtil.getInstance().getUser();
+        networkUtil = NetworkUtil.getInstance(this);
+        mUser = getUser();
         mDialog = new LoadingDialog(ModifyAddressActivity.this);
         mAddressDao = new AddressDao();
         mAreaDao = new AreaDao();
@@ -269,28 +265,28 @@ public class ModifyAddressActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.et_name:
                 if (hasFocus) {
-                    mNameVi.setBackgroundColor(getColor(R.color.wechat_btn_green));
+                    mNameVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mNameVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
             case R.id.et_phone:
                 if (hasFocus) {
-                    mPhoneVi.setBackgroundColor(getColor(R.color.wechat_btn_green));
+                    mPhoneVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mPhoneVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
             case R.id.et_address_detail:
                 if (hasFocus) {
-                    mAddressDetailVi.setBackgroundColor(getColor(R.color.wechat_btn_green));
+                    mAddressDetailVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mAddressDetailVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
             case R.id.et_post_code:
                 if (hasFocus) {
-                    mPostCodeVi.setBackgroundColor(getColor(R.color.wechat_btn_green));
+                    mPostCodeVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mPostCodeVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
@@ -389,7 +385,7 @@ public class ModifyAddressActivity extends BaseActivity {
         paramMap.put("detail", addressDetail);
         paramMap.put("postCode", addressPostCode);
 
-        mVolleyUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
+        /*networkUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mDialog.dismiss();
@@ -416,7 +412,7 @@ public class ModifyAddressActivity extends BaseActivity {
                     return;
                 }
             }
-        });
+        });*/
     }
 
     /**

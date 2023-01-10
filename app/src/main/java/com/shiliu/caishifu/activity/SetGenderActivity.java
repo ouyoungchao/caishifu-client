@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -7,19 +7,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkError;
-import com.android.volley.TimeoutError;
-import com.bc.wechat.R;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.VolleyUtil;
-import com.bc.wechat.widget.LoadingDialog;
+import androidx.annotation.Nullable;
+
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,9 +26,8 @@ import butterknife.OnClick;
 /**
  * 修改性别
  *
- * @author zhou
  */
-public class SetGenderActivity extends BaseActivity2 {
+public class SetGenderActivity extends CommonActivity {
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -51,24 +49,24 @@ public class SetGenderActivity extends BaseActivity2 {
 
     User mUser;
     LoadingDialog mDialog;
-    VolleyUtil mVolleyUtil;
+    NetworkUtil networkUtil;
     String mSex;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_gender);
+        setContentView(R.layout.set_gender_activity);
         ButterKnife.bind(this);
 
         initStatusBar();
 
-        mUser = PreferencesUtil.getInstance().getUser();
+        mUser = getUser();
         mDialog = new LoadingDialog(SetGenderActivity.this);
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        networkUtil = NetworkUtil.getInstance(this);
         initView();
     }
 
-    private void initView() {
+    public void initView() {
         setTitleStrokeWidth(mTitleTv);
         renderSex();
     }
@@ -125,7 +123,7 @@ public class SetGenderActivity extends BaseActivity2 {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("userSex", userSex);
 
-        mVolleyUtil.httpPutRequest(url, paramMap, response -> {
+       /* networkUtil.httpPutRequest(url, paramMap, response -> {
             mDialog.dismiss();
             mUser.setUserSex(userSex);
             PreferencesUtil.getInstance().setUser(mUser);
@@ -140,7 +138,7 @@ public class SetGenderActivity extends BaseActivity2 {
                 Toast.makeText(SetGenderActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
                 return;
             }
-        });
+        });*/
     }
 
 }

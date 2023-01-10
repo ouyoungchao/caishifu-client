@@ -1,4 +1,4 @@
-package com.bc.wechat.adapter;
+package com.shiliu.caishifu.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.mapapi.search.core.PoiInfo;
-import com.bc.wechat.R;
+import com.shiliu.caishifu.R;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class MapPickerAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         ViewHolder viewHolder;
         if (null == convertView) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.item_pick_place, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.pick_place_item, null);
 
             viewHolder = new ViewHolder();
             viewHolder.mNameTv = convertView.findViewById(R.id.tv_name);

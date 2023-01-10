@@ -1,14 +1,14 @@
-package com.bc.wechat.engine;
+package com.shiliu.caishifu.engine;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.huantansheng.easyphotos.engine.ImageEngine;
-
-import androidx.annotation.NonNull;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 

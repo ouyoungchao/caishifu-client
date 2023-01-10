@@ -15,10 +15,9 @@ import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.DeviceInfo;
-import com.shiliu.caishifu.model.server.AbstractCommonResult;
 import com.shiliu.caishifu.model.server.CommonResult;
 import com.shiliu.caishifu.model.server.ResultCode;
-import com.shiliu.caishifu.model.server.TokenResultAbstract;
+import com.shiliu.caishifu.model.server.TokenResult;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.DeviceInfoUtil;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -236,10 +235,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "server response: " + response);
                 mDialog.dismiss();
-                TokenResultAbstract tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResultAbstract.class);
+                TokenResult tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResult.class);
                 if(response.code() == 200) {
-                    PreferencesUtil.getInstance().saveParam("tokenInfo",tokenResult.getData());
+                    PreferencesUtil.getInstance().saveParam("tokenInfo",JsonUtil.objectToJson(tokenResult.getData()));
                     PreferencesUtil.getInstance().setLogin(true);
+                    //获取用户信息
+                    getUser();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }else if(response.code() == 500){
                     if(tokenResult.getCode() == ResultCode.LOGIN_USERNAME_OR_PASSWOR_ERROR.getCode()){

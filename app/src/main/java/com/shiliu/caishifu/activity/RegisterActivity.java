@@ -26,7 +26,6 @@ import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.UserDao;
 import com.shiliu.caishifu.model.server.CommonResult;
 import com.shiliu.caishifu.model.server.ResultCode;
-import com.shiliu.caishifu.model.server.UserResultAbstract;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CountDownTimerUtils;
 import com.shiliu.caishifu.utils.ExampleUtil;
@@ -368,8 +367,7 @@ public class RegisterActivity extends CommonActivity {
                         finish();
                         break;
                     case 500:
-//                        Log.d(TAG, "onResponse: " + response.body().string());
-                        UserResultAbstract result = JsonUtil.jsoToObject(response.body().byteStream(), UserResultAbstract.class);
+                        CommonResult result = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
                         if (ResultCode.REGISTER_FAILED_USER_EXIST.getCode() == (result.getCode())) {
                             ExampleUtil.showToast(RegisterActivity.this,
                                     ResultCode.REGISTER_FAILED_USER_EXIST.getMessage(), Toast.LENGTH_SHORT);

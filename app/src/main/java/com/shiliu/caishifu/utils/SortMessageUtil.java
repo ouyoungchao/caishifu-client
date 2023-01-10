@@ -11,6 +11,7 @@ import com.shiliu.caishifu.model.server.CommonResult;
 import com.shiliu.caishifu.model.server.ResultCode;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -21,6 +22,6 @@ public class SortMessageUtil {
 
     public static void getAuthCode(Context context, String telephone, NetworkUtil.NetworkCallbak callbak) {
         String url = Constant.BASE_URL + "caishifu/getAuthCode?telephone="+telephone;
-        NetworkUtil.getInstance(context).doGetReRequest(url,callbak);
+        NetworkUtil.getInstance(context).doGetReRequest(url, Collections.emptyMap(),callbak);
     }
 }

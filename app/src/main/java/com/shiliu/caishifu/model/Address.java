@@ -1,4 +1,4 @@
-package com.bc.wechat.entity;
+package com.shiliu.caishifu.model;
 
 import com.orm.SugarRecord;
 
@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 地址
  *
- * @author zhou
  */
 public class Address extends SugarRecord implements Serializable {
 

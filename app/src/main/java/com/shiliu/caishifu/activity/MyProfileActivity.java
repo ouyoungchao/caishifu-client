@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,25 +16,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkError;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.bc.wechat.R;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.engine.GlideEngine;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.CollectionUtils;
-import com.bc.wechat.utils.CommonUtil;
-import com.bc.wechat.utils.FileUtil;
-import com.bc.wechat.utils.OssUtil;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.VolleyUtil;
-import com.bc.wechat.widget.ConfirmDialog;
-import com.bc.wechat.widget.LoadingDialog;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.engine.GlideEngine;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.CommonUtil;
+import com.shiliu.caishifu.utils.CollectionUtils;
+import com.shiliu.caishifu.utils.FileUtil;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.OssUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.widget.ConfirmDialog;
+import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,17 +43,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * 个人信息
+ * 个人信息界面
  *
- * @author zhou
  */
 public class MyProfileActivity extends BaseActivity {
 
@@ -64,13 +60,6 @@ public class MyProfileActivity extends BaseActivity {
     @BindView(R.id.rl_nick_name)
     RelativeLayout mNickNameRl;
 
-    // 微信号
-    @BindView(R.id.rl_wx_id)
-    RelativeLayout mWxIdRl;
-
-    // 二维码
-    @BindView(R.id.rl_qr_code)
-    RelativeLayout mQrCodeRl;
 
     // 更多
     @BindView(R.id.rl_more)
@@ -86,22 +75,16 @@ public class MyProfileActivity extends BaseActivity {
     @BindView(R.id.tv_nick_name)
     TextView mNickNameTv;
 
-    @BindView(R.id.tv_wx_id)
-    TextView mWxIdTv;
 
     @BindView(R.id.sdv_avatar)
     SimpleDraweeView mAvatarSdv;
 
-    @BindView(R.id.iv_wx_id)
-    ImageView mWxIdIv;
-
-    VolleyUtil mVolleyUtil;
+    NetworkUtil networkUtil;
     LoadingDialog mDialog;
 
     private static final int UPDATE_AVATAR_BY_TAKE_CAMERA = 1;
     private static final int UPDATE_AVATAR_BY_ALBUM = 2;
     private static final int UPDATE_USER_NICK_NAME = 3;
-    private static final int UPDATE_USER_WX_ID = 4;
     private static final int UPDATE_USER_AVATAR = 5;
 
     User mUser;
@@ -109,7 +92,7 @@ public class MyProfileActivity extends BaseActivity {
 
     @Override
     public int getContentView() {
-        return R.layout.activity_my_profile;
+        return R.layout.my_profile_activity;
     }
 
     @Override
@@ -125,7 +108,7 @@ public class MyProfileActivity extends BaseActivity {
 
     @Override
     public void initData() {
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        networkUtil = NetworkUtil.getInstance(this);
         mDialog = new LoadingDialog(MyProfileActivity.this);
 
         PreferencesUtil.getInstance().init(this);
@@ -138,12 +121,11 @@ public class MyProfileActivity extends BaseActivity {
             mAvatarSdv.setImageURI(resizeAvatarUrl);
         }
 
-        renderWxId(mUser);
         initCamera();
     }
 
-    @OnClick({R.id.rl_avatar, R.id.sdv_avatar, R.id.rl_nick_name, R.id.rl_wx_id,
-            R.id.rl_qr_code, R.id.rl_more, R.id.rl_address})
+    @OnClick({R.id.rl_avatar, R.id.sdv_avatar, R.id.rl_nick_name,
+            R.id.rl_more, R.id.rl_address})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_avatar:
@@ -158,12 +140,6 @@ public class MyProfileActivity extends BaseActivity {
                 // 昵称
                 startActivityForResult(new Intent(this, EditNameActivity.class), UPDATE_USER_NICK_NAME);
                 break;
-            case R.id.rl_wx_id:
-                startActivityForResult(new Intent(this, EditWeChatIdActivity.class), UPDATE_USER_WX_ID);
-                break;
-            case R.id.rl_qr_code:
-                startActivity(new Intent(this, MyQrCodeActivity.class));
-                break;
             case R.id.rl_more:
                 startActivity(new Intent(this, MyMoreProfileActivity.class));
                 break;
@@ -177,20 +153,6 @@ public class MyProfileActivity extends BaseActivity {
         finish();
     }
 
-    /**
-     * 渲染微信ID
-     */
-    private void renderWxId(User user) {
-        mWxIdTv.setText(user.getUserWxId());
-        // 微信号只能修改一次
-        if (Constant.USER_WX_ID_MODIFY_FLAG_TRUE.equals(user.getUserWxIdModifyFlag())) {
-            mWxIdIv.setVisibility(View.GONE);
-            mWxIdRl.setClickable(false);
-        } else {
-            mWxIdRl.setClickable(true);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -200,9 +162,6 @@ public class MyProfileActivity extends BaseActivity {
                 case UPDATE_USER_NICK_NAME:
                     // 昵称
                     mNickNameTv.setText(user.getUserNickName());
-                    break;
-                case UPDATE_USER_WX_ID:
-                    renderWxId(user);
                     break;
                 case UPDATE_USER_AVATAR:
                     mDialog.setMessage("正在上传头像");
@@ -244,7 +203,7 @@ public class MyProfileActivity extends BaseActivity {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("userAvatar", userAvatar);
 
-        mVolleyUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
+       /* networkUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 mUser.setUserAvatar(userAvatar);
@@ -264,7 +223,7 @@ public class MyProfileActivity extends BaseActivity {
                     return;
                 }
             }
-        });
+        });*/
     }
 
     /**

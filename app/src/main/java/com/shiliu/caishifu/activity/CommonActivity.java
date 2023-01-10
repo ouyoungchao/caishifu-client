@@ -35,7 +35,7 @@ import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
 
 
-public abstract class CommonActivity extends FragmentActivity {
+public abstract class CommonActivity extends AbstractFragmentActivity {
 
     private MessageDao mMessageDao;
     private User mUser;
@@ -44,7 +44,7 @@ public abstract class CommonActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMessageDao = new MessageDao();
-        mUser = PreferencesUtil.getInstance().getUser();
+        mUser = getUser();
     }
 
     @Override

@@ -29,7 +29,7 @@
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="true"
-                android:text="江宁开发区胜太科技园(庄排路157号)"
+                android:text="坂田街道杨美社区华为荔枝园西区园"
                 android:textColor="#000"
                 android:textSize="16sp" />
 
@@ -40,7 +40,7 @@
                 android:ellipsize="end"
                 android:gravity="left"
                 android:singleLine="true"
-                android:text="江宁区"
+                android:text="龙岗区"
                 android:textColor="#999"
                 android:textSize="13sp" />
         </LinearLayout>

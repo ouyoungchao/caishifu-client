@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -21,27 +22,36 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+//import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
+import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.fragement.ChatsFragment;
 import com.shiliu.caishifu.fragement.DiscoverFragment;
 import com.shiliu.caishifu.fragement.MeFragment;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.ViewType;
+import com.shiliu.caishifu.model.server.TokenInfo;
 import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.StatusBarUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.jpush.im.android.api.model.UserInfo;
+import okhttp3.Call;
+import okhttp3.Response;
 
 
 public class MainActivity extends BaseActivity implements Observer {
+    private static final String TAG = "MainActivity";
 
     public static final int REQUEST_CODE_SCAN = 0;
     public static final int REQUEST_CODE_CAMERA = 1;
@@ -67,8 +77,6 @@ public class MainActivity extends BaseActivity implements Observer {
 //    private RelativeLayout mTitleRl;
 //    private TextView mTitleTv;
 //    private ImageView mAddIv;
-
-    User mUser;
 
     // 首页弹出框
     private PopupWindow mPopupWindow;
@@ -141,7 +149,6 @@ public class MainActivity extends BaseActivity implements Observer {
     @Override
     public void initData() {
         PreferencesUtil.getInstance().init(this);
-        mUser = PreferencesUtil.getInstance().getUser();
         registerMessageReceiver();
         refreshNewMsgsUnreadNum();
 //        refreshNewFriendsUnreadNum();
@@ -225,7 +232,7 @@ public class MainActivity extends BaseActivity implements Observer {
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         filter.addAction(MESSAGE_RECEIVED_ACTION_ADD_FRIENDS_APPLY_MAIN);
         filter.addAction(MESSAGE_RECEIVED_ACTION_ADD_FRIENDS_ACCEPT_MAIN);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+//        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
     }
 
     @Override

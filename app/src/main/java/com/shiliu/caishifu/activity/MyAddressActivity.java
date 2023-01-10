@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,18 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONArray;
-import com.android.volley.NetworkError;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.bc.wechat.R;
-import com.bc.wechat.adapter.MyAddressAdapter;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.dao.AddressDao;
-import com.bc.wechat.entity.Address;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.VolleyUtil;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.adapter.MyAddressAdapter;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.dao.AddressDao;
+import com.shiliu.caishifu.model.Address;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
 
 import java.util.List;
 
@@ -40,7 +35,6 @@ import butterknife.BindView;
 /**
  * 我的地址
  *
- * @author zhou
  */
 public class MyAddressActivity extends BaseActivity {
 
@@ -58,14 +52,14 @@ public class MyAddressActivity extends BaseActivity {
 
     MyAddressAdapter mMyAddressAdapter;
     User mUser;
-    VolleyUtil mVolleyUtil;
+    NetworkUtil networkUtil;
     AddressDao mAddressDao;
     // 弹窗
     PopupWindow mPopupWindow;
 
     @Override
     public int getContentView() {
-        return R.layout.activity_my_address;
+        return R.layout.my_address_activity;
     }
 
     @Override
@@ -82,8 +76,8 @@ public class MyAddressActivity extends BaseActivity {
 
     @Override
     public void initData() {
-        mUser = PreferencesUtil.getInstance().getUser();
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        mUser = getUser();
+        networkUtil = NetworkUtil.getInstance(this);
         mAddressDao = new AddressDao();
 
         final List<Address> addressList = mAddressDao.getAddressList();
@@ -111,7 +105,7 @@ public class MyAddressActivity extends BaseActivity {
 
     private void getAddressListByUserId(String userId) {
         String url = Constant.BASE_URL + "users/" + userId + "/address";
-        mVolleyUtil.httpGetRequest(url, new Response.Listener<String>() {
+        /*networkUtil.httpGetRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 final List<Address> addressList = JSONArray.parseArray(response, Address.class);
@@ -150,12 +144,12 @@ public class MyAddressActivity extends BaseActivity {
                     }
                 });
             }
-        });
+        });*/
     }
 
     private void deleteAddress(String userId, final String addressId) {
         String url = Constant.BASE_URL + "users/" + userId + "/address/" + addressId;
-        mVolleyUtil.httpDeleteRequest(url, new Response.Listener<String>() {
+        /*networkUtil.httpDeleteRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 mAddressDao.deleteAddressByAddressId(addressId);
@@ -182,87 +176,10 @@ public class MyAddressActivity extends BaseActivity {
                     return;
                 }
             }
-        });
+        });*/
     }
 
-    private void showOperation(final Address address) {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View view = layoutInflater.inflate(R.layout.popup_window_address_setting, null);
-        // 给popwindow加上动画效果
-        LinearLayout mPopRootLl = view.findViewById(R.id.ll_pop_root);
-        view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
-        mPopRootLl.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.push_bottom_in));
-        // 设置popwindow的宽高
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        mPopupWindow = new PopupWindow(view, dm.widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        // 使其聚集
-        mPopupWindow.setFocusable(true);
-        // 设置允许在外点击消失
-        mPopupWindow.setOutsideTouchable(true);
-
-        // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-        mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-        backgroundAlpha(0.5f);  //透明度
-
-        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                backgroundAlpha(1f);
-            }
-        });
-        // 弹出的位置
-        mPopupWindow.showAtLocation(mRootLl, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
-
-        // 编辑
-        RelativeLayout mModifyAddressRl = view.findViewById(R.id.rl_modify_address);
-        mModifyAddressRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MyAddressActivity.this, ModifyAddressActivity.class);
-                intent.putExtra("address", address);
-                startActivity(intent);
-                mPopupWindow.dismiss();
-            }
-        });
-
-        // 删除
-        RelativeLayout mDeleteAddressRl = view.findViewById(R.id.rl_delete_address);
-        mDeleteAddressRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteAddress(mUser.getUserId(), address.getAddressId());
-                mPopupWindow.dismiss();
-            }
-        });
-
-        // 复制
-        RelativeLayout mCopyAddressRl = view.findViewById(R.id.rl_copy_address);
-        mCopyAddressRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                StringBuffer addressBuffer = new StringBuffer();
-                addressBuffer.append("收货人：").append(address.getName()).append("\n")
-                        .append("手机号码：").append(address.getPhone()).append("\n")
-                        .append("详细地址：").append(address.getProvince()).append(address.getCity())
-                        .append(address.getDistrict()).append(address.getDetail()).append("\n")
-                        .append("邮政编码：").append(address.getPostCode()).append("\n");
-                setPlainTextClipData(addressBuffer.toString());
-                mPopupWindow.dismiss();
-            }
-        });
-
-        // 取消
-        RelativeLayout mCancelRl = view.findViewById(R.id.rl_cancel);
-        mCancelRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPopupWindow.dismiss();
-            }
-        });
-
-    }
 
     /**
      * 设置添加屏幕的背景透明度

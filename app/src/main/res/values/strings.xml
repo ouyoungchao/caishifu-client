@@ -51,6 +51,8 @@
     <!--动态相关-->
     <string name="tab_discover">发现</string>
     <string name="vegetable_market">菜市场</string>
+    <string name="vegetable_market_buyer">买菜</string>
+    <string name="vegetable_market_seller">卖菜</string>
     <string name="user_settings">资料设置</string>
     <string name="send">发送</string>
     <string name="show_more">全文</string>
@@ -83,5 +85,29 @@
     <string name="save">保存</string>
     <string name="call">呼叫</string>
     <string name="copy">拷贝</string>
+    <!--用户设置-->
+    <string name="personal_info">个人信息</string>
+    <string name="avatar">头像</string>
+    <string name="caishifu_id">菜师傅号</string>
+    <string name="phone_id">手机号</string>
+    <string name="more">更多</string>
+    <string name="my_address">我的地址</string>
+    <string name="sex">性别</string>
+    <string name="region">地区</string>
+    <string name="whats_up">个性签名</string>
+
+    <string name="edit_name">更改名字</string>
+    <string name="edit_caishifu_id">更改手机号</string>
+    <string name="set_gender">设置性别</string>
+    <string name="saving">保存</string>
+    <string name="sex_male">男</string>
+    <string name="sex_female">女</string>
+
+    <string name="add_address">新增地址</string>
+    <string name="modify_address">修改地址</string>
+    <string name="add_address_abandon_tips">是否放弃新增地址信息？</string>
+    <string name="modify_address_abandon_tips">是否放弃修改地址信息？</string>
+
+    <string name="tips">提示</string>
 </resources>
 

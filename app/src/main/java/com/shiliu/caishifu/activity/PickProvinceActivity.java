@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,23 +6,24 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bc.wechat.R;
-import com.bc.wechat.adapter.AreaAdapter;
-import com.bc.wechat.dao.AreaDao;
-import com.bc.wechat.entity.Area;
+import androidx.annotation.Nullable;
+
+
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.adapter.AreaAdapter;
+import com.shiliu.caishifu.dao.AreaDao;
+import com.shiliu.caishifu.model.Area;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * 选择省
  *
- * @author zhou
  */
-public class PickProvinceActivity extends BaseActivity2 {
+public class PickProvinceActivity extends CommonActivity {
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -36,7 +37,7 @@ public class PickProvinceActivity extends BaseActivity2 {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_area_picker);
+        setContentView(R.layout.area_picker_activity);
         ButterKnife.bind(this);
         initStatusBar();
         initView();
@@ -61,7 +62,7 @@ public class PickProvinceActivity extends BaseActivity2 {
         FinishActivityManager.getManager().finishActivity(this);
     }
 
-    private void initView() {
+    public void initView() {
         setTitleStrokeWidth(mTitleTv);
     }
 

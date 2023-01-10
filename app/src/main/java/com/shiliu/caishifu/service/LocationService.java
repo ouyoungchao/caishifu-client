@@ -1,4 +1,4 @@
-package com.bc.wechat.service;
+package com.shiliu.caishifu.service;
 
 import android.content.Context;
 

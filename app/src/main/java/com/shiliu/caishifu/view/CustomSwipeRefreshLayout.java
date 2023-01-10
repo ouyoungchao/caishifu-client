@@ -25,17 +25,18 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+//import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrollingParent,
         NestedScrollingChild {
+    private static final String TAG = "CustomSwipeRefreshLayou";
 
     // Maps to ProgressBar.Large style
     public static final int LARGE = MaterialProgressDrawable.LARGE;
     // Maps to ProgressBar default style
     public static final int DEFAULT = MaterialProgressDrawable.DEFAULT;
 
-    private static final String LOG_TAG = SwipeRefreshLayout.class.getSimpleName();
+//    private static final String LOG_TAG = SwipeRefreshLayout.class.getSimpleName();
 
     private static final int MAX_ALPHA = 255;
     private static final int STARTING_PROGRESS_ALPHA = (int) (.3f * MAX_ALPHA);
@@ -673,7 +674,7 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
 
             case MotionEvent.ACTION_MOVE:
                 if (mActivePointerId == INVALID_POINTER) {
-                    Log.e(LOG_TAG, "Got ACTION_MOVE event but don't have an active pointer id.");
+                    Log.e(TAG, "Got ACTION_MOVE event but don't have an active pointer id.");
                     return false;
                 }
 
@@ -999,7 +1000,7 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
             case MotionEvent.ACTION_MOVE: {
                 pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (pointerIndex < 0) {
-                    Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
+                    Log.e(TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
                     return false;
                 }
 
@@ -1020,7 +1021,7 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
             case MotionEventCompat.ACTION_POINTER_DOWN: {
                 pointerIndex = MotionEventCompat.getActionIndex(ev);
                 if (pointerIndex < 0) {
-                    Log.e(LOG_TAG, "Got ACTION_POINTER_DOWN event but have an invalid action index.");
+                    Log.e(TAG, "Got ACTION_POINTER_DOWN event but have an invalid action index.");
                     return false;
                 }
                 mActivePointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
@@ -1037,7 +1038,7 @@ public class CustomSwipeRefreshLayout extends ViewGroup implements NestedScrolli
 
                 pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
                 if (pointerIndex < 0) {
-                    Log.e(LOG_TAG, "Got ACTION_UP event but don't have an active pointer id.");
+                    Log.e(TAG, "Got ACTION_UP event but don't have an active pointer id.");
                     return false;
                 }
 

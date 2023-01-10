@@ -1,9 +1,10 @@
-package com.bc.wechat.utils;
+package com.shiliu.caishifu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.bc.wechat.cons.Constant;
+
+import com.shiliu.caishifu.cons.Constant;
 
 import java.io.File;
 import java.io.FileNotFoundException;

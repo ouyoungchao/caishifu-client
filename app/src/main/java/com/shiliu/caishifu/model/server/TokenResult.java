@@ -1,4 +1,4 @@
 package com.shiliu.caishifu.model.server;
 
-public class TokenResultAbstract<TokenInfo> extends AbstractCommonResult {
+public class TokenResult<TokenInfo> extends AbstractCommonResult {
 }

@@ -1,4 +1,4 @@
-package com.bc.wechat.adapter;
+package com.shiliu.caishifu.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.bc.wechat.R;
-import com.bc.wechat.entity.Area;
+
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.model.Area;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class AreaAdapter extends BaseAdapter {
         ViewHolder viewHolder;
         if (null == convertView) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.item_province, null);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.province_item, null);
             viewHolder.mProvinceTv = convertView.findViewById(R.id.tv_province);
             convertView.setTag(viewHolder);
         } else {

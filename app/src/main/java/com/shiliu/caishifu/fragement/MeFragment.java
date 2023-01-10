@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.MyProfileActivity;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
@@ -26,7 +27,7 @@ import butterknife.OnClick;
 /**
  * tab - "我"
  */
-public class MeFragment extends Fragment implements View.OnClickListener {
+public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     @BindView(R.id.sdv_avatar)
     SimpleDraweeView mAvatarSdv;
@@ -51,15 +52,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mUser = PreferencesUtil.getInstance().getUser();
-//        initView();
+        mUser = getUser(this.getContext());
+        initView();
 
     }
 
     private void initView() {
         mNickNameTv.setText(mUser.getUserNickName());
-        String userWxId = mUser.getUserWxId() == null ? "" : mUser.getUserWxId();
-        mWxIdTv.setText("帐号:" + userWxId);
+        mWxIdTv.setText("帐号:" + mUser.getUserPhone());
         String userAvatar = mUser.getUserAvatar();
         if (!TextUtils.isEmpty(userAvatar)) {
             String resizeAvatarUrl = OssUtil.resize(mUser.getUserAvatar());
@@ -72,7 +72,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             // 个人页面
             case R.id.rl_me:
-//                startActivity(new Intent(getActivity(), MyProfileActivity.class));
+                startActivity(new Intent(getActivity(), MyProfileActivity.class));
                 break;
             // 状态:
             case R.id.rl_status:

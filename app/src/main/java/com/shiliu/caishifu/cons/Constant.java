@@ -1,5 +1,7 @@
 package com.shiliu.caishifu.cons;
 
+import java.io.File;
+
 public class Constant {
 
     /**
@@ -97,4 +99,14 @@ public class Constant {
 
     public static final String USER_SEX_MALE = "1";
     public static final String USER_SEX_FEMALE = "2";
+
+    public static final String  AUTHORIZATION = "Authorization";
+
+    /**
+     * 定位类型-地区信息
+     * 获取省市区街道信息
+     */
+    public static final String LOCATION_TYPE_AREA = "0";
+    public static final String DEFAULT_POST_CODE = "000000";
+    public static String PICTURE_DIR = "sdcard/caishifu/pictures/";
 }

@@ -229,13 +229,17 @@ public class DiscoverFragment extends BaseFragment {
         mConfirmDialog.show();*/
     }
 
-    @OnClick({R.id.rl_vegetable_market})
+    @OnClick({R.id.rl_vegetable_market_buyer,R.id.rl_vegetable_market_seller})
     public void onClick(View view) {
         String[] permissions;
         switch (view.getId()) {
-            case R.id.rl_vegetable_market:
+            case R.id.rl_vegetable_market_buyer:
                 startActivity(new Intent(getActivity(), FriendsCircleActivity.class));
                 break;
+            case R.id.rl_vegetable_market_seller:
+                startActivity(new Intent(getActivity(), FriendsCircleActivity.class));
+                break;
+            default: break;
         }
     }
 

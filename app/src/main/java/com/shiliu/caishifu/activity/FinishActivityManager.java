@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.app.Activity;
 
@@ -6,7 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Stack;
 
-public class FinishActivityManager extends BaseActivity2 {
+public class FinishActivityManager extends BaseActivity {
     private FinishActivityManager() {
     }
 
@@ -151,5 +151,25 @@ public class FinishActivityManager extends BaseActivity2 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int getContentView() {
+        return 0;
+    }
+
+    @Override
+    public void initView() {
+
+    }
+
+    @Override
+    public void initListener() {
+
+    }
+
+    @Override
+    public void initData() {
+
     }
 }

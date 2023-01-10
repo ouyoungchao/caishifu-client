@@ -3,6 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.shiliu.caishifu">
 
+    <!--网络权限-->
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!--地图所需要的权限-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".CaishifuApplication"
         android:allowBackup="true"
@@ -12,6 +20,10 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="Bmug2opqgsCzgARv9CnDiGC7fVimMg8H" />
 
         <activity
             android:name=".activity.FlashActivity"
@@ -40,6 +52,68 @@
 
         <activity android:name=".activity.FriendsCircleActivity"></activity>
 
+        <activity android:name=".activity.MyProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme">
+        </activity>
+        <!--用户设置，编辑姓名-->
+        <activity
+            android:name=".activity.EditNameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <!--用户设置，更多界面-->
+        <activity
+            android:name=".activity.MyMoreProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+        <!--我的地址界面-->
+        <activity
+            android:name=".activity.MyAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <activity
+            android:name=".activity.BigImageActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.SetGenderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+        <!--个性签名界面-->
+        <activity
+            android:name=".activity.EditSignActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <!--添加地址界面-->
+        <activity
+            android:name=".activity.AddAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <!--地图界面-->
+        <activity
+            android:name=".activity.MapPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarTheme" />
+        <!--省份界面-->
+        <activity
+            android:name=".activity.PickProvinceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+        <!--市界面-->
+        <activity
+            android:name=".activity.PickCityActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+        <!--区界面-->
+        <activity
+            android:name=".activity.PickDistrictActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
         <service
             android:name="cn.jpush.android.service.PushService"
             android:process=":multiprocess"
@@ -52,6 +126,12 @@
                 <action android:name="cn.jiguang.user.service.action" />
             </intent-filter>
         </service>
+
+        <!--百度地图所需要的服务-->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
 
         <!-- Required SDK核心功能-->
         <receiver

@@ -1,4 +1,4 @@
-package com.bc.wechat.activity;
+package com.shiliu.caishifu.activity;
 
 import android.text.Editable;
 import android.text.Selection;
@@ -9,14 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkError;
-import com.android.volley.TimeoutError;
-import com.bc.wechat.R;
-import com.bc.wechat.cons.Constant;
-import com.bc.wechat.entity.User;
-import com.bc.wechat.utils.PreferencesUtil;
-import com.bc.wechat.utils.VolleyUtil;
-import com.bc.wechat.widget.LoadingDialog;
+import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.cons.Constant;
+import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,13 +42,13 @@ public class EditSignActivity extends BaseActivity {
 
     final int maxSignLength = 30;
 
-    VolleyUtil mVolleyUtil;
+    NetworkUtil networkUtil;
     LoadingDialog mDialog;
     User mUser;
 
     @Override
     public int getContentView() {
-        return R.layout.activity_edit_sign;
+        return R.layout.edit_sign_activity;
     }
 
     @Override
@@ -74,9 +72,9 @@ public class EditSignActivity extends BaseActivity {
     @Override
     public void initData() {
         PreferencesUtil.getInstance().init(this);
-        mVolleyUtil = VolleyUtil.getInstance(this);
+        networkUtil = NetworkUtil.getInstance(this);
         mDialog = new LoadingDialog(EditSignActivity.this);
-        mUser = PreferencesUtil.getInstance().getUser();
+        mUser = getUser();
 
         mSignEt.setText(mUser.getUserSign());
         // 剩余可编辑字数
@@ -144,7 +142,7 @@ public class EditSignActivity extends BaseActivity {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("userSign", userSign);
 
-        mVolleyUtil.httpPutRequest(url, paramMap, response -> {
+       /* networkUtil.httpPutRequest(url, paramMap, response -> {
             mDialog.dismiss();
             mUser.setUserSign(userSign);
             PreferencesUtil.getInstance().setUser(mUser);
@@ -158,6 +156,6 @@ public class EditSignActivity extends BaseActivity {
                 Toast.makeText(EditSignActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
                 return;
             }
-        });
+        });*/
     }
 }

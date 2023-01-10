@@ -82,7 +82,7 @@ public class FriendsCircleActivity extends CommonActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends_circle_activity);
         initView();
-        mUser = PreferencesUtil.getInstance().getUser();
+        mUser = getUser();
         networkUtil = NetworkUtil.getInstance(this);
         mFriendsCircleDao = new FriendsCircleDao();
         mTimeStamp = 0L;
