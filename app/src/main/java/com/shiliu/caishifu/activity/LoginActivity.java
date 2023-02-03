@@ -223,7 +223,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             paramMap.put("isAuthCode","true");
         }
 //        paramMap.put("password", MD5Util.encode(password, "utf8"));
-        networkUtil.doPostRequest(url, paramMap, new NetworkUtil.NetworkCallbak() {
+        networkUtil.doPostRequestWithFormBody(url, paramMap, new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure login ", e);

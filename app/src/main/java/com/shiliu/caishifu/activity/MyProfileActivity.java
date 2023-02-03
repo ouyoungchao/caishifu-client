@@ -10,6 +10,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -28,29 +29,42 @@ import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.engine.GlideEngine;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CollectionUtils;
 import com.shiliu.caishifu.utils.FileUtil;
+import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.ThreadUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 个人信息界面
  *
  */
 public class MyProfileActivity extends BaseActivity {
+    private static final String TAG = "MyProfileActivity";
 
     // 头像
     @BindView(R.id.rl_avatar)
@@ -170,12 +184,9 @@ public class MyProfileActivity extends BaseActivity {
                     // 返回对象集合: 包含图片的宽、高、大小、用户是否选中原图选项等信息
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     if (!CollectionUtils.isEmpty(resultPhotos)) {
-                        new Thread(() -> {
-                            List<String> imageList = FileUtil.uploadFile(Constant.BASE_URL + "oss/file", resultPhotos.get(0).path);
-                            if (null != imageList && imageList.size() > 0) {
-                                updateUserAvatar(user.getUserId(), imageList.get(0));
-                            }
-                        }).start();
+                        ThreadUtil.getExecutors().submit(new Thread(() -> {
+                                updateUserAvatar(resultPhotos.get(0).path);
+                        }));
                     }
                     break;
             }
@@ -187,21 +198,46 @@ public class MyProfileActivity extends BaseActivity {
      */
     private void showPhotoDialog() {
         EasyPhotos.createAlbum(this, true, false, GlideEngine.getInstance())
-                .setFileProviderAuthority("com.bc.wechat.fileprovider")
+                .setFileProviderAuthority("com.shiliu.caishifu.fileprovider")
                 .setCount(1)//参数说明：最大可选数，默认1
                 .start(UPDATE_USER_AVATAR);
     }
 
     /**
-     * 修改用户头像
-     *
-     * @param userId     用户ID
-     * @param userAvatar 用户头像
+     * 上传头像
+     * @param filePath
      */
-    private void updateUserAvatar(String userId, final String userAvatar) {
-        String url = Constant.BASE_URL + "users/" + userId + "/userAvatar";
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("userAvatar", userAvatar);
+    private void updateUserAvatar(final String filePath) {
+        String url = Constant.BASE_URL + "caishifu/updateMember";
+        File file = new File(filePath);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
+        MultipartBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file",file.getName(),fileBody)
+                .build();
+        networkUtil.doPostWithMultiBody(url, getAuthorizationHeader(), requestBody, new NetworkUtil.NetworkCallbak() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: update user avatar", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+//                List<String> imageList = FileUtil.uploadFile(Constant.BASE_URL + "oss/file", filePath);
+//                mUser.setUserAvatar(imageList.get(0));
+                UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                if(needLogin(response)){
+                    login();
+                }else {
+                    User user = (User) JsonUtil.jsoToObject((String) userResult.getData().toString(), User.class);
+                    mUser.setUserAvatar(user.getUserAvatar());
+                    PreferencesUtil.getInstance().setUser(mUser);
+                    mAvatarSdv.setImageURI(OssUtil.resize(user.getUserAvatar()));
+                    mDialog.dismiss();
+                }
+            }
+        });
+
 
        /* networkUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
             @Override

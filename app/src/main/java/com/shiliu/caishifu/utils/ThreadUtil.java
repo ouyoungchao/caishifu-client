@@ -1,5 +1,7 @@
 package com.shiliu.caishifu.utils;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,10 +16,10 @@ public class ThreadUtil {
             return new Thread(r,"caishifu-"+ numbs.getAndDecrement());
         }
     };
-    private static Executors executors = (Executors) Executors.newCachedThreadPool(threadFactory);
+    private static ExecutorService executor =  Executors.newCachedThreadPool(threadFactory);
 
-    public static Executors getExecutors(){
-        return executors;
+    public static ExecutorService getExecutors(){
+        return executor;
     }
 
 }

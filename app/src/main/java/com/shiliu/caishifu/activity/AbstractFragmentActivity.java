@@ -1,5 +1,6 @@
 package com.shiliu.caishifu.activity;
 
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Call;
 import okhttp3.Response;
 
 public class AbstractFragmentActivity extends FragmentActivity {
@@ -58,5 +58,16 @@ public class AbstractFragmentActivity extends FragmentActivity {
             headers.put(Constant.AUTHORIZATION, tokenInfo.getTokenHead() + tokenInfo.getToken());
         }
         return headers;
+    }
+
+    public boolean needLogin(Response response){
+        if(response.code() == ResultCode.UNAUTHORIZED.getCode()){
+            return true;
+        }
+        return false;
+    }
+
+    public void login(){
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

@@ -346,7 +346,7 @@ public class RegisterActivity extends CommonActivity {
         paramMap.put("isBuyer", isBuyer ? "true" : "false");
         paramMap.put("password", MD5Util.encode(password, "utf8"));
         paramMap.put("authCode", authCode);
-        networkUtil.doPostRequest(url, paramMap, new NetworkUtil.NetworkCallbak() {
+        networkUtil.doPostRequestWithFormBody(url, paramMap, new NetworkUtil.NetworkCallbak() {
 
             @Override
             public void onFailure(Call call, IOException e) {

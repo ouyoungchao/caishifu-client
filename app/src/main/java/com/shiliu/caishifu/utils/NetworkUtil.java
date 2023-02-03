@@ -1,6 +1,7 @@
 package com.shiliu.caishifu.utils;
 
 import android.content.Context;
+import android.content.Entity;
 import android.os.Looper;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -72,7 +74,7 @@ public class NetworkUtil {
         okHttpClient.newCall(builder.build()).enqueue(callbak);
     }
 
-    public void doPostRequest(String url, Map<String, String> body, final NetworkCallbak callbak){
+    public void doPostRequestWithFormBody(String url, Map<String,String> body, final NetworkCallbak callbak){
         FormBody.Builder formBody = new FormBody.Builder();
         if(!body.isEmpty()) {
             Iterator<Map.Entry<String, String>> iterator = body.entrySet().iterator();
@@ -83,6 +85,21 @@ public class NetworkUtil {
         }
         Request request = new Request.Builder().url(url).post(formBody.build()).build();
         okHttpClient.newCall(request).enqueue(callbak);
+    }
+
+    public void doPostWithMultiBody(String url, Map<String, String> header, MultipartBody body, final NetworkCallbak callbak){
+        Request.Builder builder = new Request.Builder().url(url);
+        if(!header.isEmpty()){
+            Iterator<Map.Entry<String, String>> iterator = header.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,String> entry = iterator.next();
+                builder.addHeader(entry.getKey(),entry.getValue());
+            }
+        }
+        if(body != null){
+            builder.method("POST",body);
+        }
+        okHttpClient.newCall(builder.build()).enqueue(callbak);
     }
 
     public void doPostRequest(String url, String json, final NetworkCallbak callbak) {
