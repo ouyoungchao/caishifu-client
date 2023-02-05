@@ -129,22 +129,86 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/rl_more"
+        android:id="@+id/rl_sex"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/bg_list_item_click"
         android:clickable="true">
 
         <TextView
-            android:id="@+id/tv_temp_more"
+            android:id="@+id/tv_temp_sex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="@string/more"
+            android:text="@string/sex"
             android:textColor="#353535"
-            android:textSize="@dimen/my_profile_text_size" />
+            android:textSize="@dimen/common_item_text_size" />
+
+        <TextView
+            android:id="@+id/tv_sex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:layout_toRightOf="@id/tv_temp_sex"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:src="@mipmap/icon_right_arrow" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:background="@color/common_divider_grey" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_sign"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item_click"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/tv_temp_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/whats_up"
+            android:textColor="#353535"
+            android:textSize="@dimen/common_item_text_size" />
+
+        <TextView
+            android:id="@+id/tv_sign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:layout_toRightOf="@id/tv_temp_sign"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:inputType="textMultiLine"
+            android:text=""
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
 
         <ImageView
             android:layout_width="24dp"

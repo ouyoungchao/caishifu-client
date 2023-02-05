@@ -14,10 +14,10 @@ import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import okhttp3.Response;
 
 public class AbstractFragmentActivity extends FragmentActivity {
@@ -49,6 +49,17 @@ public class AbstractFragmentActivity extends FragmentActivity {
             }
         }
         return mUser;
+    }
+
+    protected void updateUserProperties(Map<String, Object> paramMap, NetworkUtil networkUtil, NetworkUtil.NetworkCallbak callbak) {
+        if(paramMap.isEmpty() || networkUtil == null || callbak == null){
+            Log.i(TAG, "updateUserProperties or networkUtil or callbak is empty");
+            return;
+        }
+        String url = Constant.BASE_URL + "caishifu/updateMember";
+        MultipartBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM).addFormDataPart("user", JsonUtil.objectToJson(paramMap)).build();
+        networkUtil.doPostWithMultiBody(url, getAuthorizationHeader(), requestBody, callbak);
     }
 
     public Map<String, String> getAuthorizationHeader() {

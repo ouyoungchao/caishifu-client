@@ -14,6 +14,7 @@ import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.activity.ModifyAddressActivity;
 import com.shiliu.caishifu.model.Address;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
 public class MyAddressAdapter extends BaseAdapter {
 
     Context mContext;
-    List<Address> mAddressList;
+    List<Address> mAddressList = new ArrayList<>();
 
     public MyAddressAdapter(Context context, List<Address> addressList) {
         this.mContext = context;

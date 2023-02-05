@@ -64,10 +64,6 @@
             android:theme="@style/ImageTranslucentTheme" />
 
         <!--用户设置，更多界面-->
-        <activity
-            android:name=".activity.MyMoreProfileActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ImageTranslucentTheme" />
         <!--我的地址界面-->
         <activity
             android:name=".activity.MyAddressActivity"

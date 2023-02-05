@@ -109,5 +109,10 @@
     <string name="modify_address_abandon_tips">是否放弃修改地址信息？</string>
 
     <string name="tips">提示</string>
+    <string name="update_user_properties_failed">个人信息修改失败，请重试</string>
+    <string name="update_user_properties_success">个人信息修改成功</string>
+
+    <string name="update_user_avatar_failed">修改头像失败，请重试</string>
+    <string name="update_user_avatar_success">修改头像成功</string>
 </resources>
 

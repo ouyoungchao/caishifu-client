@@ -12,7 +12,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.huantansheng.easyphotos.EasyPhotos;
@@ -29,11 +27,10 @@ import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.engine.GlideEngine;
 import com.shiliu.caishifu.model.User;
-import com.shiliu.caishifu.model.server.ResultCode;
 import com.shiliu.caishifu.model.server.UserResult;
 import com.shiliu.caishifu.utils.CommonUtil;
 import com.shiliu.caishifu.utils.CollectionUtils;
-import com.shiliu.caishifu.utils.FileUtil;
+import com.shiliu.caishifu.utils.ExampleUtil;
 import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.OssUtil;
@@ -44,12 +41,7 @@ import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -75,9 +67,17 @@ public class MyProfileActivity extends BaseActivity {
     RelativeLayout mNickNameRl;
 
 
-    // 更多
-    @BindView(R.id.rl_more)
-    RelativeLayout mMoreRl;
+    @BindView(R.id.rl_sex)
+    RelativeLayout mSexRl;
+
+    @BindView(R.id.rl_sign)
+    RelativeLayout mSignRl;
+
+    @BindView(R.id.tv_sex)
+    TextView mSexTv;
+
+    @BindView(R.id.tv_sign)
+    TextView mSignTv;
 
     // 我的地址
     @BindView(R.id.rl_address)
@@ -100,6 +100,8 @@ public class MyProfileActivity extends BaseActivity {
     private static final int UPDATE_AVATAR_BY_ALBUM = 2;
     private static final int UPDATE_USER_NICK_NAME = 3;
     private static final int UPDATE_USER_AVATAR = 5;
+    private static final int UPDATE_USER_SEX = 6;
+    private static final int UPDATE_USER_SIGN = 7;
 
     User mUser;
     String mImageName;
@@ -135,11 +137,18 @@ public class MyProfileActivity extends BaseActivity {
             mAvatarSdv.setImageURI(resizeAvatarUrl);
         }
 
+        if (Constant.USER_SEX_MALE == mUser.getUserSex()) {
+            mSexTv.setText(getString(R.string.sex_male));
+        } else if (Constant.USER_SEX_FEMALE == mUser.getUserSex()) {
+            mSexTv.setText(getString(R.string.sex_female));
+        }
+        mSignTv.setText(mUser.getUserSign());
+
         initCamera();
     }
 
-    @OnClick({R.id.rl_avatar, R.id.sdv_avatar, R.id.rl_nick_name,
-            R.id.rl_more, R.id.rl_address})
+    @OnClick({R.id.rl_avatar,R.id.sdv_avatar,R.id.rl_nick_name,
+            R.id.rl_sex, R.id.rl_sign, R.id.rl_address})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_avatar:
@@ -154,11 +163,15 @@ public class MyProfileActivity extends BaseActivity {
                 // 昵称
                 startActivityForResult(new Intent(this, EditNameActivity.class), UPDATE_USER_NICK_NAME);
                 break;
-            case R.id.rl_more:
-                startActivity(new Intent(this, MyMoreProfileActivity.class));
-                break;
             case R.id.rl_address:
                 startActivity(new Intent(this, MyAddressActivity.class));
+                break;
+            case R.id.rl_sex:
+                startActivityForResult(new Intent(this, SetGenderActivity.class), UPDATE_USER_SEX);
+                break;
+            case R.id.rl_sign:
+                // 签名
+                startActivityForResult(new Intent(this, EditSignActivity.class),UPDATE_USER_SIGN);
                 break;
         }
     }
@@ -188,6 +201,12 @@ public class MyProfileActivity extends BaseActivity {
                                 updateUserAvatar(resultPhotos.get(0).path);
                         }));
                     }
+                    break;
+                case UPDATE_USER_SEX:
+                    mSexTv.setText(user.getUserSex());
+                    break;
+                case UPDATE_USER_SIGN:
+                    mSignTv.setText(user.getUserSign());
                     break;
             }
         }
@@ -219,12 +238,12 @@ public class MyProfileActivity extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: update user avatar", e);
+                mDialog.dismiss();
+                ExampleUtil.showToast(MyProfileActivity.this, getResources().getString(R.string.update_user_avatar_failed), Toast.LENGTH_SHORT);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-//                List<String> imageList = FileUtil.uploadFile(Constant.BASE_URL + "oss/file", filePath);
-//                mUser.setUserAvatar(imageList.get(0));
                 UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
                 if(needLogin(response)){
                     login();
@@ -232,34 +251,12 @@ public class MyProfileActivity extends BaseActivity {
                     User user = (User) JsonUtil.jsoToObject((String) userResult.getData().toString(), User.class);
                     mUser.setUserAvatar(user.getUserAvatar());
                     PreferencesUtil.getInstance().setUser(mUser);
-                    mAvatarSdv.setImageURI(OssUtil.resize(user.getUserAvatar()));
                     mDialog.dismiss();
+                    ExampleUtil.showToast(MyProfileActivity.this, getResources().getString(R.string.update_user_avatar_success), Toast.LENGTH_SHORT);
+
                 }
             }
         });
-
-
-       /* networkUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                mUser.setUserAvatar(userAvatar);
-                PreferencesUtil.getInstance().setUser(mUser);
-                mAvatarSdv.setImageURI(OssUtil.resize(userAvatar));
-                mDialog.dismiss();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mDialog.dismiss();
-                if (volleyError instanceof NetworkError) {
-                    Toast.makeText(MyProfileActivity.this, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (volleyError instanceof TimeoutError) {
-                    Toast.makeText(MyProfileActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-        });*/
     }
 
     /**
@@ -269,37 +266,6 @@ public class MyProfileActivity extends BaseActivity {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
-    }
-
-    /**
-     * 动态权限
-     */
-    public void requestPermissions(Activity activity, String[] permissions, int requestCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //Android 6.0开始的动态权限，这里进行版本判断
-            ArrayList<String> mPermissionList = new ArrayList<>();
-            for (int i = 0; i < permissions.length; i++) {
-                if (ContextCompat.checkSelfPermission(activity, permissions[i])
-                        != PackageManager.PERMISSION_GRANTED) {
-                    mPermissionList.add(permissions[i]);
-                }
-            }
-            if (mPermissionList.isEmpty()) {
-                // 非初次进入App且已授权
-                switch (requestCode) {
-                    case UPDATE_AVATAR_BY_TAKE_CAMERA:
-                        showCamera();
-                        break;
-                    case UPDATE_AVATAR_BY_ALBUM:
-                        showAlbum();
-                        break;
-                }
-            } else {
-                // 请求权限方法
-                String[] requestPermissions = mPermissionList.toArray(new String[mPermissionList.size()]);
-                // 这个触发下面onRequestPermissionsResult这个回调
-                ActivityCompat.requestPermissions(activity, requestPermissions, requestCode);
-            }
-        }
     }
 
     /**

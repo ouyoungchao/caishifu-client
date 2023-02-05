@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
-import com.shiliu.caishifu.dao.AddressDao;
 import com.shiliu.caishifu.dao.AreaDao;
 import com.shiliu.caishifu.model.Address;
 import com.shiliu.caishifu.model.Area;
@@ -72,9 +71,6 @@ public class ModifyAddressActivity extends BaseActivity {
     @BindView(R.id.tv_save)
     TextView mSaveTv;
 
-    @BindView(R.id.iv_address_book)
-    ImageView mAddressBookIv;
-
     @BindView(R.id.iv_location)
     ImageView mLocationIv;
 
@@ -95,7 +91,6 @@ public class ModifyAddressActivity extends BaseActivity {
 
     private LoadingDialog mDialog;
     private Address mAddress;
-    private AddressDao mAddressDao;
     private AreaDao mAreaDao;
 
     public void back(View view) {
@@ -165,7 +160,6 @@ public class ModifyAddressActivity extends BaseActivity {
         networkUtil = NetworkUtil.getInstance(this);
         mUser = getUser();
         mDialog = new LoadingDialog(ModifyAddressActivity.this);
-        mAddressDao = new AddressDao();
         mAreaDao = new AreaDao();
         PreferencesUtil.getInstance().init(this);
 
@@ -228,7 +222,7 @@ public class ModifyAddressActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.et_address_info, R.id.tv_save, R.id.iv_address_book, R.id.iv_location})
+    @OnClick({R.id.et_address_info, R.id.tv_save, R.id.iv_location})
     public void onClick(View view) {
         String[] permissions;
         switch (view.getId()) {
@@ -247,11 +241,6 @@ public class ModifyAddressActivity extends BaseActivity {
                 String addressPostCode = mPostCodeEt.getText().toString();
                 modifyAddress(mAddress.getAddressId(), addressName, addressPhone, addressProvince,
                         addressCity, addressDistrict, addressDetail, addressPostCode);
-                break;
-
-            case R.id.iv_address_book:
-                permissions = new String[]{"android.permission.READ_CONTACTS"};
-                requestPermissions(ModifyAddressActivity.this, permissions, REQUEST_CODE_CONTACTS);
                 break;
             case R.id.iv_location:
                 permissions = new String[]{"android.permission.ACCESS_FINE_LOCATION"};

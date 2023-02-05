@@ -5,23 +5,39 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.StatusBarUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 更改名字
@@ -29,6 +45,7 @@ import butterknife.ButterKnife;
  * @author zhou
  */
 public class EditNameActivity extends CommonActivity {
+    private static final String TAG = "EditNameActivity";
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -65,9 +82,8 @@ public class EditNameActivity extends CommonActivity {
         mSaveTv.setOnClickListener(view -> {
             mDialog.setMessage(getString(R.string.saving));
             mDialog.show();
-            String userId = mUser.getUserId();
             String userNickName = mNickNameEt.getText().toString();
-            updateUserNickName(userId, userNickName);
+            updateUserNickName(userNickName);
         });
     }
 
@@ -129,27 +145,39 @@ public class EditNameActivity extends CommonActivity {
         }
     }
 
-    private void updateUserNickName(String userId, final String userNickName) {
-        String url = Constant.BASE_URL + "users/" + userId + "/userNickName";
-        Map<String, String> paramMap = new HashMap<>();
+    private void updateUserNickName(final String userNickName) {
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userNickName", userNickName);
-
-       /* networkUtil.httpPutRequest(url, paramMap, response -> {
-            mDialog.dismiss();
-            setResult(RESULT_OK);
-            mUser.setUserNickName(userNickName);
-            PreferencesUtil.getInstance().setUser(mUser);
-            finish();
-        }, volleyError -> {
-            mDialog.dismiss();
-            if (volleyError instanceof NetworkError) {
-                Toast.makeText(EditNameActivity.this, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
-                return;
-            } else if (volleyError instanceof TimeoutError) {
-                Toast.makeText(EditNameActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
-                return;
+        updateUserProperties(paramMap, networkUtil, new NetworkUtil.NetworkCallbak() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: update userName ", e);
+                mDialog.dismiss();
+                ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
             }
 
-        });*/
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (needLogin(response)) {
+                    login();
+                } else{
+                    UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null) {
+                        mUser.setUserNickName(userNickName);
+                        PreferencesUtil.getInstance().setUser(mUser);
+                        mDialog.dismiss();
+                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
+                        Log.i(TAG, "onResponse: update nickName success");
+                        finish();
+                    }else {
+                        mDialog.dismiss();
+                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+                        Log.w(TAG, "onResponse: update nickName failed");
+                    }
+                }
+            }
+        });
     }
+
+
 }

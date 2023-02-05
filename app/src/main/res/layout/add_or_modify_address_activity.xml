@@ -60,7 +60,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="收货人"
+            android:text="姓名"
             android:textColor="#353535"
             android:textSize="@dimen/common_item_text_size" />
 
@@ -77,15 +77,6 @@
             android:textColor="#353535"
             android:textColorHint="#DDDDDD"
             android:textSize="@dimen/common_item_text_size" />
-
-        <ImageView
-            android:id="@+id/iv_address_book"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:src="@mipmap/icon_address_book" />
 
         <View
             android:id="@+id/vi_name"

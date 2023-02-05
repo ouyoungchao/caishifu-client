@@ -1,30 +1,17 @@
 package com.shiliu.caishifu.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONArray;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.adapter.MyAddressAdapter;
 import com.shiliu.caishifu.cons.Constant;
-import com.shiliu.caishifu.dao.AddressDao;
-import com.shiliu.caishifu.model.Address;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.NetworkUtil;
 
@@ -53,7 +40,6 @@ public class MyAddressActivity extends BaseActivity {
     MyAddressAdapter mMyAddressAdapter;
     User mUser;
     NetworkUtil networkUtil;
-    AddressDao mAddressDao;
     // 弹窗
     PopupWindow mPopupWindow;
 
@@ -78,13 +64,9 @@ public class MyAddressActivity extends BaseActivity {
     public void initData() {
         mUser = getUser();
         networkUtil = NetworkUtil.getInstance(this);
-        mAddressDao = new AddressDao();
 
-        final List<Address> addressList = mAddressDao.getAddressList();
-        mMyAddressAdapter = new MyAddressAdapter(this, addressList);
+        mMyAddressAdapter = new MyAddressAdapter(this, mUser.getAddressList());
         mAddressLv.setAdapter(mMyAddressAdapter);
-
-        getAddressListByUserId(mUser.getUserId());
     }
 
     public void back(View view) {
@@ -95,57 +77,11 @@ public class MyAddressActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // 本地读取
-        List<Address> addressList = mAddressDao.getAddressList();
-        mMyAddressAdapter.setData(addressList);
+        mMyAddressAdapter.setData(mUser.getAddressList());
         mMyAddressAdapter.notifyDataSetChanged();
-
-        // 服务器读取
-        getAddressListByUserId(mUser.getUserId());
     }
 
-    private void getAddressListByUserId(String userId) {
-        String url = Constant.BASE_URL + "users/" + userId + "/address";
-        /*networkUtil.httpGetRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                final List<Address> addressList = JSONArray.parseArray(response, Address.class);
-                if (null != addressList && addressList.size() > 0) {
-                    // 持久化
-                    mAddressDao.clearAddress();
-                    for (Address address : addressList) {
-                        if (null != address) {
-                            mAddressDao.saveAddress(address);
-                        }
-                    }
-                }
-                mMyAddressAdapter.setData(addressList);
-                mMyAddressAdapter.notifyDataSetChanged();
-                mAddressLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        Address address = addressList.get(position);
-                        showOperation(address);
-                        return false;
-                    }
-                });
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                final List<Address> addressList = mAddressDao.getAddressList();
-                mMyAddressAdapter.setData(addressList);
-                mMyAddressAdapter.notifyDataSetChanged();
-                mAddressLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        Address address = addressList.get(position);
-                        showOperation(address);
-                        return false;
-                    }
-                });
-            }
-        });*/
-    }
+
 
     private void deleteAddress(String userId, final String addressId) {
         String url = Constant.BASE_URL + "users/" + userId + "/address/" + addressId;

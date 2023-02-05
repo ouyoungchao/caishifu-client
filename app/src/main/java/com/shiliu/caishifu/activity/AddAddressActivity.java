@@ -14,6 +14,7 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,26 +28,36 @@ import androidx.core.content.ContextCompat;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.AreaDao;
+import com.shiliu.caishifu.model.Address;
 import com.shiliu.caishifu.model.Area;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 新增地址
  *
  */
 public class AddAddressActivity extends BaseActivity {
+    private static final String TAG = "AddAddressActivity";
 
     private static final int REQUEST_CODE_CONTACTS = 0;
     private static final int REQUEST_CODE_LOCATION = 1;
@@ -77,9 +88,6 @@ public class AddAddressActivity extends BaseActivity {
 
     @BindView(R.id.tv_save)
     TextView mSaveTv;
-
-    @BindView(R.id.iv_address_book)
-    ImageView mAddressBookIv;
 
     @BindView(R.id.iv_location)
     ImageView mLocationIv;
@@ -127,7 +135,7 @@ public class AddAddressActivity extends BaseActivity {
         mUser = getUser();
         mDialog = new LoadingDialog(AddAddressActivity.this);
         mAreaDao = new AreaDao();
-
+        //设置地址初始值
         PreferencesUtil.getInstance().init(this);
         PreferencesUtil.getInstance().setPickedProvince("");
         PreferencesUtil.getInstance().setPickedCity("");
@@ -238,10 +246,11 @@ public class AddAddressActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.et_address_info, R.id.tv_save, R.id.iv_address_book, R.id.iv_location})
+    @OnClick({R.id.et_address_info, R.id.tv_save, R.id.iv_location})
     public void onClick(View view) {
         String[] permissions;
         switch (view.getId()) {
+            //选择省市
             case R.id.et_address_info:
                 startActivity(new Intent(AddAddressActivity.this, PickProvinceActivity.class));
                 break;
@@ -257,10 +266,7 @@ public class AddAddressActivity extends BaseActivity {
                 String addressPostCode = mPostCodeEt.getText().toString();
                 addAddress(name, phone, addressProvince, addressCity, addressDistrict, addressDetail, addressPostCode);
                 break;
-            case R.id.iv_address_book:
-                permissions = new String[]{"android.permission.READ_CONTACTS"};
-                requestPermissions(AddAddressActivity.this, permissions, REQUEST_CODE_CONTACTS);
-                break;
+            //地图选择
             case R.id.iv_location:
                 permissions = new String[]{"android.permission.ACCESS_FINE_LOCATION"};
                 requestPermissions(AddAddressActivity.this, permissions, REQUEST_CODE_LOCATION);
@@ -299,41 +305,42 @@ public class AddAddressActivity extends BaseActivity {
                             final String addressProvince,
                             final String addressCity, final String addressDistrict, final String addressDetail,
                             final String addressPostCode) {
-        String url = Constant.BASE_URL + "users/" + mUser.getUserId() + "/address";
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("name", name);
-        paramMap.put("phone", phone);
-        paramMap.put("province", addressProvince);
-        paramMap.put("city", addressCity);
-        paramMap.put("district", addressDistrict);
-        paramMap.put("detail", addressDetail);
-        paramMap.put("postCode", addressPostCode);
-
-        /*networkUtil.httpPostRequest(url, paramMap, new Response.Listener<String>() {
+        Address address = new Address(name,phone,addressProvince,addressCity,addressDistrict,addressDetail,addressPostCode);
+        List<Address> addressList = new ArrayList<>();
+        addressList.add(address);
+        if(!mUser.getAddressList().isEmpty()){
+            addressList.addAll(mUser.getAddressList());
+        }
+        Map<String,Object> requestParamMap = new HashMap<>();
+        requestParamMap.put("addressList", JsonUtil.objectToJson(addressList));
+        updateUserProperties(requestParamMap, networkUtil, new NetworkUtil.NetworkCallbak() {
             @Override
-            public void onResponse(String response) {
+            public void onFailure(Call call, IOException e) {
+                Log.w(TAG, "onFailure addAddress", e);
                 mDialog.dismiss();
-
-                // 持久化
-                Address address = new Address(name, phone, addressProvince,
-                        addressCity, addressDistrict, addressDetail, addressPostCode);
-                Address.save(address);
-
-                finish();
+                ExampleUtil.showToast(AddAddressActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mDialog.dismiss();
-                if (volleyError instanceof NetworkError) {
-                    Toast.makeText(AddAddressActivity.this, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (volleyError instanceof TimeoutError) {
-                    Toast.makeText(AddAddressActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
-                    return;
+            public void onResponse(Call call, Response response) throws IOException {
+                if (needLogin(response)) {
+                    login();
+                } else {
+                    UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null){
+                        mUser.setAddressList(addressList);
+                        PreferencesUtil.getInstance().setUser(mUser);
+                        mDialog.dismiss();
+                        ExampleUtil.showToast(AddAddressActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
+                        Log.i(TAG, "onResponse: add address success");
+                    }else {
+                        mDialog.dismiss();
+                        ExampleUtil.showToast(AddAddressActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+                        Log.w(TAG, "onResponse: add address failed");
+                    }
                 }
             }
-        });*/
+        });
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -15,11 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.alibaba.fastjson.JSON;
+import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.MessageDao;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.utils.JsonUtil;
+import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,9 +41,13 @@ import cn.jpush.im.android.api.model.GroupInfo;
 import cn.jpush.im.android.api.model.Message;
 import cn.jpush.im.android.api.model.UserInfo;
 import cn.jpush.im.api.BasicCallback;
+import okhttp3.Call;
+import okhttp3.MultipartBody;
+import okhttp3.Response;
 
 
 public abstract class CommonActivity extends AbstractFragmentActivity {
+    private static final String TAG = "CommonActivity";
 
     private MessageDao mMessageDao;
     private User mUser;
@@ -247,5 +259,8 @@ public abstract class CommonActivity extends AbstractFragmentActivity {
 
         com.shiliu.caishifu.entity.Message.save(message);*/
     }
+
+    
+
 
 }

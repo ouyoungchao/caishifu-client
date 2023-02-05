@@ -4,29 +4,36 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shiliu.caishifu.R;
-import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.ResultCode;
+import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 修改个性签名
  *
- * @author zhou
  */
 public class EditSignActivity extends BaseActivity {
+    private static final String TAG = "EditSignActivity";
 
     @BindView(R.id.tv_title)
     TextView mTitleTv;
@@ -65,7 +72,7 @@ public class EditSignActivity extends BaseActivity {
             mDialog.show();
             String userId = mUser.getUserId();
             String userNickName = mSignEt.getText().toString();
-            updateUserSign(userId, userNickName);
+            updateUserSign(userNickName);
         });
     }
 
@@ -137,25 +144,36 @@ public class EditSignActivity extends BaseActivity {
         finish();
     }
 
-    private void updateUserSign(final String userId, final String userSign) {
-        String url = Constant.BASE_URL + "users/" + userId + "/userSign";
-        Map<String, String> paramMap = new HashMap<>();
+    private void updateUserSign(final String userSign) {
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userSign", userSign);
 
-       /* networkUtil.httpPutRequest(url, paramMap, response -> {
-            mDialog.dismiss();
-            mUser.setUserSign(userSign);
-            PreferencesUtil.getInstance().setUser(mUser);
-            finish();
-        }, volleyError -> {
-            mDialog.dismiss();
-            if (volleyError instanceof NetworkError) {
-                Toast.makeText(EditSignActivity.this, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
-                return;
-            } else if (volleyError instanceof TimeoutError) {
-                Toast.makeText(EditSignActivity.this, R.string.network_time_out, Toast.LENGTH_SHORT).show();
-                return;
+        updateUserProperties(paramMap, networkUtil, new NetworkUtil.NetworkCallbak() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mDialog.dismiss();
+                Log.w(TAG, "onFailure update user's sex ", e);
             }
-        });*/
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (needLogin(response)) {
+                    login();
+                } else {
+                    UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null) {
+                        mUser.setUserSign(userSign);
+                        PreferencesUtil.getInstance().setUser(mUser);
+                        ExampleUtil.showToast(EditSignActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
+                        Log.i(TAG, "onResponse: update sign success");
+                        finish();
+                    } else{
+                        ExampleUtil.showToast(EditSignActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+                        Log.i(TAG, "onResponse: update sign failed");
+                        mDialog.dismiss();
+                    }
+                }
+            }
+        });
     }
 }

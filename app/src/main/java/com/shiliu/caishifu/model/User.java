@@ -57,9 +57,9 @@ public class User extends SugarRecord implements Serializable {
      */
     private String userHeader;
     /**
-     * 性别
+     * 性别 0:未知；1：男；2：女
      */
-    private String userSex;
+    private int userSex;
     /**
      * 籍贯
      */
@@ -178,6 +178,17 @@ public class User extends SugarRecord implements Serializable {
      */
     private List<String> userTagList;
 
+
+    private List<Address> addressList = new ArrayList<>();
+
+    public List<Address> getAddressList() {
+        return addressList;
+    }
+
+    public void setAddressList(List<Address> addressList) {
+        this.addressList = addressList;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -258,11 +269,11 @@ public class User extends SugarRecord implements Serializable {
         this.userHeader = userHeader;
     }
 
-    public String getUserSex() {
+    public  int getUserSex() {
         return userSex;
     }
 
-    public void setUserSex(String userSex) {
+    public void setUserSex(int userSex) {
         this.userSex = userSex;
     }
 
@@ -505,10 +516,14 @@ public class User extends SugarRecord implements Serializable {
     @Override
     public String toString() {
         return "User{" +
-                "userId='" + userId + '\'' +
-                ", userNickName='" + userNickName + '\'' +
+                "userNickName='" + userNickName + '\'' +
                 ", userPhone='" + userPhone + '\'' +
                 ", isBuyer='" + isBuyer + '\'' +
+                ", userSex=" + userSex +
+                ", userSign='" + userSign + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", userTags='" + userTags + '\'' +
+                ", addressList=" + addressList +
                 '}';
     }
 }
