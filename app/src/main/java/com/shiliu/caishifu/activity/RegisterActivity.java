@@ -226,6 +226,9 @@ public class RegisterActivity extends CommonActivity {
                     @Override
                     public void onFinish() {
                         isDuringObtainVerification = false;
+                        if(ValidateUtil.isValidChinesePhone(mPhoneEt.getText().toString())){
+                            mVerificateBtn.setEnabled(true);
+                        }
                     }
                 });
                 countDownTimerUtils.start();

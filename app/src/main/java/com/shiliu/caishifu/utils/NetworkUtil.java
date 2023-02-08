@@ -55,7 +55,7 @@ public class NetworkUtil {
         try {
             return okHttpClient.newCall(builder.build()).execute();
         } catch (IOException e) {
-            Log.e(TAG, "doGetRequest: "+ url,e );
+            Log.e(TAG, "doGetRequest: "+ url, e);
         }
         return null;
     }

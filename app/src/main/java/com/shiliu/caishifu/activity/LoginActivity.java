@@ -1,6 +1,7 @@
 package com.shiliu.caishifu.activity;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,6 +35,8 @@ import com.shiliu.caishifu.R;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -223,12 +226,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             paramMap.put("isAuthCode","true");
         }
 //        paramMap.put("password", MD5Util.encode(password, "utf8"));
+        CountDownLatch countDownLatch = new CountDownLatch(1);
         networkUtil.doPostRequestWithFormBody(url, paramMap, new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure login ", e);
                 ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
                 mDialog.dismiss();
+                countDownLatch.countDown();
             }
 
             @Override
@@ -254,8 +259,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     Log.d(TAG, "Login failed with code " + response.code());
                     ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
                 }
+                countDownLatch.countDown();
             }
         });
+        try {
+            //等待获取用哪个户信息
+            countDownLatch.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "login: ", e);
+        }
     }
 
     class TextChange implements TextWatcher {

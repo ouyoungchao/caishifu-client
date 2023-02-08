@@ -42,6 +42,8 @@ import com.shiliu.caishifu.widget.LoadingDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -251,9 +253,13 @@ public class MyProfileActivity extends BaseActivity {
                     User user = (User) JsonUtil.jsoToObject((String) userResult.getData().toString(), User.class);
                     mUser.setUserAvatar(user.getUserAvatar());
                     PreferencesUtil.getInstance().setUser(mUser);
+                    try {
+                        mAvatarSdv.setImageURI(OssUtil.resize(mUser.getUserAvatar()));
+                    }catch (IllegalStateException e){
+                        Log.w(TAG, "setImageURI error ", e);
+                    }
                     mDialog.dismiss();
                     ExampleUtil.showToast(MyProfileActivity.this, getResources().getString(R.string.update_user_avatar_success), Toast.LENGTH_SHORT);
-
                 }
             }
         });

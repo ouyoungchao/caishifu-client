@@ -24,6 +24,7 @@ import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
+import com.shiliu.caishifu.utils.ThreadUtil;
 
 import java.io.IOException;
 import java.util.Date;
@@ -56,7 +57,12 @@ public abstract class CommonActivity extends AbstractFragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMessageDao = new MessageDao();
-        mUser = getUser();
+        ThreadUtil.getExecutors().execute(new Thread(){
+            @Override
+            public void run() {
+                mUser = getUser();
+            }
+        });
     }
 
     @Override
