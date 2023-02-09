@@ -153,7 +153,7 @@ public class EditNameActivity extends CommonActivity {
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: update userName ", e);
                 mDialog.dismiss();
-                ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+//                ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
             }
 
             @Override
@@ -166,12 +166,11 @@ public class EditNameActivity extends CommonActivity {
                         mUser.setUserNickName(userNickName);
                         PreferencesUtil.getInstance().setUser(mUser);
                         mDialog.dismiss();
-                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
-                        Log.i(TAG, "onResponse: update nickName success");
+//                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
                         finish();
                     }else {
                         mDialog.dismiss();
-                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+//                        ExampleUtil.showToast(EditNameActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
                         Log.w(TAG, "onResponse: update nickName failed");
                     }
                 }

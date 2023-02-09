@@ -55,7 +55,6 @@ import okhttp3.Response;
 
 /**
  * 个人信息界面
- *
  */
 public class MyProfileActivity extends BaseActivity {
     private static final String TAG = "MyProfileActivity";
@@ -149,7 +148,7 @@ public class MyProfileActivity extends BaseActivity {
         initCamera();
     }
 
-    @OnClick({R.id.rl_avatar,R.id.sdv_avatar,R.id.rl_nick_name,
+    @OnClick({R.id.rl_avatar, R.id.sdv_avatar, R.id.rl_nick_name,
             R.id.rl_sex, R.id.rl_sign, R.id.rl_address})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -173,7 +172,7 @@ public class MyProfileActivity extends BaseActivity {
                 break;
             case R.id.rl_sign:
                 // 签名
-                startActivityForResult(new Intent(this, EditSignActivity.class),UPDATE_USER_SIGN);
+                startActivityForResult(new Intent(this, EditSignActivity.class), UPDATE_USER_SIGN);
                 break;
         }
     }
@@ -186,11 +185,12 @@ public class MyProfileActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            final User user = PreferencesUtil.getInstance().getUser();
+            mUser = getUser();
             switch (requestCode) {
                 case UPDATE_USER_NICK_NAME:
                     // 昵称
-                    mNickNameTv.setText(user.getUserNickName());
+                    Log.d(TAG, "UPDATE_USER_NICK_NAME: " + mUser.getUserNickName());
+                    mNickNameTv.setText(mUser.getUserNickName());
                     break;
                 case UPDATE_USER_AVATAR:
                     mDialog.setMessage("正在上传头像");
@@ -199,19 +199,31 @@ public class MyProfileActivity extends BaseActivity {
                     // 返回对象集合: 包含图片的宽、高、大小、用户是否选中原图选项等信息
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     if (!CollectionUtils.isEmpty(resultPhotos)) {
-                        ThreadUtil.getExecutors().submit(new Thread(() -> {
-                                updateUserAvatar(resultPhotos.get(0).path);
-                        }));
+//                        ThreadUtil.getExecutors().submit(new Thread(() -> {
+                        updateUserAvatar(resultPhotos.get(0).path);
+//                        }));
                     }
                     break;
                 case UPDATE_USER_SEX:
-                    mSexTv.setText(user.getUserSex());
+                    mSexTv.setText(mUser.getUserSex());
                     break;
                 case UPDATE_USER_SIGN:
-                    mSignTv.setText(user.getUserSign());
+                    mSignTv.setText(mUser.getUserSign());
                     break;
             }
         }
+    }
+
+    public void onResume() {
+        super.onResume();
+        mUser = PreferencesUtil.getInstance().getUser();
+        mNickNameTv.setText(mUser.getUserNickName());
+        if (Constant.USER_SEX_MALE == mUser.getUserSex()) {
+            mSexTv.setText(getString(R.string.sex_male));
+        } else if (Constant.USER_SEX_FEMALE == mUser.getUserSex()) {
+            mSexTv.setText(getString(R.string.sex_female));
+        }
+        mSignTv.setText(mUser.getUserSign());
     }
 
     /**
@@ -226,6 +238,7 @@ public class MyProfileActivity extends BaseActivity {
 
     /**
      * 上传头像
+     *
      * @param filePath
      */
     private void updateUserAvatar(final String filePath) {
@@ -234,35 +247,43 @@ public class MyProfileActivity extends BaseActivity {
         RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file",file.getName(),fileBody)
+                .addFormDataPart("file", file.getName(), fileBody)
                 .build();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
         networkUtil.doPostWithMultiBody(url, getAuthorizationHeader(), requestBody, new NetworkUtil.NetworkCallbak() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: update user avatar", e);
                 mDialog.dismiss();
                 ExampleUtil.showToast(MyProfileActivity.this, getResources().getString(R.string.update_user_avatar_failed), Toast.LENGTH_SHORT);
+                countDownLatch.countDown();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                if(needLogin(response)){
+                if (needLogin(response)) {
                     login();
-                }else {
+                    countDownLatch.countDown();
+                } else {
                     User user = (User) JsonUtil.jsoToObject((String) userResult.getData().toString(), User.class);
                     mUser.setUserAvatar(user.getUserAvatar());
                     PreferencesUtil.getInstance().setUser(mUser);
-                    try {
-                        mAvatarSdv.setImageURI(OssUtil.resize(mUser.getUserAvatar()));
-                    }catch (IllegalStateException e){
-                        Log.w(TAG, "setImageURI error ", e);
-                    }
                     mDialog.dismiss();
                     ExampleUtil.showToast(MyProfileActivity.this, getResources().getString(R.string.update_user_avatar_success), Toast.LENGTH_SHORT);
+                    countDownLatch.countDown();
                 }
             }
         });
+        try {
+            countDownLatch.await(10, TimeUnit.SECONDS);
+            mAvatarSdv.setImageURI(OssUtil.resize(mUser.getUserAvatar()));
+        } catch (InterruptedException e) {
+            Log.e(TAG, "updateUserAvatar: ", e);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "updateUserAvatar: ", e);
+        }
+
     }
 
     /**

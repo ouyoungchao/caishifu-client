@@ -92,12 +92,11 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         mUser = PreferencesUtil.getInstance().getUser();
-       /* mNickNameTv.setText(mUser.getUserNickName());
-        String userWxId = mUser.getUserWxId() == null ? "" : mUser.getUserWxId();
-        mWxIdTv.setText("帐号:" + userWxId);
+        mNickNameTv.setText(mUser.getUserNickName());
+        mWxIdTv.setText("帐号:" + mUser.getUserPhone());
         if (!TextUtils.isEmpty(mUser.getUserAvatar())) {
             String resizeAvatarUrl = OssUtil.resize(mUser.getUserAvatar());
             mAvatarSdv.setImageURI(Uri.parse(resizeAvatarUrl));
-        }*/
+        }
     }
 }
