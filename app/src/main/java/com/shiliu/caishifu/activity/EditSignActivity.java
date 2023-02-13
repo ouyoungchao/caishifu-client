@@ -161,14 +161,14 @@ public class EditSignActivity extends BaseActivity {
                     login();
                 } else {
                     UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null) {
+                    if (userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null) {
                         mUser.setUserSign(userSign);
                         PreferencesUtil.getInstance().setUser(mUser);
-                        ExampleUtil.showToast(EditSignActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
+                        ExampleUtil.showToast(EditSignActivity.this, userResult.getMessage(), Toast.LENGTH_SHORT);
                         Log.i(TAG, "onResponse: update sign success");
                         finish();
                     } else{
-                        ExampleUtil.showToast(EditSignActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
+                        ExampleUtil.showToast(EditSignActivity.this, userResult.getMessage(), Toast.LENGTH_SHORT);
                         Log.i(TAG, "onResponse: update sign failed");
                         mDialog.dismiss();
                     }

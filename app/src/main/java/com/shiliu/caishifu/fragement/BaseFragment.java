@@ -43,7 +43,7 @@ public class BaseFragment extends Fragment {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                            if(userResult.getCode() == ResultCode.USERINFO_GET_SUCCESS.getCode() && userResult.getData() != null) {
+                            if(userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null) {
                                 User user = JsonUtil.jsoToObject(JsonUtil.objectToJson(userResult.getData()),User.class);
                                 if (user != null) {
                                     mUser = user;

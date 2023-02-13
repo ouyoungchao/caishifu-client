@@ -369,22 +369,12 @@ public class RegisterActivity extends CommonActivity {
                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         finish();
                         break;
-                    case 500:
+                    default:
                         CommonResult result = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
-                        if (ResultCode.REGISTER_FAILED_USER_EXIST.getCode() == (result.getCode())) {
-                            ExampleUtil.showToast(RegisterActivity.this,
-                                    ResultCode.REGISTER_FAILED_USER_EXIST.getMessage(), Toast.LENGTH_SHORT);
-                        }else if(ResultCode.VERIFICATION_CODE_INVALID.getCode() == result.getCode()){
-                            ExampleUtil.showToast(RegisterActivity.this,
-                                    ResultCode.VERIFICATION_CODE_INVALID.getMessage(), Toast.LENGTH_SHORT);
-                        }
+                        Log.w(TAG, "onResponse: " + response.body().string());
                         mDialog.dismiss();
+                        ExampleUtil.showToast(RegisterActivity.this,result.getMessage(), Toast.LENGTH_SHORT);
                         break;
-                  default:
-                      Log.d(TAG, "onResponse: " + response.body().string());
-                      mDialog.dismiss();
-                      ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.account_or_password_error), Toast.LENGTH_SHORT);
-                      break;
                 }
             }
         });
@@ -443,8 +433,10 @@ public class RegisterActivity extends CommonActivity {
                 public void onResponse(Call call, Response response) throws IOException {
                     Log.i(TAG, "onResponse: getAuthCode success");
                     CommonResult commonResult = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
-                    if(commonResult.getCode() == ResultCode.VERIFICATION_GET_FAILED.getCode()){
-                        ExampleUtil.showToast(RegisterActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                    if(commonResult.getCode() == ResultCode.SUCCESS.getCode()){
+                        ExampleUtil.showToast(RegisterActivity.this, commonResult.getMessage(), Toast.LENGTH_SHORT);
+                    }else{
+                        ExampleUtil.showToast(RegisterActivity.this, commonResult.getMessage(), Toast.LENGTH_SHORT);
                     }
                 }
             });

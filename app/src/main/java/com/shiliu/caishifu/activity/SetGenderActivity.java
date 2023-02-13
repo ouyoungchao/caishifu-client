@@ -140,14 +140,18 @@ public class SetGenderActivity extends CommonActivity {
                     login();
                 } else {
                     UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null) {
+                    if (userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null) {
                         mUser.setUserSex(userSex);
                         PreferencesUtil.getInstance().setUser(mUser);
                         mDialog.dismiss();
-                        ExampleUtil.showToast(SetGenderActivity.this, getResources().getString(R.string.update_user_properties_success), Toast.LENGTH_SHORT);
-                        Log.i(TAG, "onResponse: update sex success");
+                        ExampleUtil.showToast(SetGenderActivity.this, userResult.getMessage(), Toast.LENGTH_SHORT);
                         renderSex();
+                        Log.i(TAG, "updateUserSex onResponse: update sex success");
                         finish();
+                    } else {
+                        mDialog.dismiss();
+                        ExampleUtil.showToast(SetGenderActivity.this, userResult.getMessage(), Toast.LENGTH_SHORT);
+                        Log.w(TAG, "updateUserSex onResponse: update sex error " + userResult.toString());
                     }
                 }
             }

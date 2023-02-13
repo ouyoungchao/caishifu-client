@@ -191,10 +191,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.i(TAG, "onResponse: getAuthCode success");
                 CommonResult commonResult = JsonUtil.jsoToObject(response.body().byteStream(), CommonResult.class);
-                if(commonResult.getCode() == ResultCode.VERIFICATION_GET_FAILED.getCode()){
-                    ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.obtain_verification_code_failed), Toast.LENGTH_SHORT);
+                if(commonResult.getCode() == ResultCode.SUCCESS.getCode()){
+                    ExampleUtil.showToast(LoginActivity.this, commonResult.getMessage(), Toast.LENGTH_SHORT);
+                    Log.i(TAG, "onResponse: getAuthCode success");
+                }else{
+                    ExampleUtil.showToast(LoginActivity.this, commonResult.getMessage(), Toast.LENGTH_SHORT);
+                    Log.i(TAG, "onResponse: getAuthCode failed " + commonResult.toString());
                 }
             }
         });
@@ -241,23 +244,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Log.d(TAG, "server response: " + response);
                 mDialog.dismiss();
                 TokenResult tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResult.class);
-                if(response.code() == 200) {
+                if(tokenResult.getCode() == ResultCode.SUCCESS.getCode()) {
                     PreferencesUtil.getInstance().saveParam("tokenInfo",JsonUtil.objectToJson(tokenResult.getData()));
                     PreferencesUtil.getInstance().setLogin(true);
                     //获取用户信息
                     getUser();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }else if(response.code() == 500){
-                    if(tokenResult.getCode() == ResultCode.LOGIN_USERNAME_OR_PASSWOR_ERROR.getCode()){
-                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_USERNAME_OR_PASSWOR_ERROR.getMessage(), Toast.LENGTH_SHORT);
-                    }else if(tokenResult.getCode() == ResultCode.LOGIN_USERNAME_IS_FIRBIDDEN.getCode()) {
-                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_USERNAME_IS_FIRBIDDEN.getMessage(), Toast.LENGTH_SHORT);
-                    } else {
-                        ExampleUtil.showToast(LoginActivity.this, ResultCode.LOGIN_ERROR.getMessage(), Toast.LENGTH_SHORT);
-                    }
-                }else{
-                    Log.d(TAG, "Login failed with code " + response.code());
-                    ExampleUtil.showToast(LoginActivity.this, getResources().getString(R.string.login_failed), Toast.LENGTH_SHORT);
+                }else {
+                    Log.w(TAG, "login onResponse: " + tokenResult.toString());
+                    ExampleUtil.showToast(LoginActivity.this,tokenResult.getMessage(), Toast.LENGTH_SHORT);
                 }
                 countDownLatch.countDown();
             }

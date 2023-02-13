@@ -327,7 +327,7 @@ public class AddAddressActivity extends BaseActivity {
                     login();
                 } else {
                     UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                    if (userResult.getCode() == ResultCode.USERINFO_UPDATE_SUCCESS.getCode() && userResult.getData() != null){
+                    if (userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null){
                         mUser.setAddressList(addressList);
                         PreferencesUtil.getInstance().setUser(mUser);
                         mDialog.dismiss();
@@ -335,8 +335,8 @@ public class AddAddressActivity extends BaseActivity {
                         Log.i(TAG, "onResponse: add address success");
                     }else {
                         mDialog.dismiss();
-                        ExampleUtil.showToast(AddAddressActivity.this, getResources().getString(R.string.update_user_properties_failed), Toast.LENGTH_SHORT);
-                        Log.w(TAG, "onResponse: add address failed");
+                        ExampleUtil.showToast(AddAddressActivity.this, userResult.getMessage(), Toast.LENGTH_SHORT);
+                        Log.w(TAG, "onResponse: add address failed " + userResult.toString());
                     }
                 }
             }
