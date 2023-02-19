@@ -25,6 +25,7 @@ import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.activity.FriendsCircleActivity;
 import com.shiliu.caishifu.activity.MainActivity;
 import com.shiliu.caishifu.activity.MomentsActivity;
+import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class DiscoverFragment extends BaseFragment {
     @BindView(R.id.tv_seller)
     TextView mSellerTv;
 
+    private User user;
+
 
     Fragment sellVegetableFragment = new SellVegetableFragment();
 
@@ -52,6 +55,7 @@ public class DiscoverFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         setTitleStrokeWidth(mBuyerTv);
         setTitleStrokeWidth(mSellerTv);
+
        /* if (PreferencesUtil.getInstance().isOpenPeopleNearby()) {
             mOpenPeopleNearbyIv.setVisibility(View.VISIBLE);
         } else {
@@ -60,11 +64,35 @@ public class DiscoverFragment extends BaseFragment {
 
     }
 
+    private void initView() {
+        user = getUser(this.getContext());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        initView();
         View view = inflater.inflate(R.layout.discover_fragment, container, false);
         ButterKnife.bind(this, view);
+        FragmentTransaction trx = this.getActivity().getSupportFragmentManager()
+                .beginTransaction();
+        if (Boolean.TRUE.equals(user.getIsBuyer())) {
+            trx.hide(buyVegetableFragment);
+            if(!sellVegetableFragment.isAdded()) {
+                trx.add(R.id.rl_discover_fragment_container, sellVegetableFragment);
+            }
+            trx.show(sellVegetableFragment).commit();
+            mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_top_bar));
+            mSellerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
+        }else{
+            trx.hide(sellVegetableFragment);
+            if(!buyVegetableFragment.isAdded()) {
+                trx.add(R.id.rl_discover_fragment_container, buyVegetableFragment);
+            }
+            trx.show(buyVegetableFragment).commit();
+            mSellerTv.setBackgroundColor(getResources().getColor(R.color.common_top_bar));
+            mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
+        }
         return view;
     }
 
