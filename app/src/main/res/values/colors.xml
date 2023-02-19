@@ -59,4 +59,15 @@
 
     <color name="caishifu_btn_green">#07C063</color>
     <color name="picker_list_divider">#dadada</color>
+
+    <color name="ed_hint">#FF9B9B9B</color>
+    <color name="bg_place_holder">#FFF2F2F3</color>
+    <color name="bg_title_line">#E0E0E0</color>
+    <color name="bg_title">#2B2C30</color>
+    <color name="bg_title_pressed">#222126</color>
+    <color name="bg_publish_disable">#245724</color>
+    <color name="bg_publish_enable">#1F9F11</color>
+    <color name="bg_img_place_holder">#49545C</color>
+    <color name="bg_delete_image">#E75452</color>
+    <color name="bg_delete_image_selected">#C4373A</color>
 </resources>

@@ -9,8 +9,8 @@
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_top_bar"
-        android:layout_alignParentTop="true"
-        android:background="@color/common_top_bar">
+        android:background="@color/common_top_bar"
+        android:layout_alignParentTop="true">
 
         <TextView
             android:id="@+id/tv_title"
@@ -30,6 +30,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:clickable="true"
+            android:background="@color/common_top_bar"
             android:src="@mipmap/icon_main_activity_add_normal" />
 
         <ImageView
@@ -51,7 +52,7 @@
         android:id="@+id/lv_conversation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         android:cacheColorHint="#00000000"
         android:descendantFocusability="blocksDescendants"
         android:divider="@null"

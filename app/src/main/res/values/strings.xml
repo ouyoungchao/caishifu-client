@@ -114,5 +114,11 @@
 
     <string name="update_user_avatar_failed">修改头像失败，请重试</string>
     <string name="update_user_avatar_success">修改头像成功</string>
+
+    <string name="tips_delete_image">拖动到此处删除</string>
+    <string name="tips_delete_image_delete">松手即可删除</string>
+
+    <string name = "radish">萝卜</string>
+    <string name="cabbage">白菜</string>
 </resources>
 

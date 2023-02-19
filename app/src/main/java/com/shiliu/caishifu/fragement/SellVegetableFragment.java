@@ -1,22 +1,15 @@
-package com.shiliu.caishifu.activity;
+package com.shiliu.caishifu.fragement;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,13 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.adapter.FriendsCircleAdapter;
@@ -41,7 +30,6 @@ import com.shiliu.caishifu.engine.GlideEngine;
 import com.shiliu.caishifu.model.FriendsCircle;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.NetworkUtil;
-import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
 import java.util.ArrayList;
@@ -49,15 +37,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
- * 朋友圈
- *
- * @author zhou
+ * 发布卖菜信息
  */
-public class FriendsCircleActivity extends CommonActivity {
+public class SellVegetableFragment extends BaseFragment {
 
     private RelativeLayout mRootRl;
     private ImageView mAddFriendsCircleIv;
@@ -85,71 +71,15 @@ public class FriendsCircleActivity extends CommonActivity {
     private static final int UPLOAD_PICTURE = 1;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.friends_circle_activity);
-        initView();
-        mUser = getUser();
-        networkUtil = NetworkUtil.getInstance(this);
+
+        mUser = getUser(this.getContext());
+        networkUtil = NetworkUtil.getInstance(this.getContext());
         mFriendsCircleDao = new FriendsCircleDao();
         mTimeStamp = 0L;
-        mDialog = new LoadingDialog(FriendsCircleActivity.this);
-
-        View headerView = LayoutInflater.from(this).inflate(R.layout.friends_circle_header_item, null);
-
-        mAddFriendsCircleIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = layoutInflater.inflate(R.layout.add_friends_circle_popup_window, null);
-                // 给popwindow加上动画效果
-                LinearLayout mPopRootLl = view.findViewById(R.id.ll_pop_root);
-                view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
-                mPopRootLl.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.push_bottom_in));
-                // 设置popwindow的宽高
-                DisplayMetrics dm = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(dm);
-                mPopupWindow = new PopupWindow(view, dm.widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // 使其聚集
-                mPopupWindow.setFocusable(true);
-                // 设置允许在外点击消失
-                mPopupWindow.setOutsideTouchable(true);
-
-                // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-                mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-                backgroundAlpha(0.5f);  //透明度
-
-                mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        backgroundAlpha(1f);
-                    }
-                });
-                // 弹出的位置
-                mPopupWindow.showAtLocation(mRootRl, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
-
-                RelativeLayout addByAlbumRl = view.findViewById(R.id.tv_add_by_album);
-                addByAlbumRl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showPhotoDialog();
-                    }
-                });
-
-                // 取消
-                RelativeLayout mCancelRl = view.findViewById(R.id.rl_cancel);
-                mCancelRl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mPopupWindow.dismiss();
-                    }
-                });
-            }
-        });
-
+        mDialog = new LoadingDialog(this.getContext());
         mFriendsCircleList = mFriendsCircleDao.getFriendsCircleList(Constant.DEFAULT_PAGE_SIZE, mTimeStamp);
-
         FriendsCircleAdapter.ClickListener clickListener = new FriendsCircleAdapter.ClickListener() {
             @Override
             public void onClick(Object... objects) {
@@ -157,18 +87,16 @@ public class FriendsCircleActivity extends CommonActivity {
                 int position = Integer.parseInt(String.valueOf(objects[2]));
                 mCircleId = circleId;
                 mBottomLl.setVisibility(View.VISIBLE);
-
                 mCommentEt.setFocusable(true);
                 mCommentEt.setFocusableInTouchMode(true);
                 mCommentEt.requestFocus();
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
+                SellVegetableFragment.this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 mFriendsCircleLv.smoothScrollToPosition(position);
             }
         };
 
-        mCommentEt.addTextChangedListener(new TextChange());
-        mSendBtn.setOnClickListener(new View.OnClickListener() {
+//        mCommentEt.addTextChangedListener(new TextChange());
+       /* mSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDialog.setMessage("正在发表...");
@@ -180,45 +108,12 @@ public class FriendsCircleActivity extends CommonActivity {
                 mBottomLl.setVisibility(View.GONE);
                 mCommentEt.setText("");
             }
-        });
+        });*/
 
-        mAdapter = new FriendsCircleAdapter(mFriendsCircleList, this, clickListener);
+       /* mAdapter = new FriendsCircleAdapter(mFriendsCircleList, this.getContext(), clickListener);
         mFriendsCircleLv.setAdapter(mAdapter);
-        mFriendsCircleLv.addHeaderView(headerView, null, false);
-        mFriendsCircleLv.setHeaderDividersEnabled(false);
-
-        // headerView
-        ImageView mCoverIv = headerView.findViewById(R.id.iv_cover);
-        mCoverIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-
-        TextView mNickNameTv = headerView.findViewById(R.id.tv_nick_name);
-        mNickNameTv.setText(mUser.getUserNickName());
-
-        SimpleDraweeView mAvatarSdv = headerView.findViewById(R.id.sdv_avatar);
-        if (!TextUtils.isEmpty(mUser.getUserAvatar())) {
-            mAvatarSdv.setImageURI(Uri.parse(mUser.getUserAvatar()));
-        }
         getFriendsCircleList(mUser.getUserId(), Constant.DEFAULT_PAGE_SIZE, false);
 
-//        mRefreshLayout.setPrimaryColorsId(android.R.color.black, android.R.color.white);
-//        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(RefreshLayout refreshlayout) {
-//                // 下拉刷新
-//                getFriendsCircleList(mUser.getUserId(), Constant.DEFAULT_PAGE_SIZE, false);
-//            }
-//        });
-//        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore(RefreshLayout refreshlayout) {
-//                // 上拉加载
-//                getFriendsCircleList(mUser.getUserId(), Constant.DEFAULT_PAGE_SIZE, true);
-//            }
-//        });
 
         mFriendsCircleLv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -227,16 +122,24 @@ public class FriendsCircleActivity extends CommonActivity {
                 mBottomLl.setVisibility(View.GONE);
                 return false;
             }
-        });
+        });*/
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.sell_vegatable_fragment, container, false);
+        initView(view);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == -1) {
             switch (requestCode) {
                 case UPLOAD_PICTURE:
-
             }
         }
     }
@@ -261,13 +164,13 @@ public class FriendsCircleActivity extends CommonActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             boolean commentEtHasText = mCommentEt.getText().length() > 0;
             if (commentEtHasText) {
-                mSendBtn.setBackgroundColor(Color.parseColor("#45c01a"));
+               /* mSendBtn.setBackgroundColor(Color.parseColor("#45c01a"));
                 mSendBtn.setTextColor(Color.parseColor("#ffffff"));
-                mSendBtn.setEnabled(true);
+                mSendBtn.setEnabled(true);*/
             } else {
-                mSendBtn.setBackgroundColor(Color.parseColor("#cccccc"));
+                /*mSendBtn.setBackgroundColor(Color.parseColor("#cccccc"));
                 mSendBtn.setTextColor(Color.parseColor("#666667"));
-                mSendBtn.setEnabled(false);
+                mSendBtn.setEnabled(false);*/
             }
         }
 
@@ -277,20 +180,8 @@ public class FriendsCircleActivity extends CommonActivity {
         }
     }
 
-    private void initView() {
-        mManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        mRootRl = findViewById(R.id.rl_root);
-        mAddFriendsCircleIv = findViewById(R.id.iv_add_friends_circle);
-        mFriendsCircleLv = findViewById(R.id.ll_friends_circle);
-
-        mBottomLl = findViewById(R.id.ll_bottom);
-        mCommentEt = findViewById(R.id.et_comment);
-        mSendBtn = findViewById(R.id.btn_send);
-
-        // 上拉加载，下拉刷新
-//        mRefreshLayout = findViewById(R.id.srl_friends_circle);
+    private void initView(View view) {
+        mFriendsCircleLv = view.findViewById(R.id.ll_friends_circle);
     }
 
 
@@ -298,15 +189,15 @@ public class FriendsCircleActivity extends CommonActivity {
      * 隐藏软键盘
      */
     private void hideKeyboard() {
-        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (getCurrentFocus() != null)
-                mManager.hideSoftInputFromWindow(getCurrentFocus()
+        if (this.getActivity().getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (this.getActivity().getCurrentFocus() != null)
+                mManager.hideSoftInputFromWindow(this.getActivity().getCurrentFocus()
                         .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
     public void back(View view) {
-        finish();
+//        finish();
     }
 
     private void getFriendsCircleList(String userId, final int pageSize, final boolean isAdd) {
@@ -398,10 +289,10 @@ public class FriendsCircleActivity extends CommonActivity {
      * @param bgAlpha 透明度值
      */
     public void backgroundAlpha(float bgAlpha) {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        WindowManager.LayoutParams lp = this.getActivity().getWindow().getAttributes();
         // 0.0-1.0
         lp.alpha = bgAlpha;
-        getWindow().setAttributes(lp);
+        this.getActivity().getWindow().setAttributes(lp);
     }
 
 }

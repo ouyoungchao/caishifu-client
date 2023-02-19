@@ -3,6 +3,7 @@ package com.shiliu.caishifu.fragement;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
@@ -33,18 +36,22 @@ import butterknife.OnClick;
 
 public class DiscoverFragment extends BaseFragment {
 
-    @BindView(R.id.tv_title)
-    TextView mTitleTv;
+    @BindView(R.id.tv_buyer)
+    TextView mBuyerTv;
 
-    // 开启"附近的人"标记
-    /*@BindView(R.id.iv_open_people_nearby)
-    ImageView mOpenPeopleNearbyIv;*/
+    @BindView(R.id.tv_seller)
+    TextView mSellerTv;
+
+
+    Fragment sellVegetableFragment = new SellVegetableFragment();
+
+    Fragment buyVegetableFragment = new BuyVegetableFragment();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setTitleStrokeWidth(mTitleTv);
-
+        setTitleStrokeWidth(mBuyerTv);
+        setTitleStrokeWidth(mSellerTv);
        /* if (PreferencesUtil.getInstance().isOpenPeopleNearby()) {
             mOpenPeopleNearbyIv.setVisibility(View.VISIBLE);
         } else {
@@ -64,11 +71,6 @@ public class DiscoverFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        /*if (PreferencesUtil.getInstance().isOpenPeopleNearby()) {
-            mOpenPeopleNearbyIv.setVisibility(View.VISIBLE);
-        } else {
-            mOpenPeopleNearbyIv.setVisibility(View.GONE);
-        }*/
     }
 
     @Override
@@ -114,10 +116,8 @@ public class DiscoverFragment extends BaseFragment {
                 // 非初次进入App且已授权
                 switch (requestCode) {
                     case MainActivity.REQUEST_CODE_CAMERA:
-                        startScanActivity();
                         break;
                     case MainActivity.REQUEST_CODE_LOCATION:
-                        startPeopleNearbyActivity();
                         break;
                 }
 
@@ -145,10 +145,8 @@ public class DiscoverFragment extends BaseFragment {
             // 同意权限做的处理,开启服务提交通讯录
             switch (requestCode) {
                 case MainActivity.REQUEST_CODE_CAMERA:
-                    startScanActivity();
                     break;
                 case MainActivity.REQUEST_CODE_LOCATION:
-                    startPeopleNearbyActivity();
                     break;
             }
         } else {
@@ -193,51 +191,31 @@ public class DiscoverFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 进入扫一扫页面
-     */
-    private void startScanActivity() {
-        /*Intent intent = new Intent(getActivity(), CaptureActivity2.class);
-        intent.putExtra(CaptureActivity2.USE_DEFUALT_ISBN_ACTIVITY, true);
-        startActivityForResult(intent, MainActivity.REQUEST_CODE_SCAN);*/
-    }
 
-    /**
-     * 进入附近的人列表页
-     */
-    private void startPeopleNearbyActivity() {
-       /* final ConfirmDialog mConfirmDialog = new ConfirmDialog(getActivity(), getString(R.string.tips),
-                getString(R.string.open_people_nearby_tips),
-                getString(R.string.ok), getString(R.string.cancel), getActivity().getColor(R.color.navy_blue));
-        mConfirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {
-            @Override
-            public void onOkClick() {
-                mConfirmDialog.dismiss();
-                // 开启足迹
-                PreferencesUtil.getInstance().setOpenPeopleNearby(true);
 
-                startActivity(new Intent(getActivity(), PeopleNearbyActivity.class));
-            }
-
-            @Override
-            public void onCancelClick() {
-                mConfirmDialog.dismiss();
-            }
-        });
-        // 点击空白处消失
-        mConfirmDialog.setCancelable(true);
-        mConfirmDialog.show();*/
-    }
-
-    @OnClick({R.id.rl_vegetable_market_buyer,R.id.rl_vegetable_market_seller})
+    @OnClick({R.id.tv_seller,R.id.tv_buyer})
     public void onClick(View view) {
         String[] permissions;
+        FragmentTransaction trx = this.getActivity().getSupportFragmentManager()
+                .beginTransaction();
         switch (view.getId()) {
-            case R.id.rl_vegetable_market_buyer:
-                startActivity(new Intent(getActivity(), FriendsCircleActivity.class));
+            case R.id.tv_seller:
+                trx.hide(buyVegetableFragment);
+                if(!sellVegetableFragment.isAdded()) {
+                    trx.add(R.id.rl_discover_fragment_container, sellVegetableFragment);
+                }
+                trx.show(sellVegetableFragment).commit();
+                mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_top_bar));
+                mSellerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
                 break;
-            case R.id.rl_vegetable_market_seller:
-                startActivity(new Intent(getActivity(), FriendsCircleActivity.class));
+            case R.id.tv_buyer:
+                trx.hide(sellVegetableFragment);
+                if(!buyVegetableFragment.isAdded()) {
+                    trx.add(R.id.rl_discover_fragment_container, buyVegetableFragment);
+                }
+                trx.show(buyVegetableFragment).commit();
+                mSellerTv.setBackgroundColor(getResources().getColor(R.color.common_top_bar));
+                mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
                 break;
             default: break;
         }

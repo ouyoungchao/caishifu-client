@@ -230,7 +230,7 @@ public class MyProfileActivity extends BaseActivity {
      * 显示修改头像对话框
      */
     private void showPhotoDialog() {
-        EasyPhotos.createAlbum(this, true, false, GlideEngine.getInstance())
+        EasyPhotos.createAlbum(this, false, false, GlideEngine.getInstance())
                 .setFileProviderAuthority("com.shiliu.caishifu.fileprovider")
                 .setCount(1)//参数说明：最大可选数，默认1
                 .start(UPDATE_USER_AVATAR);

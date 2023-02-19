@@ -33,4 +33,11 @@
     <dimen name="my_profile_text_size">15.5sp</dimen>
     <dimen name="me_thick_divider_height">8dp</dimen>
     <dimen name="map_holder_height">480dp</dimen>
+
+    <!--发布卖菜信息相关-->
+    <dimen name="dimen_size_8">8dp</dimen>
+    <dimen name="dimen_size_18">18dp</dimen>
+    <dimen name="dimen_size_62">62dp</dimen>
+    <dimen name="dimen_size_63">63dp</dimen>
+    <dimen name="dimen_size_160">160dp</dimen>
 </resources>
