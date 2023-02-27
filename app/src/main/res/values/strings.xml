@@ -51,6 +51,7 @@
     <!--动态相关-->
     <string name="tab_discover">发现</string>
     <string name="vegetable_market">菜市场</string>
+    <string name="publish_vegetable_info">发布</string>
     <string name="vegetable_market_buyer">买菜</string>
     <string name="vegetable_market_seller">卖菜</string>
     <string name="user_settings">资料设置</string>

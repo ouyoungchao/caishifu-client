@@ -56,20 +56,25 @@
         android:background="@color/bg_place_holder"
         tools:visibility="gone">
 
-        <View
-            android:id="@+id/line1"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_alignParentTop="true"
-            android:background="@color/bg_title_line" />
+        <ListView
+            android:id="@+id/vegetable_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/divider_list"
+            android:dividerHeight="0.5dp"
+            android:scrollbars="none"
+            android:transcriptMode="normal" />
 
         <include
             android:id="@+id/view_placeholder"
-            layout="@layout/publish_content_place_container"
+            layout="@layout/publish_vegetable_container_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/line1" />
+            android:layout_below="@+id/vegetable_list"/>
+
     </RelativeLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/rl_delete"

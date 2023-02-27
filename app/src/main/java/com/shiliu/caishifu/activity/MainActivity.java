@@ -14,7 +14,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,18 +26,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 //import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.huantansheng.easyphotos.EasyPhotos;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.abserver.Observer;
 import com.shiliu.caishifu.abserver.ObserverManager;
-import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.fragement.ChatsFragment;
 import com.shiliu.caishifu.fragement.DiscoverFragment;
 import com.shiliu.caishifu.fragement.MeFragment;
-import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.ViewType;
-import com.shiliu.caishifu.model.server.TokenInfo;
 import com.shiliu.caishifu.utils.ExampleUtil;
-import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.StatusBarUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
@@ -45,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import cn.jpush.im.android.api.model.UserInfo;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -56,6 +57,7 @@ public class MainActivity extends BaseActivity implements Observer {
     public static final int REQUEST_CODE_SCAN = 0;
     public static final int REQUEST_CODE_CAMERA = 1;
     public static final int REQUEST_CODE_LOCATION = 2;
+    private static final int UPLOAD_PICTURE = 3;
 
     public static boolean isForeground = false;
 
@@ -77,6 +79,13 @@ public class MainActivity extends BaseActivity implements Observer {
 //    private RelativeLayout mTitleRl;
 //    private TextView mTitleTv;
 //    private ImageView mAddIv;
+
+    @BindView(R.id.rl_vegetable_publish)
+    RelativeLayout mVegetablePublish;
+
+    @BindView(R.id.rl_vegetable_market)
+    RelativeLayout mVegetableMarket;
+
 
     // 首页弹出框
     private PopupWindow mPopupWindow;
@@ -166,6 +175,7 @@ public class MainActivity extends BaseActivity implements Observer {
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
             case R.id.rl_vegetable_market:
+                Log.i(TAG, "onTabClicked: caishichang");
                 mIndex = 1;
                 StatusBarUtil.setStatusBarColor(MainActivity.this, R.color.app_common_bg);
                 break;
@@ -190,7 +200,19 @@ public class MainActivity extends BaseActivity implements Observer {
         mMainButtonTvs[mCurrentTabIndex].setTextColor(getColor(R.color.black_deep));
         mMainButtonTvs[mIndex].setTextColor(0xFF45C01A);
         mCurrentTabIndex = mIndex;
+        Log.i(TAG, "onTabClicked: mCurrentTabIndex = " + mCurrentTabIndex + " and mIndex = " + mIndex);
+        if(mIndex == 1){
+            mVegetableMarket.setVisibility(View.INVISIBLE);
+            mVegetablePublish.setVisibility(View.VISIBLE);
+        } else {
+            mVegetablePublish.setVisibility(View.INVISIBLE);
+            mVegetableMarket.setVisibility(View.VISIBLE);
+        }
     }
+
+
+
+
 
     @Override
     protected void onResume() {
@@ -206,6 +228,16 @@ public class MainActivity extends BaseActivity implements Observer {
         // 会话
         if (mCurrentTabIndex == 0) {
             mChatFragment.refreshConversationList();
+        }
+
+        if (mCurrentTabIndex == 1 && mCurrentTabIndex != mIndex) {
+            FragmentTransaction trx = getSupportFragmentManager()
+                    .beginTransaction();
+            trx.hide(mFragments[mCurrentTabIndex]);
+            if (!mFragments[mIndex].isAdded()) {
+                trx.add(R.id.rl_fragment_container, mFragments[mIndex]);
+            }
+            trx.show(mFragments[mIndex]).commit();
         }
     }
 

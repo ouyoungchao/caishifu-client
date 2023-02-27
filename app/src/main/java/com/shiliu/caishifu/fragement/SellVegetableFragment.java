@@ -1,15 +1,22 @@
 package com.shiliu.caishifu.fragement;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,34 +25,56 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.huantansheng.easyphotos.EasyPhotos;
+import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.EditPublishActivity;
+import com.shiliu.caishifu.activity.MyProfileActivity;
 import com.shiliu.caishifu.adapter.FriendsCircleAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.FriendsCircleDao;
 import com.shiliu.caishifu.engine.GlideEngine;
 import com.shiliu.caishifu.model.FriendsCircle;
 import com.shiliu.caishifu.model.User;
+import com.shiliu.caishifu.model.server.UserResult;
+import com.shiliu.caishifu.utils.CollectionUtils;
+import com.shiliu.caishifu.utils.ExampleUtil;
+import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.OssUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
  * 发布卖菜信息
  */
 public class SellVegetableFragment extends BaseFragment {
+    private static final String TAG = "SellVegetableFragment";
 
-    private RelativeLayout mRootRl;
     private ImageView mAddFriendsCircleIv;
     private ListView mFriendsCircleLv;
     private User mUser;
@@ -68,7 +97,9 @@ public class SellVegetableFragment extends BaseFragment {
     // 弹窗
     private PopupWindow mPopupWindow;
 
-    private static final int UPLOAD_PICTURE = 1;
+    private static final int UPLOAD_PICTURE = 3;
+
+    Activity activity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,27 +162,110 @@ public class SellVegetableFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.sell_vegatable_fragment, container, false);
         initView(view);
         ButterKnife.bind(this, view);
+        View publishView = this.getActivity().findViewById(R.id.rl_vegetable_publish);
+        publishView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick: sell publish");
+                Intent editPublishIntent = new Intent(getContext(), EditPublishActivity.class);
+                startActivity(editPublishIntent);
+            }
+        });
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1) {
+        if (resultCode == this.getActivity().RESULT_OK) {
             switch (requestCode) {
                 case UPLOAD_PICTURE:
+                    ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+                    if (!CollectionUtils.isEmpty(resultPhotos)) {
+                        Intent editPublishIntent = new Intent(this.getContext(), EditPublishActivity.class);
+                        editPublishIntent.putParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS, resultPhotos);
+                        startActivity(editPublishIntent);
+                    }
+                    break;
             }
         }
     }
 
 
+    public void publishMessage(View view) {
+        switch (view.getId()) {
+            case R.id.rl_vegetable_publish:
+                LayoutInflater layoutInflater = (LayoutInflater) this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = layoutInflater.inflate(R.layout.add_friends_circle_popup_window, null);
+                // 给popwindow加上动画效果
+                LinearLayout mPopRootLl = view.findViewById(R.id.ll_pop_root);
+                view.startAnimation(AnimationUtils.loadAnimation(this.getActivity().getApplicationContext(), R.anim.fade_in));
+                mPopRootLl.startAnimation(AnimationUtils.loadAnimation(this.activity.getApplicationContext(), R.anim.push_bottom_in));
+                // 设置popwindow的宽高
+                DisplayMetrics dm = new DisplayMetrics();
+                this.activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+                mPopupWindow = new PopupWindow(view, dm.widthPixels, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                // 使其聚集
+                mPopupWindow.setFocusable(true);
+                // 设置允许在外点击消失
+                mPopupWindow.setOutsideTouchable(true);
+
+                // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+                mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+                backgroundAlpha(0.5f);  //透明度
+
+                mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        backgroundAlpha(1f);
+                    }
+                });
+                RelativeLayout publishLayout = this.activity.findViewById(R.id.rl_root);
+                // 弹出的位置
+                mPopupWindow.showAtLocation(publishLayout, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+
+                TextView addByAlbumRl = view.findViewById(R.id.tv_add_by_album);
+                addByAlbumRl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showPhotoDialog();
+                    }
+                });
+
+                // 取消
+                RelativeLayout mCancelRl = view.findViewById(R.id.rl_cancel);
+                mCancelRl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mPopupWindow.dismiss();
+                    }
+                });
+                break;
+
+        }
+    }
 
     private void showPhotoDialog() {
         EasyPhotos.createAlbum(this, false, false, GlideEngine.getInstance())
                 .setFileProviderAuthority("com.shiliu.caishifu.fileprovider")
-                .setCount(1)//参数说明：最大可选数，默认1
+                .setCount(8)//参数说明：最大可选数，默认1
                 .start(UPLOAD_PICTURE);
     }
+
+    /**
+     * 设置添加屏幕的背景透明度
+     * 1.0完全不透明，0.0f完全透明
+     *
+     * @param bgAlpha 透明度值
+     */
+    public void backgroundAlpha(float bgAlpha) {
+        WindowManager.LayoutParams lp = this.getActivity().getWindow().getAttributes();
+        // 0.0-1.0
+        lp.alpha = bgAlpha;
+        this.getActivity().getWindow().setAttributes(lp);
+    }
+
 
     class TextChange implements TextWatcher {
 
@@ -182,6 +296,7 @@ public class SellVegetableFragment extends BaseFragment {
 
     private void initView(View view) {
         mFriendsCircleLv = view.findViewById(R.id.ll_friends_circle);
+        activity = this.getActivity();
     }
 
 
@@ -189,9 +304,9 @@ public class SellVegetableFragment extends BaseFragment {
      * 隐藏软键盘
      */
     private void hideKeyboard() {
-        if (this.getActivity().getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (this.getActivity().getCurrentFocus() != null)
-                mManager.hideSoftInputFromWindow(this.getActivity().getCurrentFocus()
+        if (activity.getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (activity.getCurrentFocus() != null)
+                mManager.hideSoftInputFromWindow(activity.getCurrentFocus()
                         .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
@@ -280,19 +395,6 @@ public class SellVegetableFragment extends BaseFragment {
         paramMap.put("userId", mUser.getUserId());
 
 
-    }
-
-    /**
-     * 设置添加屏幕的背景透明度
-     * 1.0完全不透明，0.0f完全透明
-     *
-     * @param bgAlpha 透明度值
-     */
-    public void backgroundAlpha(float bgAlpha) {
-        WindowManager.LayoutParams lp = this.getActivity().getWindow().getAttributes();
-        // 0.0-1.0
-        lp.alpha = bgAlpha;
-        this.getActivity().getWindow().setAttributes(lp);
     }
 
 }

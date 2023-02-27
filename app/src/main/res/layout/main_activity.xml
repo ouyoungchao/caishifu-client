@@ -56,12 +56,17 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
         </RelativeLayout>
-        <!-- 底层菜单-->
+
         <RelativeLayout
-            android:id="@+id/rl_vegetable_market"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1">
+        <!-- 菜市场-->
+        <RelativeLayout
+            android:id="@+id/rl_vegetable_market"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
             android:onClick="onTabClicked"
             android:padding="3dp">
 
@@ -84,6 +89,39 @@
                 android:text="@string/vegetable_market"
                 android:textColor="#353535"
                 android:textSize="11sp" />
+        </RelativeLayout>
+
+        <!-- 发布-->
+        <RelativeLayout
+            android:id="@+id/rl_vegetable_publish"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:onClick="onTabClicked"
+            android:padding="3dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/vegetable_publish"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_centerHorizontal="true"
+                android:focusable="false"
+                android:scaleType="centerInside"
+                android:src="@drawable/bg_tab_publish" />
+
+            <TextView
+                android:id="@+id/tv_vegetable_publish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/vegetable_publish"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:text="@string/publish_vegetable_info"
+                android:textColor="#353535"
+                android:textSize="11sp" />
+        </RelativeLayout>
+
         </RelativeLayout>
 
         <RelativeLayout

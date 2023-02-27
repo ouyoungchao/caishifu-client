@@ -111,6 +111,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/ImageTranslucentTheme" />
 
+        <!--发布卖菜信息界面-->
+        <activity android:name=".activity.EditPublishActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
         <service
             android:name="cn.jpush.android.service.PushService"
             android:process=":multiprocess"

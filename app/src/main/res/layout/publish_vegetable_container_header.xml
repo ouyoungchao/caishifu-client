@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/common_top_bar">
+
+    <RelativeLayout
+        android:id="@+id/rl_vegetable_table_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/dimen_size_8"
+        android:background="@drawable/bg_list_item_click">
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="菜单"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_name"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="元/斤"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_count"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_price"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="货量"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_图片"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_count"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="图片"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/vegetable_table_data_add"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/rl_vegetable_table_header"
+        android:layout_marginTop="@dimen/dimen_size_8"
+        android:background="@drawable/bg_list_item_click">
+
+        <ImageView
+            android:id="@+id/im_vegetable_table_data_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_add_vegetable_default"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+
+    </RelativeLayout>
+</RelativeLayout>

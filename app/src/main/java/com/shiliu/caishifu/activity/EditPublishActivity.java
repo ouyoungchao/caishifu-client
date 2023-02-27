@@ -1,6 +1,5 @@
 package com.shiliu.caishifu.activity;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -43,10 +42,12 @@ public class EditPublishActivity extends CommonActivity implements OnTouchCallba
 
     public static final String ITEM_ADD = "item_add";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_publish_activity);
+        setContentView(R.layout.edit_publish_table_activity);
         initView();
         initImages();
         initTouchHelper();

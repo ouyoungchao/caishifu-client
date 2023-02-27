@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.shiliu.caishifu.R;
+import com.shiliu.caishifu.activity.EditPublishActivity;
 import com.shiliu.caishifu.adapter.FriendsCircleAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.FriendsCircleDao;
@@ -42,6 +44,7 @@ import butterknife.ButterKnife;
  * 发布卖菜信息
  */
 public class BuyVegetableFragment extends BaseFragment {
+    private static final String TAG = "BuyVegetableFragment";
 
     private RelativeLayout mRootRl;
     private ImageView mAddFriendsCircleIv;
@@ -126,12 +129,18 @@ public class BuyVegetableFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.sell_vegatable_fragment, container, false);
+        View view = inflater.inflate(R.layout.buy_vegatable_fragment, container, false);
         initView(view);
-        View headerView = LayoutInflater.from(this.getContext()).inflate(R.layout.friends_circle_header_item, null);
-        mFriendsCircleLv.addHeaderView(headerView, null, false);
-        mFriendsCircleLv.setHeaderDividersEnabled(false);
         ButterKnife.bind(this, view);
+        View publishView = this.getActivity().findViewById(R.id.rl_vegetable_publish);
+        publishView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "onClick: buy publish");
+                Intent editPublishIntent = new Intent(getContext(), EditPublishActivity.class);
+                startActivity(editPublishIntent);
+            }
+        });
         return view;
     }
 
@@ -144,7 +153,6 @@ public class BuyVegetableFragment extends BaseFragment {
             }
         }
     }
-
 
 
     private void showPhotoDialog() {

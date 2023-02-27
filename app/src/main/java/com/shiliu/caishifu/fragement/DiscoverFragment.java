@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import butterknife.OnClick;
 
 
 public class DiscoverFragment extends BaseFragment {
+    private static final String TAG = "DiscoverFragment";
 
     @BindView(R.id.tv_buyer)
     TextView mBuyerTv;
@@ -77,6 +79,7 @@ public class DiscoverFragment extends BaseFragment {
         FragmentTransaction trx = this.getActivity().getSupportFragmentManager()
                 .beginTransaction();
         if (Boolean.TRUE.equals(user.getIsBuyer())) {
+            Log.i(TAG, "onCreateView: add seller fragement");
             trx.hide(buyVegetableFragment);
             if(!sellVegetableFragment.isAdded()) {
                 trx.add(R.id.rl_discover_fragment_container, sellVegetableFragment);
@@ -85,6 +88,7 @@ public class DiscoverFragment extends BaseFragment {
             mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_top_bar));
             mSellerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
         }else{
+            Log.i(TAG, "onCreateView: add buyer fragement");
             trx.hide(sellVegetableFragment);
             if(!buyVegetableFragment.isAdded()) {
                 trx.add(R.id.rl_discover_fragment_container, buyVegetableFragment);
