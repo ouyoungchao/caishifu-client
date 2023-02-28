@@ -121,5 +121,7 @@
 
     <string name = "radish">萝卜</string>
     <string name="cabbage">白菜</string>
+
+    <string name="picture">图片</string>
 </resources>
 
