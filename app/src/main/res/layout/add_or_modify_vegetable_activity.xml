@@ -178,7 +178,20 @@
         android:clickable="true">
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/sdv_avatar"
+            android:id="@+id/sdv_vegetable_picture2"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_toLeftOf="@+id/sdv_vegetable_picture1"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            fresco:actualImageScaleType="centerCrop"
+            fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
+            fresco:placeholderImageScaleType="centerCrop"
+            fresco:roundedCornerRadius="5dp"
+            android:visibility="gone"/>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv_vegetable_picture1"
             android:layout_width="58dp"
             android:layout_height="58dp"
             android:layout_alignParentRight="true"

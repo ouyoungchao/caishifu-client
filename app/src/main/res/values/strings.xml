@@ -123,5 +123,9 @@
     <string name="cabbage">白菜</string>
 
     <string name="picture">图片</string>
+    <string name="buyInfo">买菜信息</string>
+    <string name="sellInfo">卖菜信息</string>
+    <string name="add_sell_vegetable_abandon_tips">是否放弃新增卖菜信息？</string>
+    <string name="add_buy_vegetable_abandon_tips">是否放弃新增买菜信息？</string>
 </resources>
 
