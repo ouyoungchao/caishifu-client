@@ -31,11 +31,11 @@ import butterknife.OnClick;
 import butterknife.OnFocusChange;
 
 /**
- * 新增地址
+ * 新增商品
  *
  */
-public class AddVegetableActivity extends BaseActivity {
-    private static final String TAG = "AddVegetableActivity";
+public class AddProductActivity extends BaseActivity {
+    private static final String TAG = "AddProductActivity";
 
     private static final int REQUEST_CODE_CONTACTS = 0;
     private static final int REQUEST_CODE_LOCATION = 1;
@@ -82,11 +82,12 @@ public class AddVegetableActivity extends BaseActivity {
 
     @Override
     public int getContentView() {
-        return R.layout.add_or_modify_vegetable_activity;
+        return R.layout.add_or_modify_product_activity;
     }
 
     @Override
     public void initView() {
+        mUser = getUser();
         initStatusBar();
         if(Boolean.valueOf(mUser.getIsBuyer())) {
             mTitleTv.setText(getString(R.string.buyInfo));
@@ -106,8 +107,7 @@ public class AddVegetableActivity extends BaseActivity {
     @Override
     public void initData() {
         networkUtil = NetworkUtil.getInstance(this);
-        mUser = getUser();
-        mDialog = new LoadingDialog(AddVegetableActivity.this);
+        mDialog = new LoadingDialog(AddProductActivity.this);
     }
 
     public void back(View view) {
@@ -118,7 +118,7 @@ public class AddVegetableActivity extends BaseActivity {
         if (!TextUtils.isEmpty(name) ||
                 !TextUtils.isEmpty(price) ||
                 !TextUtils.isEmpty(supply)) {
-            final ConfirmDialog confirmDialog = new ConfirmDialog(AddVegetableActivity.this, getString(R.string.tips),
+            final ConfirmDialog confirmDialog = new ConfirmDialog(AddProductActivity.this, getString(R.string.tips),
                     Boolean.valueOf(mUser.getIsBuyer())?getString(R.string.add_buy_vegetable_abandon_tips):getString(R.string.add_sell_vegetable_abandon_tips),
                     getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
             confirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {
@@ -284,7 +284,7 @@ public class AddVegetableActivity extends BaseActivity {
 
         } else {
             // 拒绝授权做的处理，弹出弹框提示用户授权
-            handleRejectPermission(AddVegetableActivity.this, permissions[0], requestCode);
+            handleRejectPermission(AddProductActivity.this, permissions[0], requestCode);
         }
     }
 
@@ -299,7 +299,7 @@ public class AddVegetableActivity extends BaseActivity {
                     content = getString(R.string.request_permission_location);
                     break;
             }
-            final ConfirmDialog mConfirmDialog = new ConfirmDialog(AddVegetableActivity.this, getString(R.string.request_permission),
+            final ConfirmDialog mConfirmDialog = new ConfirmDialog(AddProductActivity.this, getString(R.string.request_permission),
                     content,
                     getString(R.string.go_setting), getString(R.string.cancel), getColor(R.color.navy_blue));
             mConfirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {

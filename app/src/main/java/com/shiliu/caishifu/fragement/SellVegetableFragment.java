@@ -33,7 +33,7 @@ import androidx.annotation.Nullable;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.shiliu.caishifu.R;
-import com.shiliu.caishifu.activity.EditPublishActivity;
+import com.shiliu.caishifu.activity.PublishActivity;
 import com.shiliu.caishifu.activity.MyProfileActivity;
 import com.shiliu.caishifu.adapter.FriendsCircleAdapter;
 import com.shiliu.caishifu.cons.Constant;
@@ -167,7 +167,7 @@ public class SellVegetableFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick: sell publish");
-                Intent editPublishIntent = new Intent(getContext(), EditPublishActivity.class);
+                Intent editPublishIntent = new Intent(getContext(), PublishActivity.class);
                 startActivity(editPublishIntent);
             }
         });
@@ -182,7 +182,7 @@ public class SellVegetableFragment extends BaseFragment {
                 case UPLOAD_PICTURE:
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     if (!CollectionUtils.isEmpty(resultPhotos)) {
-                        Intent editPublishIntent = new Intent(this.getContext(), EditPublishActivity.class);
+                        Intent editPublishIntent = new Intent(this.getContext(), PublishActivity.class);
                         editPublishIntent.putParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS, resultPhotos);
                         startActivity(editPublishIntent);
                     }

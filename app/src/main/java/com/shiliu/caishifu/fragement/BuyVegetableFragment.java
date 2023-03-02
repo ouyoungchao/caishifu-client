@@ -22,7 +22,7 @@ import androidx.annotation.Nullable;
 
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.shiliu.caishifu.R;
-import com.shiliu.caishifu.activity.EditPublishActivity;
+import com.shiliu.caishifu.activity.PublishActivity;
 import com.shiliu.caishifu.adapter.FriendsCircleAdapter;
 import com.shiliu.caishifu.cons.Constant;
 import com.shiliu.caishifu.dao.FriendsCircleDao;
@@ -137,7 +137,7 @@ public class BuyVegetableFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick: buy publish");
-                Intent editPublishIntent = new Intent(getContext(), EditPublishActivity.class);
+                Intent editPublishIntent = new Intent(getContext(), PublishActivity.class);
                 startActivity(editPublishIntent);
             }
         });

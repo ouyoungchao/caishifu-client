@@ -112,7 +112,12 @@
             android:theme="@style/ImageTranslucentTheme" />
 
         <!--发布卖菜信息界面-->
-        <activity android:name=".activity.EditPublishActivity"
+        <activity android:name=".activity.PublishActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <!--发布商品信息设置-->
+        <activity android:name=".activity.AddProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ImageTranslucentTheme" />
 

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_common_bg"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/publish_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/common_top_bar">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/top_bar_back_width"
+            android:layout_height="@dimen/top_bar_back_height"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:onClick="back"
+            android:scaleType="centerInside"
+            android:src="@drawable/btn_top_back" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="@color/common_top_title"
+            android:textSize="@dimen/top_bar_title_text_size" />
+
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="@dimen/save_btn_width"
+            android:layout_height="@dimen/save_btn_height"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/save_btn_margin_right"
+            android:background="@drawable/btn_save"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/save"
+            android:textColor="@color/btn_text_default_color"
+            android:textSize="@dimen/save_btn_text_size" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_input"
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:layout_below="@id/publish_title"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/content_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_white"
+            android:gravity="start|top"
+            android:hint="卖菜信息"
+            android:includeFontPadding="false"
+            android:maxLines="4"
+            android:paddingEnd="14dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:textColorHint="@color/ed_hint"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_vegetable_table_header"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/dimen_size_8"
+        android:background="@drawable/bg_list_item_click">
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="菜单"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_name"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="元/斤"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_count"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_price"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="货量"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_vegetable_table_header_图片"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_count"
+            android:layout_marginLeft="40dp"
+            android:gravity="center"
+            android:text="图片"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/vegetable_table_item_add"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/dimen_size_8"
+        android:background="@drawable/bg_list_item_click">
+
+        <ImageView
+            android:id="@+id/im_vegetable_table_data_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_add_vegetable_default"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/placeholder_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_place_holder"
+        android:layout_above="@id/placeholder_container"
+        tools:visibility="gone">
+        <ListView
+            android:id="@+id/vegetable_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="0.5dp"
+            android:scrollbars="none"
+            android:transcriptMode="normal" />
+    </RelativeLayout>
+
+
+</LinearLayout>
