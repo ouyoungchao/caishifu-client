@@ -200,6 +200,19 @@
             fresco:actualImageScaleType="centerCrop"
             fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
             fresco:placeholderImageScaleType="centerCrop"
+            fresco:roundedCornerRadius="5dp"
+            android:visibility="gone"/>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdv_vegetable_picture_add"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="35dp"
+            fresco:actualImageScaleType="centerCrop"
+            fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
+            fresco:placeholderImageScaleType="centerCrop"
             fresco:roundedCornerRadius="5dp" />
 
         <TextView

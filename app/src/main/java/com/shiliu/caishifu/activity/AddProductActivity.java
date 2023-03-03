@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.facebook.common.util.UriUtil;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.shiliu.caishifu.R;
@@ -22,8 +24,11 @@ import com.shiliu.caishifu.model.Product;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.CollectionUtils;
 import com.shiliu.caishifu.utils.NetworkUtil;
+import com.shiliu.caishifu.utils.OssUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.shiliu.caishifu.widget.LoadingDialog;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -44,15 +49,9 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.tv_title)
     TextView mTitleTv;
 
-    /**
-     * 收货人
-     */
     @BindView(R.id.et_name)
     EditText mNameEt;
 
-    /**
-     * 手机号码
-     */
     @BindView(R.id.et_price)
     EditText mPriceEt;
 
@@ -71,14 +70,20 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.vi_supply)
     View mSupplyVi;
 
+    @BindView(R.id.sdv_vegetable_picture1)
+    SimpleDraweeView mVegetablePicture1;
+
     @BindView(R.id.sdv_vegetable_picture2)
-    View mVegetablePicture2;
+    SimpleDraweeView mVegetablePicture2;
+
+    @BindView(R.id.sdv_vegetable_picture_add)
+    SimpleDraweeView mVegetablePictureAdd;
 
     NetworkUtil networkUtil;
     User mUser;
     LoadingDialog mDialog;
 
-    List<String> pictures = new ArrayList<>();
+    List<Uri> pictures = new ArrayList<>(2);
 
     @Override
     public int getContentView() {
@@ -141,7 +146,7 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
-    @OnFocusChange({R.id.et_name, R.id.et_price, R.id.et_supply, R.id.sdv_vegetable_picture1,R.id.sdv_vegetable_picture2})
+    @OnFocusChange({R.id.et_name, R.id.et_price, R.id.et_supply})
     public void onFocusChange(View view, boolean hasFocus) {
         switch (view.getId()) {
             case R.id.et_name:
@@ -165,12 +170,6 @@ public class AddProductActivity extends BaseActivity {
                     mSupplyVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
-            case R.id.sdv_vegetable_picture1:
-            case R.id.sdv_vegetable_picture2:
-                showPhotoDialog();
-                break;
-            default:
-                break;
         }
     }
 
@@ -180,7 +179,7 @@ public class AddProductActivity extends BaseActivity {
     private void showPhotoDialog() {
         EasyPhotos.createAlbum(this, false, false, GlideEngine.getInstance())
                 .setFileProviderAuthority("com.shiliu.caishifu.fileprovider")
-                .setCount(1)//参数说明：最大可选数，默认1
+                .setCount(2-pictures.size())//参数说明：最大可选数，默认1
                 .start(UPDATE_VEGETABLE_PICTURE);
     }
 
@@ -216,7 +215,7 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.tv_save})
+    @OnClick({R.id.tv_save,R.id.sdv_vegetable_picture_add,R.id.sdv_vegetable_picture1, R.id.sdv_vegetable_picture2})
     public void onClick(View view) {
         String[] permissions;
         switch (view.getId()) {
@@ -228,8 +227,24 @@ public class AddProductActivity extends BaseActivity {
                 String supply = mSupplyEt.getText().toString();
                 addVegetable(name, price, supply,pictures);
                 break;
-           default:
-               break;
+            case R.id.sdv_vegetable_picture_add:
+                showPhotoDialog();
+            case R.id.sdv_vegetable_picture1:
+                if(pictures.size() == 2) {
+                    Intent intent = new Intent(this, BigImageActivity.class);
+                    intent.putExtra("imgUrl", pictures.get(1).toString());
+                    startActivity(intent);
+                }
+                break;
+            case R.id.sdv_vegetable_picture2:
+                if(pictures.size() > 1) {
+                    Intent intent = new Intent(this, BigImageActivity.class);
+                    intent.putExtra("imgUrl", pictures.get(0).toString());
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -239,7 +254,7 @@ public class AddProductActivity extends BaseActivity {
     }
 
     private void addVegetable(final String name, final String price,
-                            final String supply, List<String> pictures) {
+                            final String supply, List<Uri> pictures) {
         Product product = new Product(name,Float.parseFloat(price),Integer.parseInt(supply), pictures);
         mUser.getProductList().add(product);
     }
@@ -253,10 +268,33 @@ public class AddProductActivity extends BaseActivity {
                     // 返回对象集合: 包含图片的宽、高、大小、用户是否选中原图选项等信息
                     ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
                     if (!CollectionUtils.isEmpty(resultPhotos)) {
-                        pictures.add(resultPhotos.get(0).path);
-                        if(pictures.size() == 1){
-                            mVegetablePicture2.setVisibility(View.VISIBLE);
+                        mVegetablePicture1.setVisibility(View.VISIBLE);
+                        mVegetablePicture2.setVisibility(View.VISIBLE);
+                        if(resultPhotos.size() == 2){
+                            Uri picture1 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(0).path).build();
+                            Uri picture2 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(1).path).build();
+                            mVegetablePicture2.setImageURI(picture1);
+                            mVegetablePicture1.setImageURI(picture2);
+                            pictures.add(picture1);
+                            pictures.add(picture2);
+                        }else {
+                            Uri picture = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(0).path).build();
+                            if(pictures.size() == 0){
+                                mVegetablePicture2.setVisibility(View.VISIBLE);
+                                mVegetablePicture2.setImageURI(picture);
+                                pictures.add(picture);
+                            }else{
+                                mVegetablePicture1.setVisibility(View.VISIBLE);
+                                mVegetablePicture1.setImageURI(picture);
+                                pictures.add(picture);
+                            }
                         }
+                    }
+                    if(pictures.size() == 2){
+                        mVegetablePictureAdd.setVisibility(View.INVISIBLE);
                     }
                     break;
             }

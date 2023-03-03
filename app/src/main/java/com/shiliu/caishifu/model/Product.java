@@ -1,5 +1,7 @@
 package com.shiliu.caishifu.model;
 
+import android.net.Uri;
+
 import java.util.List;
 
 /**
@@ -9,9 +11,9 @@ public class Product {
     private String name;
     private float price;
     private int supply;
-    private List<String> pictures;
+    private List<Uri> pictures;
 
-    public Product(String name, float price, int supply, List<String> pictures) {
+    public Product(String name, float price, int supply, List<Uri> pictures) {
         this.name = name;
         this.price = price;
         this.supply = supply;
@@ -42,11 +44,11 @@ public class Product {
         this.supply = supply;
     }
 
-    public List<String> getPictures() {
+    public List<Uri> getPictures() {
         return pictures;
     }
 
-    public void setPictures(List<String> pictures) {
+    public void setPictures(List<Uri> pictures) {
         this.pictures = pictures;
     }
 }
