@@ -24,7 +24,7 @@ import com.shiliu.caishifu.model.Product;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.utils.CollectionUtils;
 import com.shiliu.caishifu.utils.NetworkUtil;
-import com.shiliu.caishifu.utils.OssUtil;
+import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
@@ -58,7 +58,7 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.et_supply)
     EditText mSupplyEt;
 
-    @BindView(R.id.tv_save)
+    @BindView(R.id.tv_save_vegetable_item)
     TextView mSaveTv;
 
     @BindView(R.id.vi_name)
@@ -83,7 +83,7 @@ public class AddProductActivity extends BaseActivity {
     User mUser;
     LoadingDialog mDialog;
 
-    List<Uri> pictures = new ArrayList<>(2);
+    List<String> pictures = new ArrayList<>(2);
 
     @Override
     public int getContentView() {
@@ -143,6 +143,39 @@ public class AddProductActivity extends BaseActivity {
             confirmDialog.show();
         } else {
             finish();
+        }
+    }
+
+    @OnClick({R.id.tv_save_vegetable_item,R.id.sdv_vegetable_picture_add,R.id.sdv_vegetable_picture1, R.id.sdv_vegetable_picture2})
+    public void onClick(View view) {
+        String[] permissions;
+        switch (view.getId()) {
+            case R.id.tv_save_vegetable_item:
+                mDialog.setMessage(getString(R.string.saving));
+                mDialog.show();
+                String name = mNameEt.getText().toString();
+                String price = mPriceEt.getText().toString();
+                String supply = mSupplyEt.getText().toString();
+                addVegetable(name, price, supply,pictures);
+                break;
+            case R.id.sdv_vegetable_picture_add:
+                showPhotoDialog();
+            case R.id.sdv_vegetable_picture1:
+                if(pictures.size() == 2) {
+                    Intent intent = new Intent(this, BigImageActivity.class);
+                    intent.putExtra("imgUrl", pictures.get(1));
+                    startActivity(intent);
+                }
+                break;
+            case R.id.sdv_vegetable_picture2:
+                if(pictures.size() > 1) {
+                    Intent intent = new Intent(this, BigImageActivity.class);
+                    intent.putExtra("imgUrl", pictures.get(0));
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -215,38 +248,7 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.tv_save,R.id.sdv_vegetable_picture_add,R.id.sdv_vegetable_picture1, R.id.sdv_vegetable_picture2})
-    public void onClick(View view) {
-        String[] permissions;
-        switch (view.getId()) {
-            case R.id.tv_save:
-                mDialog.setMessage(getString(R.string.saving));
-                mDialog.show();
-                String name = mNameEt.getText().toString();
-                String price = mPriceEt.getText().toString();
-                String supply = mSupplyEt.getText().toString();
-                addVegetable(name, price, supply,pictures);
-                break;
-            case R.id.sdv_vegetable_picture_add:
-                showPhotoDialog();
-            case R.id.sdv_vegetable_picture1:
-                if(pictures.size() == 2) {
-                    Intent intent = new Intent(this, BigImageActivity.class);
-                    intent.putExtra("imgUrl", pictures.get(1).toString());
-                    startActivity(intent);
-                }
-                break;
-            case R.id.sdv_vegetable_picture2:
-                if(pictures.size() > 1) {
-                    Intent intent = new Intent(this, BigImageActivity.class);
-                    intent.putExtra("imgUrl", pictures.get(0).toString());
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
-    }
+
 
     @Override
     protected void onResume() {
@@ -254,9 +256,11 @@ public class AddProductActivity extends BaseActivity {
     }
 
     private void addVegetable(final String name, final String price,
-                            final String supply, List<Uri> pictures) {
+                            final String supply, List<String> pictures) {
         Product product = new Product(name,Float.parseFloat(price),Integer.parseInt(supply), pictures);
-        mUser.getProductList().add(product);
+        mUser.addProductList(product);
+        PreferencesUtil.getInstance().setUser(mUser);
+        finish();
     }
 
     @Override
@@ -271,17 +275,17 @@ public class AddProductActivity extends BaseActivity {
                         mVegetablePicture1.setVisibility(View.VISIBLE);
                         mVegetablePicture2.setVisibility(View.VISIBLE);
                         if(resultPhotos.size() == 2){
-                            Uri picture1 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
-                                    resultPhotos.get(0).path).build();
-                            Uri picture2 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
-                                    resultPhotos.get(1).path).build();
+                            String picture1 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(0).path).build().toString();
+                            String picture2 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(1).path).build().toString();
                             mVegetablePicture2.setImageURI(picture1);
                             mVegetablePicture1.setImageURI(picture2);
                             pictures.add(picture1);
                             pictures.add(picture2);
                         }else {
-                            Uri picture = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
-                                    resultPhotos.get(0).path).build();
+                            String picture = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
+                                    resultPhotos.get(0).path).build().toString();
                             if(pictures.size() == 0){
                                 mVegetablePicture2.setVisibility(View.VISIBLE);
                                 mVegetablePicture2.setImageURI(picture);

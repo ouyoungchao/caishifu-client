@@ -127,11 +127,33 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
+
+
+    <RelativeLayout
+        android:id="@+id/placeholder_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_size_8"
+        android:background="@color/bg_place_holder"
+        android:layout_below="@id/rl_vegetable_table_header"
+        android:visibility="gone">
+        <ListView
+            android:id="@+id/vegetable_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:headerDividersEnabled="true"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="8dp"
+            android:scrollbars="none"
+            android:transcriptMode="normal" />
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/vegetable_table_item_add"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="@dimen/dimen_size_8"
+        android:layout_below="@id/placeholder_container"
         android:background="@drawable/bg_list_item_click">
 
         <ImageView
@@ -141,23 +163,6 @@
             android:src="@mipmap/icon_add_vegetable_default"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/placeholder_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/bg_place_holder"
-        android:layout_above="@id/placeholder_container"
-        tools:visibility="gone">
-        <ListView
-            android:id="@+id/vegetable_list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:divider="@drawable/list_divider"
-            android:dividerHeight="0.5dp"
-            android:scrollbars="none"
-            android:transcriptMode="normal" />
     </RelativeLayout>
 
 

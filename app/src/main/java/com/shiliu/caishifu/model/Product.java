@@ -1,19 +1,23 @@
 package com.shiliu.caishifu.model;
 
-import android.net.Uri;
+import com.orm.SugarRecord;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 商品
  */
-public class Product {
+public class Product extends SugarRecord implements Serializable {
     private String name;
     private float price;
     private int supply;
-    private List<Uri> pictures;
+    private List<String> pictures;
 
-    public Product(String name, float price, int supply, List<Uri> pictures) {
+    public Product() {
+    }
+
+    public Product(String name, float price, int supply, List<String> pictures) {
         this.name = name;
         this.price = price;
         this.supply = supply;
@@ -44,11 +48,11 @@ public class Product {
         this.supply = supply;
     }
 
-    public List<Uri> getPictures() {
+    public List<String> getPictures() {
         return pictures;
     }
 
-    public void setPictures(List<Uri> pictures) {
+    public void setPictures(List<String> pictures) {
         this.pictures = pictures;
     }
 }

@@ -187,6 +187,10 @@ public class User extends SugarRecord implements Serializable {
         return productList;
     }
 
+    public void addProductList(Product product){
+        productList.add(product);
+    }
+
     public void setProductList(List<Product> productList) {
         this.productList = productList;
     }
