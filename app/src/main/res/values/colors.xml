@@ -24,12 +24,14 @@
     <color name="common_bg">#fcfcfc</color>
     <color name="common_top_bar">#EDEDED</color>
     <color name="error_item_color">#F6EBE6</color>
+    <color name="delete_item_color">#F44336</color>
 
     <!-- 菜市场页面-->
     <color name="common_text_color_black">#191919</color>
     <color name="white">#FFFFFF</color>
     <!--保存按钮-->
     <color name="btn_save_default_color">#E1E1E1</color>
+    <color name="btn_delete_default_color">#E75452</color>
 
     <color name="color_moments_default_cover">#232323</color>
     <color name="common_divider">#dfdfdd</color>

@@ -81,49 +81,54 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="@dimen/dimen_size_8"
+
         android:background="@drawable/bg_list_item_click">
 
         <TextView
             android:id="@+id/tv_vegetable_table_header_name"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:text="菜单"
+            android:text="@string/product_name_list"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_vegetable_table_header_price"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/tv_vegetable_table_header_name"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="5dp"
             android:gravity="center"
-            android:text="元/斤"
+            android:text="@string/product_price"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_vegetable_table_header_count"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:id="@+id/tv_vegetable_table_header_supply"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/tv_vegetable_table_header_price"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="5dp"
             android:gravity="center"
-            android:text="货量"
+            android:text="@string/product_supply"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tv_vegetable_table_header_图片"
+            android:id="@+id/tv_vegetable_table_header_picture"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/tv_vegetable_table_header_count"
-            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@id/tv_vegetable_table_header_supply"
+            android:layout_marginLeft="5dp"
             android:gravity="center"
-            android:text="图片"
+            android:text="@string/picture"
+            android:textStyle="bold"
             android:textSize="16sp" />
     </RelativeLayout>
 

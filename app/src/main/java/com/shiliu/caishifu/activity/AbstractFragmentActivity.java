@@ -26,24 +26,22 @@ public class AbstractFragmentActivity extends FragmentActivity {
 
     public User getUser() {
         synchronized (this) {
-            if (mUser == null) {
-                mUser = PreferencesUtil.getInstance().getUser();
-                if (null == mUser) {
-                    Response response = NetworkUtil.getInstance(this).doGetReRequest(Constant.BASE_URL + "caishifu/userInfo", getAuthorizationHeader());
-                    if (response == null) {
-                        Log.w(TAG, "onFailure: get user ");
-                    } else {
-                        UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
-                        if (userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null) {
-                            User user = JsonUtil.jsoToObject(JsonUtil.objectToJson(userResult.getData()), User.class);
-                            if (user != null) {
-                                mUser = user;
-                                PreferencesUtil.getInstance().setUser(user);
-                            }
-                            Log.i(TAG, "onResponse: get user " + user.getUserNickName());
-                        } else {
-                            Log.w(TAG, "onResponse: get user error " + userResult.getMessage());
+            mUser = PreferencesUtil.getInstance().getUser();
+            if (null == mUser) {
+                Response response = NetworkUtil.getInstance(this).doGetReRequest(Constant.BASE_URL + "caishifu/userInfo", getAuthorizationHeader());
+                if (response == null) {
+                    Log.w(TAG, "onFailure: get user ");
+                } else {
+                    UserResult userResult = JsonUtil.jsoToObject(response.body().byteStream(), UserResult.class);
+                    if (userResult.getCode() == ResultCode.SUCCESS.getCode() && userResult.getData() != null) {
+                        User user = JsonUtil.jsoToObject(JsonUtil.objectToJson(userResult.getData()), User.class);
+                        if (user != null) {
+                            mUser = user;
+                            PreferencesUtil.getInstance().setUser(user);
                         }
+                        Log.i(TAG, "onResponse: get user " + user.getUserNickName());
+                    } else {
+                        Log.w(TAG, "onResponse: get user error " + userResult.getMessage());
                     }
                 }
             }
@@ -52,7 +50,7 @@ public class AbstractFragmentActivity extends FragmentActivity {
     }
 
     protected void updateUserProperties(Map<String, Object> paramMap, NetworkUtil networkUtil, NetworkUtil.NetworkCallbak callbak) {
-        if(paramMap.isEmpty() || networkUtil == null || callbak == null){
+        if (paramMap.isEmpty() || networkUtil == null || callbak == null) {
             Log.i(TAG, "updateUserProperties or networkUtil or callbak is empty");
             return;
         }
@@ -71,14 +69,14 @@ public class AbstractFragmentActivity extends FragmentActivity {
         return headers;
     }
 
-    public boolean needLogin(Response response){
-        if(response.code() == ResultCode.UNAUTHORIZED.getCode()){
+    public boolean needLogin(Response response) {
+        if (response.code() == ResultCode.UNAUTHORIZED.getCode()) {
             return true;
         }
         return false;
     }
 
-    public void login(){
+    public void login() {
         startActivity(new Intent(this, LoginActivity.class));
     }
 }

@@ -5,6 +5,7 @@
     <dimen name="common_item_text_size">15.5sp</dimen>
     <dimen name="common_item_dynamic_text_size">13.5sp</dimen>
     <dimen name="height_top_bar">48dp</dimen>
+    <dimen name="height_button_bar">48dp</dimen>
 
     <!--发现页面-->
     <dimen name="market_layout_height">50dp</dimen>
@@ -25,6 +26,8 @@
 
     <dimen name="save_btn_width">56dp</dimen>
     <dimen name="save_btn_height">30dp</dimen>
+    <dimen name="delete_btn_width">56dp</dimen>
+    <dimen name="delete_btn_height">30dp</dimen>
     <dimen name="save_btn_margin_right">12dp</dimen>
     <dimen name="setting_btn_margin_right">5dp</dimen>
     <dimen name="save_btn_text_size">14sp</dimen>

@@ -8,9 +8,12 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
@@ -28,16 +31,15 @@ import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 import com.shiliu.caishifu.widget.LoadingDialog;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 
 /**
  * 新增商品
- *
  */
 public class AddProductActivity extends BaseActivity {
     private static final String TAG = "AddProductActivity";
@@ -79,9 +81,14 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.sdv_vegetable_picture_add)
     SimpleDraweeView mVegetablePictureAdd;
 
+    @BindView(R.id.rl_product_item_delete)
+    RelativeLayout deleteProduct;
+
     NetworkUtil networkUtil;
     User mUser;
     LoadingDialog mDialog;
+
+    private int position;
 
     List<String> pictures = new ArrayList<>(2);
 
@@ -94,9 +101,9 @@ public class AddProductActivity extends BaseActivity {
     public void initView() {
         mUser = getUser();
         initStatusBar();
-        if(Boolean.valueOf(mUser.getIsBuyer())) {
+        if (Boolean.valueOf(mUser.getIsBuyer())) {
             mTitleTv.setText(getString(R.string.buyInfo));
-        }else{
+        } else {
             mTitleTv.setText(getString(R.string.sellInfo));
         }
         setTitleStrokeWidth(mTitleTv);
@@ -107,72 +114,147 @@ public class AddProductActivity extends BaseActivity {
         mNameEt.addTextChangedListener(new TextChange());
         mPriceEt.addTextChangedListener(new TextChange());
         mSupplyEt.addTextChangedListener(new TextChange());
+        mVegetablePicture2.addOnLayoutChangeListener(new PictureChange());
     }
 
     @Override
     public void initData() {
         networkUtil = NetworkUtil.getInstance(this);
         mDialog = new LoadingDialog(AddProductActivity.this);
+        mNameEt.setText(this.getIntent().getStringExtra("name"));
+        mPriceEt.setText(this.getIntent().getStringExtra("price"));
+        mSupplyEt.setText(this.getIntent().getStringExtra("supply"));
+        List<String> selectedPictures = this.getIntent().getStringArrayListExtra("pictures");
+        if (selectedPictures != null && !selectedPictures.isEmpty()) {
+            pictures.addAll(selectedPictures);
+            if (selectedPictures.size() == 1) {
+                mVegetablePicture2.setVisibility(View.VISIBLE);
+                mVegetablePicture2.setImageURI(selectedPictures.get(0));
+
+            } else {
+                mVegetablePicture2.setVisibility(View.VISIBLE);
+                mVegetablePicture1.setVisibility(View.VISIBLE);
+                mVegetablePictureAdd.setVisibility(View.GONE);
+                mVegetablePicture2.setImageURI(selectedPictures.get(0));
+                mVegetablePicture1.setImageURI(selectedPictures.get(1));
+            }
+        }
+        position = this.getIntent().getIntExtra("position", -1);
+        if (position != -1) {
+            deleteProduct.setVisibility(View.VISIBLE);
+        }
     }
 
     public void back(View view) {
         String name = mNameEt.getText().toString();
         String price = mPriceEt.getText().toString();
         String supply = mSupplyEt.getText().toString();
+        if (position == -1) {
+            if (!TextUtils.isEmpty(name) ||
+                    !TextUtils.isEmpty(price) ||
+                    !TextUtils.isEmpty(supply)) {
+                final ConfirmDialog confirmDialog = new ConfirmDialog(AddProductActivity.this, getString(R.string.tips),
+                        Boolean.valueOf(mUser.getIsBuyer()) ? getString(R.string.add_buy_vegetable_abandon_tips) : getString(R.string.add_sell_vegetable_abandon_tips),
+                        getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
+                confirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {
+                    @Override
+                    public void onOkClick() {
+                        confirmDialog.dismiss();
+                        finish();
+                    }
 
-        if (!TextUtils.isEmpty(name) ||
-                !TextUtils.isEmpty(price) ||
-                !TextUtils.isEmpty(supply)) {
-            final ConfirmDialog confirmDialog = new ConfirmDialog(AddProductActivity.this, getString(R.string.tips),
-                    Boolean.valueOf(mUser.getIsBuyer())?getString(R.string.add_buy_vegetable_abandon_tips):getString(R.string.add_sell_vegetable_abandon_tips),
-                    getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
-            confirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {
-                @Override
-                public void onOkClick() {
-                    confirmDialog.dismiss();
-                    finish();
-                }
-
-                @Override
-                public void onCancelClick() {
-                    confirmDialog.dismiss();
-                }
-            });
-            // 点击空白处消失
-            confirmDialog.setCancelable(true);
-            confirmDialog.show();
+                    @Override
+                    public void onCancelClick() {
+                        confirmDialog.dismiss();
+                    }
+                });
+                // 点击空白处消失
+                confirmDialog.setCancelable(true);
+                confirmDialog.show();
+            } else {
+                finish();
+            }
         } else {
             finish();
         }
     }
 
-    @OnClick({R.id.tv_save_vegetable_item,R.id.sdv_vegetable_picture_add,R.id.sdv_vegetable_picture1, R.id.sdv_vegetable_picture2})
+    @OnClick({R.id.tv_save_vegetable_item, R.id.sdv_vegetable_picture_add, R.id.sdv_vegetable_picture1, R.id.sdv_vegetable_picture2, R.id.rl_product_item_delete})
     public void onClick(View view) {
-        String[] permissions;
         switch (view.getId()) {
             case R.id.tv_save_vegetable_item:
                 mDialog.setMessage(getString(R.string.saving));
                 mDialog.show();
                 String name = mNameEt.getText().toString();
-                String price = mPriceEt.getText().toString();
-                String supply = mSupplyEt.getText().toString();
-                addVegetable(name, price, supply,pictures);
+                if (name.trim().isEmpty()) {
+                    Log.w(TAG, "input name is error");
+                    return;
+                }
+                float price;
+                try {
+                    price = Float.parseFloat(mPriceEt.getText().toString());
+                    if (price <= 0.0) {
+                        mPriceEt.setBackgroundColor(getColor(R.color.colorAccent));
+                        Log.w(TAG, "input price must more than 0.0");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    mPriceEt.setTextColor(getColor(R.color.colorAccent));
+                    Log.w(TAG, "input price is error");
+                    return;
+                }
+                int supply;
+                try {
+                    supply = Integer.parseInt(mSupplyEt.getText().toString());
+                    if (supply <= 0.0) {
+                        mSupplyEt.setTextColor(getColor(R.color.colorAccent));
+                        Log.w(TAG, "input supply must more than 0");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    mSupplyEt.setBackgroundColor(getColor(R.color.colorAccent));
+                    Log.w(TAG, "input supply is error");
+                    return;
+                }
+                addVegetable(name, price, supply, pictures);
                 break;
             case R.id.sdv_vegetable_picture_add:
                 showPhotoDialog();
             case R.id.sdv_vegetable_picture1:
-                if(pictures.size() == 2) {
+                if (pictures.size() == 2) {
                     Intent intent = new Intent(this, BigImageActivity.class);
                     intent.putExtra("imgUrl", pictures.get(1));
                     startActivity(intent);
                 }
                 break;
             case R.id.sdv_vegetable_picture2:
-                if(pictures.size() > 1) {
+                if (pictures.size() >= 1) {
                     Intent intent = new Intent(this, BigImageActivity.class);
                     intent.putExtra("imgUrl", pictures.get(0));
                     startActivity(intent);
                 }
+                break;
+            case R.id.rl_product_item_delete:
+                final ConfirmDialog confirmDialog = new ConfirmDialog(AddProductActivity.this, getString(R.string.tips),
+                        getString(R.string.confirm_delete),
+                        getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
+                confirmDialog.setOnDialogClickListener(new ConfirmDialog.OnDialogClickListener() {
+                    @Override
+                    public void onOkClick() {
+                        confirmDialog.dismiss();
+                        mUser.getProductList().remove(position);
+                        PreferencesUtil.getInstance().setUser(mUser);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelClick() {
+                        confirmDialog.dismiss();
+                    }
+                });
+                // 点击空白处消失
+                confirmDialog.setCancelable(true);
+                confirmDialog.show();
                 break;
             default:
                 break;
@@ -212,8 +294,16 @@ public class AddProductActivity extends BaseActivity {
     private void showPhotoDialog() {
         EasyPhotos.createAlbum(this, false, false, GlideEngine.getInstance())
                 .setFileProviderAuthority("com.shiliu.caishifu.fileprovider")
-                .setCount(2-pictures.size())//参数说明：最大可选数，默认1
+                .setCount(2 - pictures.size())//参数说明：最大可选数，默认1
                 .start(UPDATE_VEGETABLE_PICTURE);
+    }
+
+    class PictureChange implements View.OnLayoutChangeListener {
+
+        @Override
+        public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+            listener();
+        }
     }
 
     class TextChange implements TextWatcher {
@@ -225,21 +315,7 @@ public class AddProductActivity extends BaseActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String name = mNameEt.getText().toString();
-            String price = mPriceEt.getText().toString();
-            String supply = mSupplyEt.getText().toString();
-
-            if (!TextUtils.isEmpty(name) &&
-                    !TextUtils.isEmpty(price) &&
-                    !TextUtils.isEmpty(supply)) {
-                // 可保存
-                mSaveTv.setTextColor(0xFFFFFFFF);
-                mSaveTv.setEnabled(true);
-            } else {
-                // 不可保存
-                mSaveTv.setTextColor(getColor(R.color.btn_text_default_color));
-                mSaveTv.setEnabled(false);
-            }
+            listener();
         }
 
         @Override
@@ -248,6 +324,23 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
+    private void listener() {
+        String name = mNameEt.getText().toString();
+        String price = mPriceEt.getText().toString();
+        String supply = mSupplyEt.getText().toString();
+        if (!TextUtils.isEmpty(name) &&
+                !TextUtils.isEmpty(price) &&
+                !TextUtils.isEmpty(supply) &&
+                !pictures.isEmpty()) {
+            // 可保存
+            mSaveTv.setTextColor(getColor(R.color.common_text_color_black));
+            mSaveTv.setEnabled(true);
+        } else {
+            // 不可保存
+            mSaveTv.setTextColor(getColor(R.color.btn_text_default_color));
+            mSaveTv.setEnabled(false);
+        }
+    }
 
 
     @Override
@@ -255,10 +348,14 @@ public class AddProductActivity extends BaseActivity {
         super.onResume();
     }
 
-    private void addVegetable(final String name, final String price,
-                            final String supply, List<String> pictures) {
-        Product product = new Product(name,Float.parseFloat(price),Integer.parseInt(supply), pictures);
-        mUser.addProductList(product);
+    private void addVegetable(final String name, final float price,
+                              final int supply, List<String> pictures) {
+        Product product = new Product(name, price, supply, pictures);
+        if (position != -1) {
+            mUser.getProductList().set(position, product);
+        } else {
+            mUser.addProductList(product);
+        }
         PreferencesUtil.getInstance().setUser(mUser);
         finish();
     }
@@ -274,7 +371,7 @@ public class AddProductActivity extends BaseActivity {
                     if (!CollectionUtils.isEmpty(resultPhotos)) {
                         mVegetablePicture1.setVisibility(View.VISIBLE);
                         mVegetablePicture2.setVisibility(View.VISIBLE);
-                        if(resultPhotos.size() == 2){
+                        if (resultPhotos.size() == 2) {
                             String picture1 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
                                     resultPhotos.get(0).path).build().toString();
                             String picture2 = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
@@ -283,21 +380,21 @@ public class AddProductActivity extends BaseActivity {
                             mVegetablePicture1.setImageURI(picture2);
                             pictures.add(picture1);
                             pictures.add(picture2);
-                        }else {
+                        } else {
                             String picture = new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(
                                     resultPhotos.get(0).path).build().toString();
-                            if(pictures.size() == 0){
+                            if (pictures.size() == 0) {
                                 mVegetablePicture2.setVisibility(View.VISIBLE);
                                 mVegetablePicture2.setImageURI(picture);
                                 pictures.add(picture);
-                            }else{
+                            } else {
                                 mVegetablePicture1.setVisibility(View.VISIBLE);
                                 mVegetablePicture1.setImageURI(picture);
                                 pictures.add(picture);
                             }
                         }
                     }
-                    if(pictures.size() == 2){
+                    if (pictures.size() == 2) {
                         mVegetablePictureAdd.setVisibility(View.INVISIBLE);
                     }
                     break;
@@ -364,8 +461,6 @@ public class AddProductActivity extends BaseActivity {
             mConfirmDialog.show();
         }
     }
-
-
 
 
 }

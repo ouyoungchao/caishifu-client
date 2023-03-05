@@ -61,7 +61,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="名称"
+            android:text="@string/product_name"
             android:textColor="#353535"
             android:textSize="@dimen/common_item_text_size" />
 
@@ -72,7 +72,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="50dp"
             android:background="@null"
-            android:hint="商品名称"
+            android:hint="例如 白菜"
             android:paddingLeft="95dp"
             android:singleLine="true"
             android:textColor="#353535"
@@ -100,7 +100,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="价格"
+            android:text="@string/product_price"
             android:textColor="#353535"
             android:textSize="@dimen/common_item_text_size" />
 
@@ -111,7 +111,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="50dp"
             android:background="@null"
-            android:hint="元/斤"
+            android:hint="例如 1.5 (只需要输入数字)"
             android:inputType="phone"
             android:paddingLeft="95dp"
             android:singleLine="true"
@@ -140,7 +140,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="日供应量"
+            android:text="@string/product_supply"
             android:textColor="#353535"
             android:textSize="@dimen/common_item_text_size" />
 
@@ -149,9 +149,9 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="50dp"
+            android:layout_marginLeft="20dp"
             android:background="@null"
-            android:hint="100斤/天"
+            android:hint="例如 100 (只需要输入数字)"
             android:inputType="phone"
             android:paddingLeft="95dp"
             android:singleLine="true"
@@ -168,8 +168,6 @@
             android:background="@color/divider_grey" />
     </RelativeLayout>
 
-
-
     <RelativeLayout
         android:id="@+id/rl_vegetable_pictures"
         android:layout_width="match_parent"
@@ -181,8 +179,8 @@
             android:id="@+id/sdv_vegetable_picture2"
             android:layout_width="58dp"
             android:layout_height="58dp"
-            android:layout_toLeftOf="@+id/sdv_vegetable_picture1"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="88dp"
             android:layout_centerVertical="true"
             fresco:actualImageScaleType="centerCrop"
             fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
@@ -196,7 +194,7 @@
             android:layout_height="58dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="35dp"
+            android:layout_marginRight="20dp"
             fresco:actualImageScaleType="centerCrop"
             fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
             fresco:placeholderImageScaleType="centerCrop"
@@ -209,7 +207,7 @@
             android:layout_height="58dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="35dp"
+            android:layout_marginRight="20dp"
             fresco:actualImageScaleType="centerCrop"
             fresco:placeholderImage="@mipmap/icon_main_activity_add_pressed"
             fresco:placeholderImageScaleType="centerCrop"
@@ -229,5 +227,27 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="20dp"
             android:background="@color/common_divider_grey" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_product_item_delete"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_button_bar"
+        android:background="@color/common_top_bar"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/tv_product_item_delete"
+            android:layout_width="@dimen/delete_btn_width"
+            android:layout_height="@dimen/delete_btn_height"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/delete"
+            android:background="@drawable/btn_delete"
+            android:textColor="@color/common_top_title"
+            android:textSize="@dimen/top_bar_title_text_size"
+            />
     </RelativeLayout>
 </LinearLayout>

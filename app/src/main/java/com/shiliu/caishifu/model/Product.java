@@ -55,4 +55,14 @@ public class Product extends SugarRecord implements Serializable {
     public void setPictures(List<String> pictures) {
         this.pictures = pictures;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", supply=" + supply +
+                ", pictures=" + pictures +
+                '}';
+    }
 }
