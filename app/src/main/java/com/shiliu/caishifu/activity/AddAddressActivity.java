@@ -83,9 +83,6 @@ public class AddAddressActivity extends BaseActivity {
     @BindView(R.id.et_address_info)
     EditText mAddressInfoEt;
 
-    @BindView(R.id.et_post_code)
-    EditText mPostCodeEt;
-
     @BindView(R.id.tv_save)
     TextView mSaveTv;
 
@@ -98,11 +95,8 @@ public class AddAddressActivity extends BaseActivity {
     @BindView(R.id.vi_phone)
     View mPhoneVi;
 
-    @BindView(R.id.vi_address_detail)
+    @BindView(R.id.ll_address_detail)
     View mAddressDetailVi;
-
-    @BindView(R.id.vi_post_code)
-    View mPostCodeVi;
 
     NetworkUtil networkUtil;
     User mUser;
@@ -148,13 +142,11 @@ public class AddAddressActivity extends BaseActivity {
         String phone = mPhoneEt.getText().toString();
         String addressInfo = mAddressInfoEt.getText().toString();
         String addressDetail = mAddressDetailEt.getText().toString();
-        String addressPostCode = mPostCodeEt.getText().toString();
 
         if (!TextUtils.isEmpty(name) ||
                 !TextUtils.isEmpty(phone) ||
                 !TextUtils.isEmpty(addressInfo) ||
-                !TextUtils.isEmpty(addressDetail) ||
-                !TextUtils.isEmpty(addressPostCode)) {
+                !TextUtils.isEmpty(addressDetail)) {
             final ConfirmDialog confirmDialog = new ConfirmDialog(AddAddressActivity.this, getString(R.string.tips),
                     getString(R.string.add_address_abandon_tips),
                     getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
@@ -178,7 +170,7 @@ public class AddAddressActivity extends BaseActivity {
         }
     }
 
-    @OnFocusChange({R.id.et_name, R.id.et_phone, R.id.et_address_detail, R.id.et_post_code})
+    @OnFocusChange({R.id.et_name, R.id.et_phone, R.id.et_address_detail})
     public void onFocusChange(View view, boolean hasFocus) {
         switch (view.getId()) {
             case R.id.et_name:
@@ -200,13 +192,6 @@ public class AddAddressActivity extends BaseActivity {
                     mAddressDetailVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mAddressDetailVi.setBackgroundColor(getColor(R.color.picker_list_divider));
-                }
-                break;
-            case R.id.et_post_code:
-                if (hasFocus) {
-                    mPostCodeVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
-                } else {
-                    mPostCodeVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
         }
@@ -263,8 +248,7 @@ public class AddAddressActivity extends BaseActivity {
                 String addressCity = PreferencesUtil.getInstance().getPickedCity();
                 String addressDistrict = PreferencesUtil.getInstance().getPickedDistrict();
                 String addressDetail = mAddressDetailEt.getText().toString();
-                String addressPostCode = mPostCodeEt.getText().toString();
-                addAddress(name, phone, addressProvince, addressCity, addressDistrict, addressDetail, addressPostCode);
+                addAddress(name, phone, addressProvince, addressCity, addressDistrict, addressDetail);
                 break;
             //地图选择
             case R.id.iv_location:
@@ -295,17 +279,12 @@ public class AddAddressActivity extends BaseActivity {
                 Selection.setSelection(spanText, charSequence.length());
             }
         }
-        String pickedPostCode = PreferencesUtil.getInstance().getPickedPostCode();
-        if (!TextUtils.isEmpty(pickedPostCode)) {
-            mPostCodeEt.setText(pickedPostCode);
-        }
     }
 
     private void addAddress(final String name, final String phone,
                             final String addressProvince,
-                            final String addressCity, final String addressDistrict, final String addressDetail,
-                            final String addressPostCode) {
-        Address address = new Address(name,phone,addressProvince,addressCity,addressDistrict,addressDetail,addressPostCode);
+                            final String addressCity, final String addressDistrict, final String addressDetail) {
+        Address address = new Address(name,phone,addressProvince,addressCity,addressDistrict,addressDetail,"");
         List<Address> addressList = new ArrayList<>();
         addressList.add(address);
         if(!mUser.getAddressList().isEmpty()){
@@ -387,14 +366,6 @@ public class AddAddressActivity extends BaseActivity {
                             .append(district);
                     mAddressInfoEt.setText(addressInfoBuffer.toString());
                     mAddressDetailEt.setText(addressDetail);
-
-                    Area districtArea = mAreaDao.getDistrictByCityNameAndDistrictName(city, district);
-                    if (TextUtils.isEmpty(districtArea.getPostCode())) {
-                        mPostCodeEt.setText(Constant.DEFAULT_POST_CODE);
-                    } else {
-                        mPostCodeEt.setText(districtArea.getPostCode());
-                    }
-
                     break;
             }
         }

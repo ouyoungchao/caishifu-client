@@ -43,7 +43,6 @@ import butterknife.OnFocusChange;
 
 /**
  * 修改地址
- *
  */
 public class ModifyAddressActivity extends BaseActivity {
 
@@ -65,9 +64,6 @@ public class ModifyAddressActivity extends BaseActivity {
     @BindView(R.id.et_address_info)
     EditText mAddressInfoEt;
 
-    @BindView(R.id.et_post_code)
-    EditText mPostCodeEt;
-
     @BindView(R.id.tv_save)
     TextView mSaveTv;
 
@@ -80,11 +76,8 @@ public class ModifyAddressActivity extends BaseActivity {
     @BindView(R.id.vi_phone)
     View mPhoneVi;
 
-    @BindView(R.id.vi_address_detail)
+    @BindView(R.id.ll_address_detail)
     View mAddressDetailVi;
-
-    @BindView(R.id.vi_post_code)
-    View mPostCodeVi;
 
     private NetworkUtil networkUtil;
     private User mUser;
@@ -98,19 +91,16 @@ public class ModifyAddressActivity extends BaseActivity {
         String addressPhone = mPhoneEt.getText().toString();
         String addressInfo = mAddressInfoEt.getText().toString();
         String addressDetail = mAddressDetailEt.getText().toString();
-        String addressPostCode = mPostCodeEt.getText().toString();
 
         boolean addressNameModifyFlag = !TextUtils.isEmpty(addressName) && !mAddress.getName().equals(addressName);
         boolean addressPhoneModifyFlag = !TextUtils.isEmpty(addressPhone) && !mAddress.getPhone().equals(addressPhone);
         boolean addressInfoModifyFlag = !TextUtils.isEmpty(addressInfo) && !mAddress.getInfo().equals(addressInfo);
         boolean addressDetailModifyFlag = !TextUtils.isEmpty(addressDetail) && !mAddress.getDetail().equals(addressDetail);
-        boolean addressPostCodeModifyFlag = !mAddress.getPostCode().equals(addressPostCode);
 
         if (addressNameModifyFlag ||
                 addressPhoneModifyFlag ||
                 addressInfoModifyFlag ||
-                addressDetailModifyFlag ||
-                addressPostCodeModifyFlag) {
+                addressDetailModifyFlag) {
             final ConfirmDialog confirmDialog = new ConfirmDialog(ModifyAddressActivity.this, getString(R.string.tips),
                     getString(R.string.modify_address_abandon_tips),
                     getString(R.string.ok), getString(R.string.cancel), getColor(R.color.navy_blue));
@@ -152,7 +142,6 @@ public class ModifyAddressActivity extends BaseActivity {
         mPhoneEt.addTextChangedListener(new TextChange());
         mAddressInfoEt.addTextChangedListener(new TextChange());
         mAddressDetailEt.addTextChangedListener(new TextChange());
-        mPostCodeEt.addTextChangedListener(new TextChange());
     }
 
     @Override
@@ -168,7 +157,6 @@ public class ModifyAddressActivity extends BaseActivity {
         mNameEt.setText(mAddress.getName());
         mPhoneEt.setText(mAddress.getPhone());
         mAddressDetailEt.setText(mAddress.getDetail());
-        mPostCodeEt.setText(mAddress.getPostCode());
         StringBuffer addressInfoBuffer = new StringBuffer();
         addressInfoBuffer.append(mAddress.getProvince()).append(" ")
                 .append(mAddress.getCity()).append(" ")
@@ -195,19 +183,16 @@ public class ModifyAddressActivity extends BaseActivity {
             String addressPhone = mPhoneEt.getText().toString();
             String addressInfo = mAddressInfoEt.getText().toString();
             String addressDetail = mAddressDetailEt.getText().toString();
-            String addressPostCode = mPostCodeEt.getText().toString();
 
             boolean addressNameModifyFlag = !TextUtils.isEmpty(addressName) && !mAddress.getName().equals(addressName);
             boolean addressPhoneModifyFlag = !TextUtils.isEmpty(addressPhone) && !mAddress.getPhone().equals(addressPhone);
             boolean addressInfoModifyFlag = !TextUtils.isEmpty(addressInfo) && !mAddress.getInfo().equals(addressInfo);
             boolean addressDetailModifyFlag = !TextUtils.isEmpty(addressDetail) && !mAddress.getDetail().equals(addressDetail);
-            boolean addressPostCodeModifyFlag = !mAddress.getPostCode().equals(addressPostCode);
 
             if (addressNameModifyFlag ||
                     addressPhoneModifyFlag ||
                     addressInfoModifyFlag ||
-                    addressDetailModifyFlag ||
-                    addressPostCodeModifyFlag) {
+                    addressDetailModifyFlag) {
                 mSaveTv.setTextColor(0xFFFFFFFF);
                 mSaveTv.setEnabled(true);
             } else {
@@ -238,9 +223,8 @@ public class ModifyAddressActivity extends BaseActivity {
                 String addressCity = PreferencesUtil.getInstance().getPickedCity();
                 String addressDistrict = PreferencesUtil.getInstance().getPickedDistrict();
                 String addressDetail = mAddressDetailEt.getText().toString();
-                String addressPostCode = mPostCodeEt.getText().toString();
                 modifyAddress(mAddress.getAddressId(), addressName, addressPhone, addressProvince,
-                        addressCity, addressDistrict, addressDetail, addressPostCode);
+                        addressCity, addressDistrict, addressDetail);
                 break;
             case R.id.iv_location:
                 permissions = new String[]{"android.permission.ACCESS_FINE_LOCATION"};
@@ -249,7 +233,7 @@ public class ModifyAddressActivity extends BaseActivity {
         }
     }
 
-    @OnFocusChange({R.id.et_name, R.id.et_phone, R.id.et_address_detail, R.id.et_post_code})
+    @OnFocusChange({R.id.et_name, R.id.et_phone, R.id.et_address_detail})
     public void onFocusChange(View view, boolean hasFocus) {
         switch (view.getId()) {
             case R.id.et_name:
@@ -271,13 +255,6 @@ public class ModifyAddressActivity extends BaseActivity {
                     mAddressDetailVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
                 } else {
                     mAddressDetailVi.setBackgroundColor(getColor(R.color.picker_list_divider));
-                }
-                break;
-            case R.id.et_post_code:
-                if (hasFocus) {
-                    mPostCodeVi.setBackgroundColor(getColor(R.color.caishifu_btn_green));
-                } else {
-                    mPostCodeVi.setBackgroundColor(getColor(R.color.picker_list_divider));
                 }
                 break;
         }
@@ -320,21 +297,12 @@ public class ModifyAddressActivity extends BaseActivity {
                     PreferencesUtil.getInstance().setPickedProvince(province);
                     PreferencesUtil.getInstance().setPickedCity(city);
                     PreferencesUtil.getInstance().setPickedDistrict(district);
-
                     StringBuffer addressInfoBuffer = new StringBuffer();
                     addressInfoBuffer.append(province).append(" ")
                             .append(city).append(" ")
                             .append(district);
                     mAddressInfoEt.setText(addressInfoBuffer.toString());
                     mAddressDetailEt.setText(addressDetail);
-
-                    Area districtArea = mAreaDao.getDistrictByCityNameAndDistrictName(city, district);
-                    if (TextUtils.isEmpty(districtArea.getPostCode())) {
-                        mPostCodeEt.setText(Constant.DEFAULT_POST_CODE);
-                    } else {
-                        mPostCodeEt.setText(districtArea.getPostCode());
-                    }
-
                     break;
             }
         }
@@ -355,15 +323,10 @@ public class ModifyAddressActivity extends BaseActivity {
                     .append(pickedDistrict);
             mAddressInfoEt.setText(addressInfoBuffer.toString());
         }
-
-        String pickedPostCode = PreferencesUtil.getInstance().getPickedPostCode();
-        if (!TextUtils.isEmpty(pickedPostCode)) {
-            mPostCodeEt.setText(pickedPostCode);
-        }
     }
 
     private void modifyAddress(final String addressId, final String addressName, final String addressPhone, final String addressProvince,
-                               final String addressCity, final String addressDistrict, final String addressDetail, final String addressPostCode) {
+                               final String addressCity, final String addressDistrict, final String addressDetail) {
         String url = Constant.BASE_URL + "users/" + mUser.getUserId() + "/address/" + addressId;
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("name", addressName);
@@ -372,7 +335,6 @@ public class ModifyAddressActivity extends BaseActivity {
         paramMap.put("city", addressCity);
         paramMap.put("district", addressDistrict);
         paramMap.put("detail", addressDetail);
-        paramMap.put("postCode", addressPostCode);
 
         /*networkUtil.httpPutRequest(url, paramMap, new Response.Listener<String>() {
             @Override

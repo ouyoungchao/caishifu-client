@@ -183,43 +183,43 @@ public class AddProductActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_save_vegetable_item:
-                mDialog.setMessage(getString(R.string.saving));
-                mDialog.show();
                 String name = mNameEt.getText().toString();
                 if (name.trim().isEmpty()) {
+                    mNameVi.setBackgroundColor(getColor(R.color.colorAccent));
                     Log.w(TAG, "input name is error");
-                    return;
+                    break;
                 }
                 float price;
                 try {
                     price = Float.parseFloat(mPriceEt.getText().toString());
                     if (price <= 0.0) {
-                        mPriceEt.setBackgroundColor(getColor(R.color.colorAccent));
+                        mPriceVi.setBackgroundColor(getColor(R.color.colorAccent));
                         Log.w(TAG, "input price must more than 0.0");
-                        return;
+                        break;
                     }
                 } catch (NumberFormatException e) {
-                    mPriceEt.setTextColor(getColor(R.color.colorAccent));
+                    mPriceVi.setBackgroundColor(getColor(R.color.colorAccent));
                     Log.w(TAG, "input price is error");
-                    return;
+                    break;
                 }
                 int supply;
                 try {
                     supply = Integer.parseInt(mSupplyEt.getText().toString());
                     if (supply <= 0.0) {
-                        mSupplyEt.setTextColor(getColor(R.color.colorAccent));
+                        mSupplyVi.setBackgroundColor(getColor(R.color.colorAccent));
                         Log.w(TAG, "input supply must more than 0");
-                        return;
+                        break;
                     }
                 } catch (NumberFormatException e) {
-                    mSupplyEt.setBackgroundColor(getColor(R.color.colorAccent));
+                    mSupplyVi.setBackgroundColor(getColor(R.color.colorAccent));
                     Log.w(TAG, "input supply is error");
-                    return;
+                    break;
                 }
                 addVegetable(name, price, supply, pictures);
                 break;
             case R.id.sdv_vegetable_picture_add:
                 showPhotoDialog();
+                break;
             case R.id.sdv_vegetable_picture1:
                 if (pictures.size() == 2) {
                     Intent intent = new Intent(this, BigImageActivity.class);

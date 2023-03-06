@@ -90,6 +90,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/ImageTranslucentTheme" />
 
+        <!--修改地址界面-->
+        <activity
+            android:name=".activity.ModifyAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageTranslucentTheme" />
+
         <!--地图界面-->
         <activity
             android:name=".activity.MapPickerActivity"

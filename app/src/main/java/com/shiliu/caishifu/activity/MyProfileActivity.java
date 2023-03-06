@@ -165,7 +165,13 @@ public class MyProfileActivity extends BaseActivity {
                 startActivityForResult(new Intent(this, EditNameActivity.class), UPDATE_USER_NICK_NAME);
                 break;
             case R.id.rl_address:
-                startActivity(new Intent(this, MyAddressActivity.class));
+                if(!mUser.getAddressList().isEmpty()){
+                    Intent modifyIntent = new Intent(this, ModifyAddressActivity.class);
+                    modifyIntent.putExtra("address",mUser.getAddressList().get(0));
+                    startActivity(modifyIntent);
+                }else {
+                    startActivity(new Intent(this, AddAddressActivity.class));
+                }
                 break;
             case R.id.rl_sex:
                 startActivityForResult(new Intent(this, SetGenderActivity.class), UPDATE_USER_SEX);

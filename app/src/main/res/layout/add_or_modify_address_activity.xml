@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
-            android:text="新增地址"
+            android:text="设置地址"
             android:textColor="@color/common_top_title"
             android:textSize="@dimen/top_bar_title_text_size" />
 
@@ -175,82 +175,31 @@
             android:background="@color/divider_grey" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="#ffffff"
-        android:clickable="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:text="详细地址"
-            android:textColor="#353535"
-            android:textSize="@dimen/common_item_text_size" />
+    <RelativeLayout
+        android:id="@+id/ll_address_detail"
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
 
         <EditText
             android:id="@+id/et_address_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="50dp"
-            android:background="@null"
-            android:hint="街道门牌信息"
-            android:paddingLeft="95dp"
-            android:singleLine="true"
-            android:textColor="#353535"
-            android:textColorHint="#DDDDDD"
-            android:textSize="@dimen/common_item_text_size" />
-
-        <View
-            android:id="@+id/vi_address_detail"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
-            android:background="@color/divider_grey" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="#ffffff"
-        android:clickable="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:text="邮政编码"
-            android:textColor="#353535"
-            android:textSize="@dimen/common_item_text_size" />
-
-        <EditText
-            android:id="@+id/et_post_code"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="50dp"
-            android:background="@null"
-            android:hint="邮政编码"
-            android:inputType="phone"
-            android:paddingLeft="95dp"
-            android:singleLine="true"
-            android:textColor="#353535"
-            android:textColorHint="#DDDDDD"
-            android:textSize="@dimen/common_item_text_size" />
-
-        <View
-            android:id="@+id/vi_post_code"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
-            android:background="@color/divider_grey" />
+            android:layout_height="match_parent"
+            android:background="@color/color_white"
+            android:gravity="start|top"
+            android:hint="详细地址: 包含村镇、街道信息。如 XX镇XX村XX组78号"
+            android:includeFontPadding="false"
+            android:maxLines="4"
+            android:paddingEnd="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingStart="20dp"
+            android:paddingTop="12dp"
+            android:textColorHint="@color/ed_hint"
+            android:textSize="16sp" />
     </RelativeLayout>
 </LinearLayout>
