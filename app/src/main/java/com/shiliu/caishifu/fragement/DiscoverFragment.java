@@ -25,7 +25,6 @@ import com.alibaba.fastjson.JSON;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.activity.FriendsCircleActivity;
 import com.shiliu.caishifu.activity.MainActivity;
-import com.shiliu.caishifu.activity.MomentsActivity;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.widget.ConfirmDialog;
 
@@ -52,19 +51,7 @@ public class DiscoverFragment extends BaseFragment {
 
     Fragment buyVegetableFragment = new BuyVegetableFragment();
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setTitleStrokeWidth(mBuyerTv);
-        setTitleStrokeWidth(mSellerTv);
 
-       /* if (PreferencesUtil.getInstance().isOpenPeopleNearby()) {
-            mOpenPeopleNearbyIv.setVisibility(View.VISIBLE);
-        } else {
-            mOpenPeopleNearbyIv.setVisibility(View.GONE);
-        }*/
-
-    }
 
     private void initView() {
         user = getUser(this.getContext());
@@ -98,6 +85,20 @@ public class DiscoverFragment extends BaseFragment {
             mBuyerTv.setBackgroundColor(getResources().getColor(R.color.common_bg));
         }
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setTitleStrokeWidth(mBuyerTv);
+        setTitleStrokeWidth(mSellerTv);
+
+       /* if (PreferencesUtil.getInstance().isOpenPeopleNearby()) {
+            mOpenPeopleNearbyIv.setVisibility(View.VISIBLE);
+        } else {
+            mOpenPeopleNearbyIv.setVisibility(View.GONE);
+        }*/
+
     }
 
     @Override

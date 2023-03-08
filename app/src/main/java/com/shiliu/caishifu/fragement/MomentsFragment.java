@@ -1,6 +1,5 @@
-package com.shiliu.caishifu.activity;
+package com.shiliu.caishifu.fragement;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,17 +12,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alibaba.fastjson.JSONArray;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.shiliu.caishifu.R;
 import com.shiliu.caishifu.adapter.MomentsAdapter;
 import com.shiliu.caishifu.image.ImageWatcher;
@@ -40,14 +38,11 @@ import com.shiliu.caishifu.moments.adapter.Utils;
 import com.shiliu.caishifu.utils.KeyboardUtil;
 import com.shiliu.caishifu.utils.NetworkUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
-import com.shiliu.caishifu.utils.StatusBarUtil;
 import com.shiliu.caishifu.view.CustomProgressDrawable;
 import com.shiliu.caishifu.view.CustomSwipeRefreshLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,15 +52,12 @@ import butterknife.OnClick;
  * 菜市场
  *
  */
-public class MomentsActivity extends CommonActivity implements MomentsListener, ImageWatcher.OnPictureLongPressListener {
+public class MomentsFragment extends BaseFragment implements MomentsListener, ImageWatcher.OnPictureLongPressListener {
+    private static final String TAG = "MomentsFragment";
 
     @BindView(R.id.srl_moments)
     CustomSwipeRefreshLayout mMomentsSrl;
 
-    @BindView(R.id.rl_title)
-    RelativeLayout mTitleRl;
-
-    SimpleDraweeView mAvatarSdv;
 
     @BindView(R.id.rv_moments)
     RecyclerView mMomentsRv;
@@ -88,21 +80,28 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
     MomentsComment mMomentsComment = new MomentsComment();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.moments_activity);
-        ButterKnife.bind(this);
-        networkUtil = NetworkUtil.getInstance(this);
-        mUser = PreferencesUtil.getInstance().getUser();
-        StatusBarUtil.setStatusBarColor(MomentsActivity.this, R.color.color_moments_default_cover);
+        getMarketMomentsList();
+    }
 
-        llComment = findViewById(R.id.ll_comment);
-        etComment = findViewById(R.id.et_comment);
-        tvSend = findViewById(R.id.btn_send);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate: MomentFragment");
+        super.onCreate(savedInstanceState);
+        View view = inflater.inflate(R.layout.moments_fragment, container, false);
+        ButterKnife.bind(this,view);
+        networkUtil = NetworkUtil.getInstance(getActivity());
+        mUser = PreferencesUtil.getInstance().getUser();
+
+        llComment = getActivity().findViewById(R.id.ll_comment);
+        etComment = getActivity().findViewById(R.id.et_comment);
+        tvSend = getActivity().findViewById(R.id.btn_send);
         boolean isTranslucentStatus = false;
         //        新的初始化方式二，不再需要在布局文件中加入<ImageWatcher>标签 减少布局嵌套
-        iwHelper = ImageWatcherHelper.with(this, new GlideSimpleLoader()) // 一般来讲， ImageWatcher 需要占据全屏的位置
-                .setTranslucentStatus(!isTranslucentStatus ? Utils.calcStatusBarHeight(this) : 0) // 如果不是透明状态栏，你需要给ImageWatcher标记 一个偏移值，以修正点击ImageView查看的启动动画的Y轴起点的不正确
+        iwHelper = ImageWatcherHelper.with(getActivity(), new GlideSimpleLoader()) // 一般来讲， ImageWatcher 需要占据全屏的位置
+                .setTranslucentStatus(!isTranslucentStatus ? Utils.calcStatusBarHeight(getContext()) : 0) // 如果不是透明状态栏，你需要给ImageWatcher标记 一个偏移值，以修正点击ImageView查看的启动动画的Y轴起点的不正确
                 .setErrorImageRes(R.mipmap.error_picture) // 配置error图标 如果不介意使用lib自带的图标，并不一定要调用这个API
                 .setOnPictureLongPressListener(this)
                 .setOnStateChangedListener(new ImageWatcher.OnStateChangedListener() {
@@ -126,11 +125,10 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
 
 //        setData();
 
-        mAdapter = new MomentsAdapter(mList, this, this);
+        mAdapter = new MomentsAdapter(mList, getActivity(), this);
         mAdapter.setIwHelper(iwHelper);
-        mMomentsRv.setLayoutManager(new LinearLayoutManager(this));
+        mMomentsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mMomentsRv.setAdapter(mAdapter);
-        setHeader(mMomentsRv);
 
         mMomentsRv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -140,7 +138,7 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
             }
         });
 
-        CustomProgressDrawable drawable = new CustomProgressDrawable(this, mMomentsSrl);
+        CustomProgressDrawable drawable = new CustomProgressDrawable(getContext(), mMomentsSrl);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.moments_refresh_icon);
         drawable.setBitmap(bitmap);
 
@@ -172,8 +170,7 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
 
             }
         });
-
-//        getFriendMomentsListByUserId(mUser.getUserId());
+        return view;
     }
 
     @OnClick({R.id.btn_send})
@@ -186,12 +183,6 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
         }
     }
 
-    //朋友圈头像和背景设置
-    private void setHeader(RecyclerView view) {
-        View header = LayoutInflater.from(this).inflate(R.layout.my_moments_header_item, view, false);
-        mAvatarSdv = header.findViewById(R.id.sdv_avatar);
-        mAdapter.setHeaderView(header);
-    }
 
     //评论
     @Override
@@ -258,7 +249,7 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
 
     public void hideInput() {
         llComment.setVisibility(View.GONE);
-        KeyboardUtil.hideSoftInput(this, etComment);
+        KeyboardUtil.hideSoftInput(getContext(), etComment);
     }
 
   /*  *//**
@@ -335,13 +326,6 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
 
     }
 
-    @Override
-    public void onBackPressed() {
-        //方式二
-        if (!iwHelper.handleBackPressed()) {
-            super.onBackPressed();
-        }
-    }
 
     private void showCommentWindow(View view, String userId, String userName, Moments moments) {
         //item 底部y坐标
@@ -369,7 +353,7 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
         mMomentsComment.setUserId(moments.getUserId());
     }
 
-    private void getFriendMomentsListByUserId(String userId) {
+    private void getMarketMomentsList() {
        /* String url = Constant.BASE_URL + "users/" + userId + "/friendMoments";
         networkUtil.httpGetRequest(url, new Response.Listener<String>() {
             @Override
@@ -383,6 +367,11 @@ public class MomentsActivity extends CommonActivity implements MomentsListener, 
             public void onErrorResponse(VolleyError volleyError) {
             }
         });*/
+       mUser = getUser(getContext());
+       Moments moments = new Moments();
+       moments.setProducts(mUser.getProductList());
+       moments.setUserId(mUser.getUserId());
+       mList.add(moments);
     }
 
     /**

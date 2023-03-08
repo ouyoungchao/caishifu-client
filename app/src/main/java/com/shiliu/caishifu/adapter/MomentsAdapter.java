@@ -2,21 +2,14 @@ package com.shiliu.caishifu.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -31,25 +24,24 @@ import com.shiliu.caishifu.model.Moments;
 import com.shiliu.caishifu.model.MomentsComment;
 import com.shiliu.caishifu.model.MomentsType;
 import com.shiliu.caishifu.model.User;
-import com.shiliu.caishifu.moments.BaseViewHolder;
 import com.shiliu.caishifu.moments.TextViewHolder;
 import com.shiliu.caishifu.utils.CollectionUtils;
 import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.TimeUtil;
-import com.shiliu.caishifu.viewholder.HeaderViewHolder;
+import com.shiliu.caishifu.viewholder.BaseViewHolder;
 import com.shiliu.caishifu.viewholder.ImageViewHolder;
+import com.shiliu.caishifu.viewholder.TableViewHolder;
+import com.shiliu.caishifu.widget.CommentsView;
+import com.shiliu.caishifu.widget.MomentsLikeListView;
 import com.shiliu.caishifu.widget.NineGridView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.CLIPBOARD_SERVICE;
-
 /**
- * 朋友圈
+ * 菜市场
  *
- * @author zhou
  */
 public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -57,8 +49,8 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static final int TYPE_HEADER = 0;
     // 文本
     public static final int TYPE_TEXT = 1;
-    // 图片
-    public static final int TYPE_IMAGE = 2;
+    // 表单
+    public static final int TYPE_TABLE = 2;
     // 视频
     public static final int TYPE_VIDEO = 3;
     // 网页
@@ -100,16 +92,16 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        if (viewType == TYPE_IMAGE) {
-//            return new ImageViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_image, parent, false));
-//        } else if (viewType == TYPE_VIDEO) {
-//            return new VideoViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_video, parent, false));
-//        } else if (viewType == TYPE_HEADER) {
-//            return new HeaderViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_header, parent, false));
-//        } else {
+        if (viewType == TYPE_TABLE) {
+            return new TableViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_table_item, parent, false));
+        } /*else if (viewType == TYPE_VIDEO) {
+            return new VideoViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_video, parent, false));
+        } else if (viewType == TYPE_HEADER) {
+            return new HeaderViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_header, parent, false));
+        }*/ else {
             // 默认text
-            return new TextViewHolder(mContent.getLayoutInflater().inflate(R.layout.my_moments_header_item, parent, false));
-//        }
+            return new TextViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_text_item, parent, false));
+        }
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {
@@ -119,66 +111,20 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int pos) {
-        if (viewHolder instanceof HeaderViewHolder) {
-            HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
-            if (!TextUtils.isEmpty(mUser.getUserAvatar())) {
-                headerViewHolder.mAvatarSdv.setImageURI(Uri.parse(mUser.getUserAvatar()));
-            }
-            headerViewHolder.mNickNameTv.setText(mUser.getUserNickName());
-            return;
-        }
         final int position = getRealPosition(viewHolder);
-      /*  Moments moments = mMomentsList.get(position);
+        Moments moments = mMomentsList.get(position);
         if (viewHolder instanceof TextViewHolder) {
             //将数据添加到布局中
             TextViewHolder textViewHolder = (TextViewHolder) viewHolder;
-        } else if (viewHolder instanceof ImageViewHolder) {
+        } else if (viewHolder instanceof TableViewHolder) {
             //将数据添加到另一个布局中
-            final ImageViewHolder imgViewHolder = (ImageViewHolder) viewHolder;
-            imgViewHolder.mPhotosGv.setSingleImageSize(80, 120);
-            if (!TextUtils.isEmpty(moments.getPhotos())) {
-                List<String> thumbnailList = JsonUtil.jsonArrayToList(moments.getThumbnails(), String.class);
-                List<String> photoList = JsonUtil.jsonArrayToList(moments.getPhotos(), String.class);
-                final List<Uri> photoUriList = getPhotoUriList(photoList);
-                //九宫格
-                imgViewHolder.mPhotosGv.setAdapter(new NineImageAdapter(mContent,
-                        mRequestOptions, mDrawableTransitionOptions, thumbnailList));
-                imgViewHolder.mPhotosGv.setOnImageClickListener(new NineGridView.OnImageClickListener() {
-                    @Override
-                    public void onImageClick(int position, View view) {
-                        if (iwHelper != null) {
-                            iwHelper.show((ImageView) view, imgViewHolder.mPhotosGv.getImageViews(),
-                                    photoUriList);
-                        }
-                        if (mMomentsListener != null) {
-                            // 返回主页去弹出评论
-                            mMomentsListener.imageOnclick();
-                        }
-                    }
-                });
-            }
-        } *//*else if (viewHolder instanceof VideoViewHolder) {
-            //将数据添加到另一个布局中
-            VideoViewHolder videoViewHolder = (VideoViewHolder) viewHolder;
-            if (!TextUtils.isEmpty(moments.getThumbnails())) {
-                List<String> thumbnailList = JsonUtil.jsonArrayToList(moments.getThumbnails(), String.class);
-                if (!CollectionUtils.isEmpty(thumbnailList)) {
-                    loadVideoThumbnail(mContent, thumbnailList.get(0), videoViewHolder.mVideoThumbnailIv);
-                }
-                videoViewHolder.mVideoThumbnailIv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (mMomentsListener != null) {
-                            if (!CollectionUtils.isEmpty(thumbnailList)) {
-                                mMomentsListener.videoOnclick(thumbnailList.get(0), mMomentsList.get(position).getVideo());
-                            }
-                        }
-                    }
-                });
-            }
-        }*/
+            final TableViewHolder tableViewHolder = (TableViewHolder) viewHolder;
+
+            MarketTableAdapter marketTableAdapter= new MarketTableAdapter(mContent, moments.getProducts());
+            tableViewHolder.productTableView.setAdapter(marketTableAdapter);
+        }
         // 处理公用部分
-      /*  final BaseViewHolder baseViewHolder = (BaseViewHolder) viewHolder;
+        final BaseViewHolder baseViewHolder = (BaseViewHolder) viewHolder;
         // 头像
         if (!TextUtils.isEmpty(moments.getUserAvatar())) {
             baseViewHolder.mAvatarSdv.setImageURI(Uri.parse(moments.getUserAvatar()));
@@ -191,11 +137,10 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         baseViewHolder.mContentEtv.setText(moments.getContent());
         if (!CollectionUtils.isEmpty(moments.getLikeUserList())
                 || !CollectionUtils.isEmpty(moments.getMomentsCommentList())) {
-            // TODO: 2022/11/6  
-//            baseViewHolder.mLikeAndCommentLl.setVisibility(View.VISIBLE);
+            baseViewHolder.mLikeAndCommentLl.setVisibility(View.VISIBLE);
             // 点赞列表
             if (!CollectionUtils.isEmpty(moments.getLikeUserList())) {
-              *//*  baseViewHolder.mLikeLv.setVisibility(View.VISIBLE);
+                baseViewHolder.mLikeLv.setVisibility(View.VISIBLE);
 
                 baseViewHolder.mLikeLv.setData(moments.getLikeUserList());
                 baseViewHolder.mLikeLv.setOnItemClickListener(new MomentsLikeListView.OnItemClickListener() {
@@ -203,15 +148,13 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public void onClick(int position) {
 //                        onclickUser(mList.get(position).getFabulous().get(position).getUserid() + "");
                     }
-                });*//*
+                });
             } else {
-            // TODO: 2022/11/6  
-//                baseViewHolder.mLikeLv.setVisibility(View.GONE);
+                baseViewHolder.mLikeLv.setVisibility(View.GONE);
             }
             // 评论列表
             if (!CollectionUtils.isEmpty(moments.getMomentsCommentList())) {
-                // TODO: 2022/11/6  
-                *//*baseViewHolder.mCommentsCv.setVisibility(View.VISIBLE);
+                baseViewHolder.mCommentsCv.setVisibility(View.VISIBLE);
                 baseViewHolder.mCommentsCv.setData(moments.getMomentsCommentList());
                 baseViewHolder.mCommentsCv.setOnCommentListener(new CommentsView.CommentListener() {
                     @SuppressLint("NewApi")
@@ -235,7 +178,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @SuppressLint("NewApi")
                     @Override
                     public void CommentLongClick(View view, int position1, MomentsComment momentsComment) {
-                        showCopyPopWindow(baseViewHolder.mCommentsCv, momentsComment.getContent());
+//                        showCopyPopWindow(baseViewHolder.mCommentsCv, momentsComment.getContent());
                     }
 
                     @Override
@@ -244,17 +187,14 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
 //
-                baseViewHolder.mCommentsCv.notifyDataSetChanged();*//*
+                baseViewHolder.mCommentsCv.notifyDataSetChanged();
             } else {
-                // TODO: 2022/11/6  
-//                baseViewHolder.mCommentsCv.setVisibility(View.GONE);
+                baseViewHolder.mCommentsCv.setVisibility(View.GONE);
             }
         } else {
-        // TODO: 2022/11/6  
-//            baseViewHolder.mLikeAndCommentLl.setVisibility(View.GONE);
-        }*/
-    // TODO: 2022/11/6
-       /* if (moments.getUserId().equals(mUser.getUserId())) {
+            baseViewHolder.mLikeAndCommentLl.setVisibility(View.GONE);
+        }
+        if (moments.getUserId().equals(mUser.getUserId())) {
             baseViewHolder.mDeleteTv.setVisibility(View.VISIBLE);
         } else {
             baseViewHolder.mDeleteTv.setVisibility(View.GONE);
@@ -267,7 +207,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (mMomentsListener != null) {
                 mMomentsListener.onClickLikeAndComment(view, position);
             }
-        });*/
+        });
 //        baseViewHolder.mDeleteTv.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -283,7 +223,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (MomentsType.TEXT.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_TEXT;
             } else if (MomentsType.IMAGE.getType().equals(mMomentsList.get(position).getType())) {
-                return TYPE_IMAGE;
+                return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_VIDEO;
             } else {
@@ -295,7 +235,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else if (MomentsType.TEXT.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_TEXT;
             } else if (MomentsType.IMAGE.getType().equals(mMomentsList.get(position - 1).getType())) {
-                return TYPE_IMAGE;
+                return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_VIDEO;
             } else {

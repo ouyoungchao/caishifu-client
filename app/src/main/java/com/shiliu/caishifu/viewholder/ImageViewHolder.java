@@ -3,7 +3,6 @@ package com.shiliu.caishifu.viewholder;
 import android.view.View;
 
 import com.shiliu.caishifu.R;
-import com.shiliu.caishifu.moments.BaseViewHolder;
 import com.shiliu.caishifu.widget.NineGridView;
 
 /**

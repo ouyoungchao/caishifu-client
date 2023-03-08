@@ -16,7 +16,7 @@ public class Moments {
     private String userAvatar;
     private String content;
     private String thumbnails;
-    private String photos;
+    private List<Product> products;
     private String video;
     private String createTime;
     private Long timestamp;
@@ -87,12 +87,12 @@ public class Moments {
         this.thumbnails = thumbnails;
     }
 
-    public String getPhotos() {
-        return photos;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setPhotos(String photos) {
-        this.photos = photos;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public String getVideo() {
