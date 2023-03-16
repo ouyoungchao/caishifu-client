@@ -36,6 +36,9 @@ public class PublishItemAdapter extends BaseAdapter {
     public PublishItemAdapter(Context mContext, List<Product> productList) {
         this.mContext = mContext;
         this.productList = productList;
+        if( productList!= null && productList.isEmpty()){
+
+        }
     }
 
     public void setData(List<Product> dataList) {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
 
     <LinearLayout
         android:id="@+id/ll_root"
@@ -10,7 +11,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!--<RelativeLayout
+            android:id="@+id/rl_title"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/common_top_bar"/>-->
+        <!--        <RelativeLayout-->
+        <!--todo-->
         <com.shiliu.caishifu.view.CustomSwipeRefreshLayout
+
             android:id="@+id/srl_moments"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -20,11 +29,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white" />
+<!--        </RelativeLayout>-->
 
         </com.shiliu.caishifu.view.CustomSwipeRefreshLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/ll_comment"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -76,5 +86,5 @@
     <com.shiliu.caishifu.image.ImageWatcher
         android:id="@+id/v_image_watcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
 </FrameLayout>

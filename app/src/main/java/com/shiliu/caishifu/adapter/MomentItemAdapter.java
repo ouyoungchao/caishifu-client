@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,14 +23,13 @@ import java.util.List;
  * 发布信息适配类
  *
  */
-public class MarketTableAdapter extends PublishItemAdapter {
-    private static final String TAG = "PublishItemAdapter";
+public class MomentItemAdapter extends BaseAdapter {
+    private static final String TAG = "MomentItemAdapter";
 
     Context mContext;
     List<Product> productList = new ArrayList<>();
 
-    public MarketTableAdapter(Context mContext, List<Product> productList) {
-        super(mContext,productList);
+    public MomentItemAdapter(Context mContext, List<Product> productList) {
         this.mContext = mContext;
         this.productList = productList;
     }
@@ -40,16 +40,19 @@ public class MarketTableAdapter extends PublishItemAdapter {
 
     @Override
     public int getCount() {
+        Log.i(TAG, "getCount: "+ productList.size());
         return productList.size();
     }
 
     @Override
     public Product getItem(int position) {
+        Log.d(TAG, "getItem: " + position);
         return productList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
+        Log.d(TAG, "getItemId: " + position);
         return position;
     }
 
@@ -60,8 +63,8 @@ public class MarketTableAdapter extends PublishItemAdapter {
         ViewHolder viewHolder;
         if (null == convertView) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.publish_product_item, null);
-            viewHolder.productItem = convertView.findViewById(R.id.rl_vegetable_table_item);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.moment_table_item, null);
+            viewHolder.productItem = convertView.findViewById(R.id.rl_moment_table_item);
             viewHolder.name = convertView.findViewById(R.id.tv_vegetable_table_item_name);
             viewHolder.price = convertView.findViewById(R.id.tv_vegetable_table_item_price);
             viewHolder.supply = convertView.findViewById(R.id.tv_vegetable_table_item_supply);
@@ -82,8 +85,6 @@ public class MarketTableAdapter extends PublishItemAdapter {
         }else if(product.getPictures().size() == 2){
             viewHolder.mVegetablePicture1.setImageURI(product.getPictures().get(0));
             viewHolder.mVegetablePicture2.setImageURI(product.getPictures().get(1));
-            Log.i(TAG, "picture 1 layout info: " + viewHolder.mVegetablePicture1.getLayoutParams().width +" "+ viewHolder.mVegetablePicture1.getLayoutParams().height);
-            Log.i(TAG, "picture 2 layout info: " + viewHolder.mVegetablePicture2.getLayoutParams().width +" "+ viewHolder.mVegetablePicture2.getLayoutParams().height);
         }
         viewHolder.productItem.setOnClickListener(new View.OnClickListener() {
             @Override

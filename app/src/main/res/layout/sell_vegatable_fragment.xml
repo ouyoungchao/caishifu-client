@@ -8,9 +8,10 @@
         android:id="@+id/vegetable_categorize"
         layout="@layout/vegetable_categorize_header_item" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_momments_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_below="@+id/vegetable_categorize"/>
 </RelativeLayout>

@@ -7,11 +7,11 @@ package com.shiliu.caishifu.model;
 public enum MomentsType {
 
     /**
-     * 朋友圈类型
+     * 菜市场类型
      */
     HEADER("0", "头"),
     TEXT("1", "文字"),
-    IMAGE("2", "图片"),
+    TABLE("2", "图片"),
     VIDEO("3", "视频");
 
     MomentsType(String type, String name) {

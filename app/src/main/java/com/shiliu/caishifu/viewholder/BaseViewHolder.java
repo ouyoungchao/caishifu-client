@@ -3,6 +3,7 @@ package com.shiliu.caishifu.viewholder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     public TextView mNickNameTv;
     // 文字内容
     public ExpandTextView mContentEtv;
+
     // 发布时间
     public TextView mTimeTv;
     // 删除

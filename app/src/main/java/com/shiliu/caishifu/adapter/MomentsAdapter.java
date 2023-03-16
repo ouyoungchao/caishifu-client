@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,15 +27,12 @@ import com.shiliu.caishifu.model.MomentsType;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.moments.TextViewHolder;
 import com.shiliu.caishifu.utils.CollectionUtils;
-import com.shiliu.caishifu.utils.JsonUtil;
 import com.shiliu.caishifu.utils.PreferencesUtil;
 import com.shiliu.caishifu.utils.TimeUtil;
 import com.shiliu.caishifu.viewholder.BaseViewHolder;
-import com.shiliu.caishifu.viewholder.ImageViewHolder;
 import com.shiliu.caishifu.viewholder.TableViewHolder;
 import com.shiliu.caishifu.widget.CommentsView;
 import com.shiliu.caishifu.widget.MomentsLikeListView;
-import com.shiliu.caishifu.widget.NineGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,14 +91,14 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_TABLE) {
-            return new TableViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_table_item, parent, false));
+            return new TableViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_table_fragement, parent, false));
         } /*else if (viewType == TYPE_VIDEO) {
             return new VideoViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_video, parent, false));
         } else if (viewType == TYPE_HEADER) {
             return new HeaderViewHolder(mContent.getLayoutInflater().inflate(R.layout.item_my_moments_header, parent, false));
         }*/ else {
             // 默认text
-            return new TextViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_text_item, parent, false));
+            return new TextViewHolder(mContent.getLayoutInflater().inflate(R.layout.moments_text_fragment, parent, false));
         }
     }
 
@@ -119,9 +117,10 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof TableViewHolder) {
             //将数据添加到另一个布局中
             final TableViewHolder tableViewHolder = (TableViewHolder) viewHolder;
-
-            MarketTableAdapter marketTableAdapter= new MarketTableAdapter(mContent, moments.getProducts());
-            tableViewHolder.productTableView.setAdapter(marketTableAdapter);
+            tableViewHolder.momentTable.setVisibility(View.VISIBLE);
+            MomentItemAdapter momentItemAdapter = new MomentItemAdapter(mContent, moments.getProducts());
+            tableViewHolder.momentItemList.setAdapter(momentItemAdapter);
+            momentItemAdapter.notifyDataSetChanged();
         }
         // 处理公用部分
         final BaseViewHolder baseViewHolder = (BaseViewHolder) viewHolder;
@@ -222,7 +221,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (mHeaderView == null) {
             if (MomentsType.TEXT.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_TEXT;
-            } else if (MomentsType.IMAGE.getType().equals(mMomentsList.get(position).getType())) {
+            } else if (MomentsType.TABLE.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_VIDEO;
@@ -234,7 +233,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return TYPE_HEADER;
             } else if (MomentsType.TEXT.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_TEXT;
-            } else if (MomentsType.IMAGE.getType().equals(mMomentsList.get(position - 1).getType())) {
+            } else if (MomentsType.TABLE.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_VIDEO;

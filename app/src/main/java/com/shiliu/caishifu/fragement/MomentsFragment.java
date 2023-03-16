@@ -29,6 +29,7 @@ import com.shiliu.caishifu.image.ImageWatcherHelper;
 import com.shiliu.caishifu.listener.MomentsListener;
 import com.shiliu.caishifu.model.Moments;
 import com.shiliu.caishifu.model.MomentsComment;
+import com.shiliu.caishifu.model.MomentsType;
 import com.shiliu.caishifu.model.User;
 import com.shiliu.caishifu.model.moment.ExplorePostPinglunBean;
 import com.shiliu.caishifu.moments.CustomDotIndexProvider;
@@ -55,9 +56,6 @@ import butterknife.OnClick;
 public class MomentsFragment extends BaseFragment implements MomentsListener, ImageWatcher.OnPictureLongPressListener {
     private static final String TAG = "MomentsFragment";
 
-    @BindView(R.id.srl_moments)
-    CustomSwipeRefreshLayout mMomentsSrl;
-
 
     @BindView(R.id.rv_moments)
     RecyclerView mMomentsRv;
@@ -68,8 +66,8 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
     private LinearLayout llComment;
     private EditText etComment;
 
-    @BindView(R.id.btn_send)
-    Button tvSend;
+  /*  @BindView(R.id.btn_send)
+    Button tvSend;*/
 
 //    LikeAndCommentPopupWindow mLikeAndCommentPopupWindow;
 
@@ -95,7 +93,7 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
         networkUtil = NetworkUtil.getInstance(getActivity());
         mUser = PreferencesUtil.getInstance().getUser();
 
-        llComment = getActivity().findViewById(R.id.ll_comment);
+      /*  llComment = getActivity().findViewById(R.id.ll_comment);
         etComment = getActivity().findViewById(R.id.et_comment);
         tvSend = getActivity().findViewById(R.id.btn_send);
         boolean isTranslucentStatus = false;
@@ -122,9 +120,8 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
                 .setIndexProvider(new CustomDotIndexProvider())//自定义页码指示器（默认数字）
                 .setLoadingUIProvider(new CustomLoadingUIProvider()); // 自定义LoadingUI
 
-
+*/
 //        setData();
-
         mAdapter = new MomentsAdapter(mList, getActivity(), this);
         mAdapter.setIwHelper(iwHelper);
         mMomentsRv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -138,7 +135,8 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
             }
         });
 
-        CustomProgressDrawable drawable = new CustomProgressDrawable(getContext(), mMomentsSrl);
+//       刷新功能
+       /* CustomProgressDrawable drawable = new CustomProgressDrawable(getContext(), mMomentsSrl);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.moments_refresh_icon);
         drawable.setBitmap(bitmap);
 
@@ -169,11 +167,11 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
                 }).start();
 
             }
-        });
+        });*/
         return view;
     }
 
-    @OnClick({R.id.btn_send})
+   /* @OnClick({R.id.btn_send})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_send:
@@ -181,7 +179,7 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
                         mMomentsComment.getReplyToUserId(), etComment.getText().toString(), 1);
                 break;
         }
-    }
+    }*/
 
 
     //评论
@@ -248,8 +246,8 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
     }
 
     public void hideInput() {
-        llComment.setVisibility(View.GONE);
-        KeyboardUtil.hideSoftInput(getContext(), etComment);
+//        llComment.setVisibility(View.GONE);
+//        KeyboardUtil.hideSoftInput(getContext(), etComment);
     }
 
   /*  *//**
@@ -368,9 +366,14 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
             }
         });*/
        mUser = getUser(getContext());
+        Log.d(TAG, "getMarketMomentsList: " + mUser.toString());
        Moments moments = new Moments();
        moments.setProducts(mUser.getProductList());
        moments.setUserId(mUser.getUserId());
+       moments.setTimestamp(System.currentTimeMillis());
+       moments.setType(MomentsType.TABLE.getType());
+        moments.setContent("上好的白菜，持续供货");
+        moments.setUserNickName("欧阳超");
        mList.add(moments);
     }
 

@@ -1,11 +1,11 @@
 package com.shiliu.caishifu.viewholder;
 
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.shiliu.caishifu.R;
-import com.shiliu.caishifu.widget.NineGridView;
 
 /**
  * 表单ViewHolder
@@ -13,11 +13,13 @@ import com.shiliu.caishifu.widget.NineGridView;
  */
 public class TableViewHolder extends BaseViewHolder {
 
-    public ListView productTableView;
+    public ListView momentItemList;
+    public LinearLayout momentTable;
 
     public TableViewHolder(View itemView) {
         super(itemView);
-        productTableView = (ListView) itemView.findViewById(R.id.vegetable_list);
+        momentTable = itemView.findViewById(R.id.rl_moment_table);
+        momentItemList = (ListView) itemView.findViewById(R.id.moment_item_list);
     }
 
 }

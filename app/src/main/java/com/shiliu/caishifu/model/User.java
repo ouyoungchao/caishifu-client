@@ -530,14 +530,16 @@ public class User extends SugarRecord implements Serializable {
     @Override
     public String toString() {
         return "User{" +
-                "userNickName='" + userNickName + '\'' +
+                "userType='" + userType + '\'' +
+                ", userNickName='" + userNickName + '\'' +
                 ", userPhone='" + userPhone + '\'' +
                 ", isBuyer='" + isBuyer + '\'' +
+                ", userAvatar='" + userAvatar + '\'' +
+                ", userHeader='" + userHeader + '\'' +
                 ", userSex=" + userSex +
                 ", userSign='" + userSign + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", userTags='" + userTags + '\'' +
                 ", addressList=" + addressList +
+                ", productList=" + productList +
                 '}';
     }
 }

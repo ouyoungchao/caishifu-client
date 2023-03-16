@@ -51,27 +51,33 @@
 
             </RelativeLayout>
 
-            <!--文本显示框-->
-            <com.shiliu.caishifu.widget.ExpandTextView
-                android:id="@+id/etv_content"
+            <RelativeLayout
+                android:id="@+id/rl_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:ellipsize="end"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:layout_height="wrap_content">
+                <!--文本显示框-->
+                <com.shiliu.caishifu.widget.ExpandTextView
+                    android:id="@+id/etv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:ellipsize="end"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
             <!--图片显示框-->
-            <RelativeLayout
-                android:id="@+id/rl_product_table"
+            <LinearLayout
+                android:id="@+id/rl_moment_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_size_8"
                 android:background="@color/bg_place_holder"
-                android:layout_below="@id/rl_vegetable_table_header">
+                android:layout_below="@id/rl_content"
+                android:visibility="gone">
                 <ListView
-                    android:id="@+id/vegetable_list"
+                    android:id="@+id/moment_item_list"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:headerDividersEnabled="true"
@@ -79,12 +85,14 @@
                     android:dividerHeight="8dp"
                     android:scrollbars="none"
                     android:transcriptMode="normal" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <!--信息显示框-->
+            <!--删除信息显示框-->
             <RelativeLayout
+                android:id="@+id/rl_moment_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/rl_moment_table"
                 android:layout_marginTop="8dp">
 
                 <TextView
@@ -120,6 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_below="@id/rl_moment_delete"
                 android:background="@drawable/bg_moments_like_and_comment"
                 android:orientation="vertical">
 
