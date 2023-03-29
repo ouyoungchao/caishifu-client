@@ -43,4 +43,7 @@
     <dimen name="dimen_size_62">62dp</dimen>
     <dimen name="dimen_size_63">63dp</dimen>
     <dimen name="dimen_size_160">160dp</dimen>
+
+    <dimen name="product_item_height">58dp</dimen>
+    <dimen name="product_item_raw_spacing">1dp</dimen>
 </resources>

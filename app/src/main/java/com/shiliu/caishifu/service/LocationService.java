@@ -1,12 +1,14 @@
 package com.shiliu.caishifu.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 public class LocationService {
+    private static final String TAG = "LocationService";
     private LocationClient client = null;
     private LocationClientOption mOption, customOption;
     private Object lock = new Object();
@@ -14,7 +16,11 @@ public class LocationService {
     public LocationService(Context locationContext) {
         synchronized (lock) {
             if (null == client) {
-                client = new LocationClient(locationContext);
+                try {
+                    client = new LocationClient(locationContext);
+                } catch (Exception e) {
+                    Log.w(TAG, "LocationService: ",e );
+                }
 //                client.setLocOption();
             }
         }

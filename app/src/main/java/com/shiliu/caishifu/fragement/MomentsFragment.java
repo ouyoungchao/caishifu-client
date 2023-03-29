@@ -123,7 +123,7 @@ public class MomentsFragment extends BaseFragment implements MomentsListener, Im
 */
 //        setData();
         mAdapter = new MomentsAdapter(mList, getActivity(), this);
-        mAdapter.setIwHelper(iwHelper);
+//        mAdapter.setIwHelper(iwHelper);
         mMomentsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mMomentsRv.setAdapter(mAdapter);
 

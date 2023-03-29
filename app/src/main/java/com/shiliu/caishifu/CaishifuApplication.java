@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.alibaba.fastjson.JSON;
+import com.baidu.location.LocationClient;
 import com.baidu.mapapi.SDKInitializer;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.orm.SugarContext;
@@ -62,8 +63,10 @@ public class CaishifuApplication extends Application implements Observer {
 //        ClassicsFooter.REFRESH_FOOTER_NOTHING = ""; // "全部加载完成"
 
         // 百度地图
+        SDKInitializer.setAgreePrivacy(this,true);
         SDKInitializer.initialize(this);
-        locationService = new LocationService(getApplicationContext());
+        LocationClient.setAgreePrivacy(true);
+        locationService = new LocationService(this);
 
         JMessageClient.registerEventReceiver(this);
         if (manager == null) {

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.shiliu.caishifu"
         minSdkVersion 24
@@ -59,6 +59,12 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     //汉语拼英组件
     implementation 'com.github.open-android:pinyin4j:2.5.0'
+
+    //地图
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.3.7'
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.5.4'
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Search:7.4.0'
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Util:7.4.0'
 
     //消息推送sdk
     implementation 'cn.jiguang.sdk:jmessage:2.9.0'

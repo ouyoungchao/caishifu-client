@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/white"
         android:orientation="horizontal">
 
@@ -25,31 +25,69 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="16dp"
-            android:background="@color/white"
             android:orientation="vertical">
-
-            <!--头像显示框-->
-            <RelativeLayout
+            <!--卖菜信息显示框-->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_nick_name"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_nick_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:ellipsize="end"
+                        android:maxWidth="200dp"
+                        android:singleLine="true"
+                        android:textColor="@color/navy_blue"
+                        android:textSize="@dimen/common_item_text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:ellipsize="end"
-                    android:maxWidth="200dp"
-                    android:singleLine="true"
-                    android:textColor="@color/navy_blue"
-                    android:textSize="@dimen/common_item_text_size"
-                    android:textStyle="bold" />
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:ellipsize="end"
+                        android:maxWidth="200dp"
+                        android:singleLine="true"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/common_item_text_size"
+                        android:textStyle="bold"
+                        android:text="明天"/>
 
-            </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:id="@+id/tv_sell_or_buy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:ellipsize="end"
+                        android:maxWidth="200dp"
+                        android:singleLine="true"
+                        android:textColor="@color/navy_blue"
+                        android:textSize="@dimen/common_item_text_size"
+                        android:textStyle="bold"
+                        android:text="卖菜"/>
+                </LinearLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_content"
@@ -75,14 +113,15 @@
                 android:layout_marginTop="@dimen/dimen_size_8"
                 android:background="@color/bg_place_holder"
                 android:layout_below="@id/rl_content"
-                android:visibility="gone">
+                android:orientation="vertical"
+                android:isScrollContainer="false">
                 <ListView
                     android:id="@+id/moment_item_list"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:headerDividersEnabled="true"
                     android:divider="@drawable/list_divider"
-                    android:dividerHeight="8dp"
+                    android:dividerHeight="1dp"
                     android:scrollbars="none"
                     android:transcriptMode="normal" />
             </LinearLayout>

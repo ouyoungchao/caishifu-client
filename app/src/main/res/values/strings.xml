@@ -128,7 +128,9 @@
     <string name="sellInfo">卖菜信息</string>
     <string name="add_sell_vegetable_abandon_tips">是否放弃新增卖菜信息？</string>
     <string name="add_buy_vegetable_abandon_tips">是否放弃新增买菜信息？</string>
-    <string name="product_price">元/斤</string>
+    <string name="product_price_unit">元/斤</string>
+    <string name="product_supply_unit">斤</string>
+    <string name="supply">供</string>
     <string name="product_name_list">菜单</string>
     <string name="product_name">名称</string>
     <string name="product_supply">日供货量</string>

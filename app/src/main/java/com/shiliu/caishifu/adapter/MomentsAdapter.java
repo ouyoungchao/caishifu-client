@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
@@ -42,7 +44,8 @@ import java.util.List;
  *
  */
 public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private static final String TAG = "MomentsAdapter";
+    
     // header
     public static final int TYPE_HEADER = 0;
     // 文本
@@ -104,11 +107,13 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {
         int position = holder.getLayoutPosition();
+        Log.d(TAG, "getRealPosition: "+ position + " and mHeaderView = " + mHeaderView);
         return mHeaderView == null ? position : position - 1;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int pos) {
+        Log.d(TAG, "onBindViewHolder: " + pos);
         final int position = getRealPosition(viewHolder);
         Moments moments = mMomentsList.get(position);
         if (viewHolder instanceof TextViewHolder) {
@@ -118,6 +123,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //将数据添加到另一个布局中
             final TableViewHolder tableViewHolder = (TableViewHolder) viewHolder;
             tableViewHolder.momentTable.setVisibility(View.VISIBLE);
+            setMeasuredDimension(tableViewHolder.momentTable, moments.getProducts().size());
             MomentItemAdapter momentItemAdapter = new MomentItemAdapter(mContent, moments.getProducts());
             tableViewHolder.momentItemList.setAdapter(momentItemAdapter);
             momentItemAdapter.notifyDataSetChanged();
@@ -145,6 +151,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 baseViewHolder.mLikeLv.setOnItemClickListener(new MomentsLikeListView.OnItemClickListener() {
                     @Override
                     public void onClick(int position) {
+                        Log.d(TAG, "onClick: mLikeLv.setOnItemClickListener");
 //                        onclickUser(mList.get(position).getFabulous().get(position).getUserid() + "");
                     }
                 });
@@ -159,6 +166,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @SuppressLint("NewApi")
                     @Override
                     public void CommentClick(View view, int position, MomentsComment momentsComment) {
+                        Log.d(TAG, "CommentClick: ");
                         //如果点击得 是自己
                         if (momentsComment.getUserId().equals(mUser.getUserId())) {
                             //如果是自己发的，可以删除,请求网络，返回数据刷新页面
@@ -177,6 +185,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @SuppressLint("NewApi")
                     @Override
                     public void CommentLongClick(View view, int position1, MomentsComment momentsComment) {
+                        Log.d(TAG, "CommentLongClick: ");
 //                        showCopyPopWindow(baseViewHolder.mCommentsCv, momentsComment.getContent());
                     }
 
@@ -203,6 +212,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             baseViewHolder.mTimeTv.setText(prettyTime);
         }
         baseViewHolder.mCommentIv.setOnClickListener(view -> {
+            Log.d(TAG, "onBindViewHolder: baseViewHolder.mCommentIv.setOnClickListener");
             if (mMomentsListener != null) {
                 mMomentsListener.onClickLikeAndComment(view, position);
             }
@@ -217,11 +227,21 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //        });
     }
 
+    private void setMeasuredDimension(LinearLayout momentTable, int size){
+        float height = 0;
+        if(size != 0){
+            height = mContent.getResources().getDimension(R.dimen.product_item_raw_spacing) * (size -1) + mContent.getResources().getDimension(R.dimen.product_item_height) * size;
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int)height);
+        momentTable.setLayoutParams(params);
+    }
+
     public int getItemViewType(int position) {
         if (mHeaderView == null) {
             if (MomentsType.TEXT.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_TEXT;
             } else if (MomentsType.TABLE.getType().equals(mMomentsList.get(position).getType())) {
+                Log.d(TAG, "getItemViewType: mHeaderView = null and " + position);
                 return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position).getType())) {
                 return TYPE_VIDEO;
@@ -234,6 +254,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else if (MomentsType.TEXT.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_TEXT;
             } else if (MomentsType.TABLE.getType().equals(mMomentsList.get(position - 1).getType())) {
+                Log.d(TAG, "getItemViewType: " + position);
                 return TYPE_TABLE;
             } else if (MomentsType.VIDEO.getType().equals(mMomentsList.get(position - 1).getType())) {
                 return TYPE_VIDEO;

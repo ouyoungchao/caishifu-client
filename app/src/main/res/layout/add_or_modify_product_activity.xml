@@ -100,7 +100,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="@string/product_price"
+            android:text="@string/product_price_unit"
             android:textColor="#353535"
             android:textSize="@dimen/common_item_text_size" />
 

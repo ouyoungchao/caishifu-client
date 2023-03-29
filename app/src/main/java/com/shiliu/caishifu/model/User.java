@@ -178,6 +178,15 @@ public class User extends SugarRecord implements Serializable {
      */
     private List<String> userTagList;
 
+    private int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     private List<Address> addressList = new ArrayList<>();
 

@@ -246,9 +246,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 TokenResult tokenResult = JsonUtil.jsoToObject(response.body().byteStream(), TokenResult.class);
                 if(tokenResult.getCode() == ResultCode.SUCCESS.getCode()) {
                     PreferencesUtil.getInstance().saveParam("tokenInfo",JsonUtil.objectToJson(tokenResult.getData()));
-                    PreferencesUtil.getInstance().setLogin(true);
                     //获取用户信息
                     getUser();
+                    PreferencesUtil.getInstance().setLogin(true);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }else {
                     Log.w(TAG, "login onResponse: " + tokenResult.toString());
